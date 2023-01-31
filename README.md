@@ -2,20 +2,14 @@
 
 ## Dev Setup
 
-1. Set install R Version 4.2.2. It is recommended to use [rig](https://github.com/r-lib/rig)
-2. Use the following make command to setup the project `make setup_project`
+### R Setup
 
-### Makefile Description
+Set install R Version 4.2.2. It is recommended to use [rig](https://github.com/r-lib/rig)
 
-Run `make setup_proejct`
+### Project Setup
 
-This will run the following 3 R commands:
-
-* `Rscript -e 'install.packages("renv")'`: Installs renv which is used for package management.
-* `Rscript -e 'renv::install()'`: Installs packages contained in renv configuration file.
-* `Rscript -e 'remotes::install_github("lorenzwalthert/precommit")'`: Installs the pre-commit package for streamlining setting up pre-commit.
-* `Rscript -e 'precommit::install_precommit()'`: Installs pre-commit if you do not already have it.
-* `Rscript -e 'precommit::use_precommit_config()'`: Installs a standard pre-commit config.
+1. Spin up R Studio or an R Console with R 4.2.2
+2. There is a file [setup.R](./setup.R) that includes a list of commands that will set a project up. To run it, you can do Run `source("setup.R")` in the R Console.
 
 To see pre-commit files in R Studio, need to select the option `More > Show Hidden Files`
 
