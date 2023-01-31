@@ -1,3 +1,4 @@
+behaviour
 comamnds
 config
 Dev
@@ -5,8 +6,10 @@ github
 https
 lintr
 lorenzwalthert
+Makefile
 pre
 precommit
 renv
+repo
 Rscript
 styler
