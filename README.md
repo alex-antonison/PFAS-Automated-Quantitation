@@ -7,14 +7,16 @@
 * This project uses [https://github.com/lorenzwalthert/precommit](https://github.com/lorenzwalthert/precommit) pre-commit hooks to streamline code quality and management.
 * This project uses [styler](https://styler.r-lib.org/) to auto-format code.
 
-### pre-commit
+### setup project:
 
-Set up pre-commit with
+Run `make setup_proejct`
 
-```R
-install.packages("remotes")
-remotes::install_github("lorenzwalthert/precommit")
-```
+This will run the following 3 R comamnds:
+
+* `Rscript -e 'install.packages("renv")'`: Installs renv which is used for package management
+* `Rscript -e 'renv::install()'`: Installs packages contained in renv configuration file.
+* `Rscript -e 'precommit::install_precommit()'`: Installs pre-commit if you do not already have it
+* `Rscript -e 'precommit::use_precommit_config()'`: Installs a standard pre-commit config
 
 To see pre-commit files in R Studio, need to select the option `More > Show Hidden Files`
 
