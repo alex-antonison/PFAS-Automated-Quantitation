@@ -16,6 +16,8 @@ install.packages("remotes")
 remotes::install_github("lorenzwalthert/precommit")
 ```
 
+To see pre-commit files in R Studio, need to select the option `More > Show Hidden Files`
+
 ### renv setup
 
 * Used `renv::settings$snapshot.type("all")` to capture all packages installed in project.
