@@ -1,3 +1,4 @@
+behaviour
 config
 Dev
 github
@@ -7,5 +8,6 @@ lorenzwalthert
 pre
 precommit
 renv
+repo
 Rscript
 styler
