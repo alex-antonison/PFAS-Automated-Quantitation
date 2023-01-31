@@ -7,6 +7,26 @@
 * This project uses [https://github.com/lorenzwalthert/precommit](https://github.com/lorenzwalthert/precommit) pre-commit hooks to streamline code quality and management.
 * This project uses [styler](https://styler.r-lib.org/) to auto-format code.
 
+### R Version
+
+Suggest using [rig](https://github.com/r-lib/rig) to install R Version 4.2.2
+
+### Makefile
+
+Can set the project up using `make setup_project`
+
+This runs the following commands:
+
+```bash
+Rscript -e 'renv::install()'
+Rscript -e 'precommit::install_precommit()'
+Rscript -e 'precommit::use_precommit_config()'
+```
+
+### renv setup
+
+* Used `renv::settings$snapshot.type("all")` to capture all packages installed in project.
+
 ### pre-commit
 
 Set up pre-commit with
@@ -18,13 +38,9 @@ remotes::install_github("lorenzwalthert/precommit")
 
 To see pre-commit files in R Studio, need to select the option `More > Show Hidden Files`
 
-### renv setup
-
-* Used `renv::settings$snapshot.type("all")` to capture all packages installed in project.
-
 ### GitHub Actions
 
-From [https://github.com/r-lib/actions/tree/v2-branch/examples#style-package](https://github.com/r-lib/actions/tree/v2-branch/examples#style-package), using the following github actions:
+From [https://github.com/r-lib/actions/tree/v2-branch/examples](https://github.com/r-lib/actions/tree/v2-branch/examples), using the following github actions:
 
 * `usethis::use_github_action("render-rmarkdown")`
 * `usethis::use_github_action("style")`

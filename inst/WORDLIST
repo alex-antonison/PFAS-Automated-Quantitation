@@ -5,6 +5,7 @@ github
 https
 lintr
 lorenzwalthert
+Makefile
 pre
 precommit
 renv
