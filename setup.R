@@ -1,6 +1,4 @@
 install.packages("renv")
 renv::restore()
-renv::install("reticulate")
-remotes::install_github("lorenzwalthert/precommit")
 precommit::install_precommit()
 precommit::use_precommit_config()
