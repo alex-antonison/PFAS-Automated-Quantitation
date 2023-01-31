@@ -1,0 +1,3 @@
+# important to ensure data does not get uploaded to github
+*.csv
+*.xlsx
