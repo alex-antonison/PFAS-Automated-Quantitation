@@ -1,0 +1,5 @@
+install.packages("renv")
+renv::install()
+remotes::install_github("lorenzwalthert/precommit")
+precommit::install_precommit()
+precommit::use_precommit_config()
