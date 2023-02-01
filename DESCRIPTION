@@ -1,0 +1,17 @@
+Package: ProcessMassSpecData
+Title: Process Mass Spectrometry Data
+Version: 0.1
+Authors@R: c(
+    person("Alexander", "Antonison", , "alex@antonison-cg.com", role = "cre"),
+    person("Camden", "Camacho", email = "camden.camacho@chem.ufl.edu", role = "aut"),
+    person("Antonison Consulting Group", role = c("cph", "fnd")),
+    person("Dr. John A. Bowden Research Group", role = c("cph", "fnd")))
+Description: This package streamlines processing mass spectrometry data.
+License: MIT + file LICENSE
+URL: https://github.com/antonison-consulting/ProcessMassSpecData
+BugReports: https://github.com/antonison-consulting/ProcessMassSpecData/issues/
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 4.2.0)
