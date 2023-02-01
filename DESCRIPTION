@@ -19,3 +19,6 @@ Imports:
     DiagrammeR (>= 1.0.9),
     dm (>= 1.0.3),
     dplyr (>= 1.1.0)
+Suggests: 
+    rmarkdown (>= 2.20),
+    testthat (>= 3.1.6)
