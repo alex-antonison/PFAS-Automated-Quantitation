@@ -1,0 +1,9 @@
+# Logic Flow
+
+Reources for creating process logic flows in R:
+* https://mikeyharper.uk/flowcharts-in-r-using-diagrammer/
+* https://towardsdatascience.com/r-visualizations-flow-charts-in-r-4cfa7f783872
+
+```{r}
+library(DiagrammeR)
+```
