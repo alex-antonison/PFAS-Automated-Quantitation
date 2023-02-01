@@ -9,6 +9,14 @@
     ]
   },
   "Packages": {
+    "DBI": {
+      "Package": "DBI",
+      "Version": "1.1.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "b2866e62bab9378c3cc9476a1954226b",
+      "Requirements": []
+    },
     "DiagrammeR": {
       "Package": "DiagrammeR",
       "Version": "1.0.9",
@@ -365,19 +373,6 @@
         "withr"
       ]
     },
-    "datamodelr": {
-      "Package": "datamodelr",
-      "Version": "0.2.2.9002",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "datamodelr",
-      "RemoteUsername": "bergant",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "6aeceb6b3338abdab94ee622a2fb084de5f3984c",
-      "Hash": "1431efe34734176841f2e7ed0bab0d1d",
-      "Requirements": []
-    },
     "desc": {
       "Package": "desc",
       "Version": "1.4.2",
@@ -437,6 +432,31 @@
       "Repository": "CRAN",
       "Hash": "8b708f296afd9ae69f450f9640be8990",
       "Requirements": []
+    },
+    "dm": {
+      "Package": "dm",
+      "Version": "1.0.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "875dcd0297f056177e68d58b050294b2",
+      "Requirements": [
+        "DBI",
+        "backports",
+        "cli",
+        "dplyr",
+        "glue",
+        "igraph",
+        "lifecycle",
+        "magrittr",
+        "memoise",
+        "pillar",
+        "purrr",
+        "rlang",
+        "tibble",
+        "tidyr",
+        "tidyselect",
+        "vctrs"
+      ]
     },
     "downlit": {
       "Package": "downlit",
