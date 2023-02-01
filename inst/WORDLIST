@@ -7,6 +7,8 @@ https
 lintr
 lorenzwalthert
 Makefile
+MERCHANTABILITY
+NONINFRINGEMENT
 pre
 precommit
 ProcessMassSpecData
@@ -14,3 +16,4 @@ renv
 repo
 Rscript
 styler
+sublicense
