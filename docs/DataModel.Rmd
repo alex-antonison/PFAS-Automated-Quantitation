@@ -1,0 +1,12 @@
+---
+title: "Data Model"
+date: 2016-08-25
+output: html_document
+---
+
+Reources for creating ERD diagram in R:
+* https://krlmlr.github.io/dm/
+
+```{r}
+library(dm)
+```

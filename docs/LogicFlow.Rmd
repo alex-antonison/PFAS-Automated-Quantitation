@@ -1,4 +1,8 @@
-# Logic Flow
+---
+title: "Process Logic Flow"
+date: 2016-08-25
+output: html_document
+---
 
 Reources for creating process logic flows in R:
 * https://mikeyharper.uk/flowcharts-in-r-using-diagrammer/
