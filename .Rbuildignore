@@ -8,7 +8,7 @@
 ^\.pre-commit-config\.yaml$
 ^\.pre-commit-hooks\.yaml$
 ^\.Renviron-template$
-^\setup\.R$
+^setup\.R$
 ^_pkgdown\.yml$
 ^cran-comments\.md$
 ^docs$
