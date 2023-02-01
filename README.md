@@ -15,6 +15,14 @@ Set install R Version 4.2.2. It is recommended to use [rig](https://github.com/r
 
 To see pre-commit files in R Studio, need to select the option `More > Show Hidden Files`
 
+### Package Management
+
+Packages are both managed with the DESCRIPTION file and specifically installed version with an renv.lock file. 
+
+* When adding a package, you should use `usethis::use_package("{PackageName}", min_version = TRUE)` to add it to the DESCRIPTION file.
+* You need to install the package with `renv::install("{PackageName}"")`
+* You also need to perform an `renv::snapshot()` to update the renv.lock file.
+
 ### code formatting
 
 This project uses [styler](https://styler.r-lib.org/) to auto-format code.
