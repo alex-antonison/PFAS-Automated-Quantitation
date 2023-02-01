@@ -1,4 +1,4 @@
-# process-mass-spec-data
+# process_mass_spec_data
 
 ## Overview
 
