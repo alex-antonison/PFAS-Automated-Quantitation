@@ -37,6 +37,7 @@ ProcessMassSpecData
 renv
 Reources
 repo
+rmarkdown
 Roxygen
 RoxygenNote
 Rscript
@@ -44,6 +45,7 @@ spectrometry
 Spectrometry
 styler
 sublicense
+testthat
 towardsdatascience
 ufl
 uk
