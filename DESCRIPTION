@@ -18,4 +18,4 @@ Depends:
 Imports: 
     DiagrammeR,
     dm,
-    dplyr
+    dplyr (>= 1.1.0)
