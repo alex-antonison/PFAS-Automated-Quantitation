@@ -23,6 +23,9 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
       
+      - name: Install libcurl
+        run: sudo apt-get install -y libcurl4-openssl-dev
+      
       - name: Render Rmarkdown files and Commit Results
         run: |
           RMD_PATH=($(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '[.]Rmd$'))
