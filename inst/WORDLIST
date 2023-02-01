@@ -9,6 +9,7 @@ lorenzwalthert
 Makefile
 pre
 precommit
+ProcessMassSpecData
 renv
 repo
 Rscript
