@@ -34,6 +34,8 @@ NONINFRINGEMENT
 pre
 precommit
 ProcessMassSpecData
+readr
+readxl
 renv
 Reources
 repo
@@ -43,6 +45,7 @@ RoxygenNote
 Rscript
 spectrometry
 Spectrometry
+stringr
 styler
 sublicense
 testthat
