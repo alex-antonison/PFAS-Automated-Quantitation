@@ -2,11 +2,15 @@ library(paws)
 
 s3 <- paws::s3()
 
+#' A function to upload local files to s3
+#' @param file_name A path to where the file is located
+#' @param file_type Is it a source file or a processed file
 upload_s3_file <- function(file_name, file_type) {
-  file_path_for_s3 <- paste0("data/", file_type, "/", file_name)
+  s3_path <- paste0("data/", file_type, "/", file_name)
+  local_path <- paste0("inst/extdata/", file_type, "/", file_name)
   s3$put_object(
-    Body = file_path_for_s3,
-    Key = file_path_for_s3,
+    Body = local_path,
+    Key = s3_path,
     Bucket = "univ-of-fl-data-collaboration"
   )
 }

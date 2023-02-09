@@ -1,0 +1,10 @@
+utils::globalVariables(
+  c(
+    "coordinates",
+    "batch_number",
+    "full_bottle_mass",
+    "empty_bottle_mass",
+    "sample_mass_g",
+    ".data"
+  )
+)
