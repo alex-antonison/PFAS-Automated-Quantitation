@@ -74,14 +74,14 @@ process_batch_file <- function(data) {
     ) %>%
     # write dataframe out to csv file
     arrow::write_parquet(
-      sink = "inst/extdata/processed/processed_extract_batch_source.parquet"
+      sink = "data/processed/processed_extract_batch_source.parquet"
     )
 }
 
-df <- read_batch_file("inst/extdata/source/Extraction_Batches_source.xlsx")
+df <- read_batch_file("data/source/Extraction_Batches_source.xlsx")
 
 process_batch_file(df)
 
 clean_df <- arrow::read_parquet(
-  "inst/extdata/processed/processed_extract_batch_source.parquet"
+  "data/processed/processed_extract_batch_source.parquet"
 )
