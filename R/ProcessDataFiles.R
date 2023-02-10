@@ -14,6 +14,7 @@ source("R/GetSourceData.R")
 
 #' Read in the batch sample excel file
 #' @param file_name A string of the file_name where the file is located
+#' @importFrom magrittr %>%
 read_batch_file <- function(file_name) {
   # read in the excel sheets to loop through
   batch_sheets <- readxl::excel_sheets(file_name)
@@ -45,6 +46,7 @@ read_batch_file <- function(file_name) {
 
 #' Process combined batch file
 #' @param data A dataframe that has all of the sheets combined
+#' @importFrom magrittr %>%
 process_batch_file <- function(data) {
   coordinates <- full_bottle_mass <- empty_bottle_mass <- NULL
   sample_mass_g <- batch_number <- NULL
@@ -98,6 +100,7 @@ clean_df <- arrow::read_parquet(
 #' Extract IS Mixes from Excel file
 #' @param excel_file A string of the file_name where the file is located
 #' @param sheet The name of the excel sheet
+#' @importFrom magrittr %>%
 extraact_is_mix <- function(excel_file, sheet_name) {
   mix_name <- NULL
 
