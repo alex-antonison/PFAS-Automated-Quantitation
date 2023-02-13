@@ -478,31 +478,6 @@
       "Hash": "8b708f296afd9ae69f450f9640be8990",
       "Requirements": []
     },
-    "dm": {
-      "Package": "dm",
-      "Version": "1.0.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "875dcd0297f056177e68d58b050294b2",
-      "Requirements": [
-        "DBI",
-        "backports",
-        "cli",
-        "dplyr",
-        "glue",
-        "igraph",
-        "lifecycle",
-        "magrittr",
-        "memoise",
-        "pillar",
-        "purrr",
-        "rlang",
-        "tibble",
-        "tidyr",
-        "tidyselect",
-        "vctrs"
-      ]
-    },
     "downlit": {
       "Package": "downlit",
       "Version": "0.4.2",
