@@ -40,7 +40,6 @@ repos:
           \.github/workflows/.*|
           data/.*|
           )$
-    -   id: lintr
     -   id: readme-rmd-rendered
     -   id: parsable-R
     -   id: no-browser-statement
@@ -48,7 +47,7 @@ repos:
     -   id: deps-in-desc
     -   id: pkgdown
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
+    rev: v4.4.0
     hooks: 
     -   id: check-added-large-files
         args: ['--maxkb=200']
