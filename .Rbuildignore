@@ -5,7 +5,6 @@
 ^README\.Rmd$
 ^\.Rproj\.user$
 ^\.github$
-^\.pre-commit-config\.yaml$
 ^\.pre-commit-hooks\.yaml$
 ^\.Renviron-template$
 ^setup\.R$
@@ -19,3 +18,4 @@
 ^renv$
 ^renv\.lock$
 ^scratch$
+^\.pre-commit-config\.yaml$

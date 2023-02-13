@@ -98,16 +98,16 @@ clean_df <- arrow::read_parquet(
 ####################################
 
 #' Extract IS Mixes from Excel file
-#' @param excel_file A string of the file_name where the file is located
-#' @param sheet The name of the excel sheet
+#' @param file_name A string of the file_name where the file is located
+#' @param sheet_name The name of the excel sheet
 #' @importFrom magrittr %>%
-extraact_is_mix <- function(excel_file, sheet_name) {
+extraact_is_mix <- function(file_name, sheet_name) {
   mix_name <- NULL
 
   # MPFAC-24ES
 
   is_label_mpfac_24es <- readxl::read_excel(
-    excel_file,
+    file_name,
     sheet = sheet_name,
     range = "A33:A51",
     col_names = c("mix_label")
@@ -213,3 +213,122 @@ process_is_excel <- function(file_name) {
 }
 
 process_is_excel("data/source/IS_Mix_source.xlsx")
+
+####################################
+# Process Calibration Curve Source File
+####################################
+
+#' Extract Analyte Source Values
+#' @param file_name A string of the file_name where the file is located
+#' @param sheet_name The name of the excel sheet
+extract_analyte_source <- function(file_name, sheet_name) {
+  sheet_range_cal_1 <- "A13:G123"
+  sheet_range_cal_other <- "A15:G125"
+
+  if (sheet_name == "Cal_1_Sep2021") {
+    sheet_range_col <- sheet_range_cal_1
+  } else {
+    sheet_range_col <- sheet_range_cal_other
+  }
+
+  analyte_df <- readxl::read_excel(
+    file_name,
+    sheet = sheet_name,
+    range = sheet_range_col,
+    col_names = c("analyte_concentration", "a", "b", "c", "d", "e", "cal_curve")
+  )
+
+  return(analyte_df)
+}
+
+#' Extract IS Label Mix Values
+#' @param file_name A string of the file_name where the file is located
+#' @param sheet_name The name of the excel sheet
+extract_is_label <- function(file_name, sheet_name) {
+  sheet_range_cal_1 <- "A126:G152"
+  sheet_range_cal_other <- "A128:G154"
+
+  if (sheet_name == "Cal_1_Sep2021") {
+    sheet_range_col <- sheet_range_cal_1
+  } else {
+    sheet_range_col <- sheet_range_cal_other
+  }
+
+  iso_label_df <- readxl::read_excel(
+    file_name,
+    sheet = sheet_name,
+    range = sheet_range_col,
+    col_names = c("isotopically_labeled_standard", "a", "b", "c", "d", "e", "cal_curve")
+  )
+
+  return(iso_label_df)
+}
+
+#' Process Cal Source Values
+#' @param file_name The name of the file to be processed
+process_cal_source <- function(file_name) {
+  # initialize empty dataframes for combining
+  # sheets
+  analyte_source_df <- dplyr::tibble()
+  is_label_df <- dplyr::tibble()
+
+
+  for (sheet in readxl::excel_sheets(file_name)) {
+    # only want to run the non-final sheet
+    if (stringr::str_detect(sheet, "Cal_")) {
+      print(sheet)
+
+      temp_analyte <- extract_analyte_source(file_name, sheet)
+
+      temp_analyte$calibration_level <- sheet
+
+      analyte_source_df <- dplyr::bind_rows(
+        temp_analyte,
+        analyte_source_df
+      )
+
+      temp_is_label <- extract_is_label(file_name, sheet)
+
+      temp_is_label$calibration_level <- sheet
+
+      is_label_df <- dplyr::bind_rows(
+        temp_is_label,
+        is_label_df
+      )
+    }
+  }
+
+  # select columns of interest
+  analyte_source_df <- analyte_source_df %>%
+    dplyr::select(
+      calibration_level,
+      analyte_concentration,
+      cal_curve
+    )
+
+  is_label_df <- is_label_df %>%
+    dplyr::select(
+      calibration_level,
+      isotopically_labeled_standard,
+      cal_curve
+    )
+
+  # write files out to parquet and excel
+  arrow::write_parquet(
+    analyte_source_df,
+    sink = "data/processed/analyte_concentrations.parquet"
+  )
+  readr::write_excel_csv(
+    analyte_source_df, "data/processed/analyte_concentrations.csv"
+  )
+
+  arrow::write_parquet(
+    is_label_df,
+    sink = "data/processed/is_label_source.parquet"
+  )
+  readr::write_excel_csv(
+    is_label_df, "data/processed/is_label_source.csv"
+  )
+}
+
+process_cal_source("data/source/Sep2021Calibration_Curve_source.xlsx")
