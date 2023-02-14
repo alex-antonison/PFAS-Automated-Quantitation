@@ -39,3 +39,9 @@ knitr::kable(head(batch_source_df))
 ### IS_Mix_source.xlsx
 
 This 
+
+```{r}
+is_mix_source <- arrow::read_parquet("../data/processed/is_mix_source.parquet")
+
+knitr::kable(head(is_mix_source))
+```
