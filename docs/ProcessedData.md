@@ -4,12 +4,9 @@ Processed Data
 
 # Overview
 
-The
-[Extraction_Batches_source.xlsx](../data/source/Extraction_Batches_source.xlsx),
-[IS_Mix_source.xlsx](../data/source/IS_Mix_source.xlsx), and
-[Sep2021Calibration_Curve_source.xlsx](../data/source/Sep2021Calibration_Curve_source.xlsx)
-have been processed into individual tables that have been optimized for
-working with programatically.
+The Extraction_Batches_source.xlsx, IS_Mix_source.xlsx, and
+Sep2021Calibration_Curve_source.xlsx have been processed into individual
+tables that have been optimized for working with programatically.
 
 ## Files
 
@@ -48,3 +45,23 @@ knitr::kable(head(is_label_df))
 | Cal_14_Sep2021    | M4PFHpA                       |  1897.879 |
 | Cal_14_Sep2021    | M8PFOA                        |  1897.879 |
 | Cal_14_Sep2021    | M9PFNA                        |  1897.879 |
+
+### Extraction_Batches_source.xlsx
+
+For Extraction_Batches_source.xlsx, all of the excel tabs were combined
+into a single file.
+
+``` r
+batch_source_df <- arrow::read_parquet("../data/processed/processed_extract_batch_source.parquet")
+
+knitr::kable(head(batch_source_df))
+```
+
+| batch_number | county              | sample_id    | cartridge_number | internal_standard_used | full_bottle_mass | empty_bottle_mass | sample_mass_g | coordinates                    | notes |
+|:-------------|:--------------------|:-------------|:-----------------|:-----------------------|-----------------:|------------------:|--------------:|:-------------------------------|:------|
+| Batch_13     | Extraction Blank    | EB66         | 1                | aug102021              |            305.0 |              37.5 |         267.5 |                                | NA    |
+| Batch_13     | Salt Water QC       | S7QCL1       | 2                | aug102021              |            300.7 |              38.1 |         262.6 |                                | NA    |
+| Batch_13     | Brevard County      | BRE-2431-085 | 3                | aug102021              |            300.0 |              37.7 |         262.3 | 28°19’43.968”N 80°46’45.984”W  | NA    |
+| Batch_13     | Hillsborough County | HIL-2447-099 | 4                | aug102021              |            287.8 |              38.1 |         249.7 | 28°0’46.764”N 82°21’11.7”W     | NA    |
+| Batch_13     | Brevard County      | BRE-2429-083 | 5                | aug102021              |            317.8 |              40.3 |         277.5 | 28°13’42.996”N 80°45’37.98”W   | NA    |
+| Batch_13     | Volusia County      | VOL-2477-060 | 6                | aug102021              |            314.8 |              38.1 |         276.7 | 28°56’3.9984”N 80°49’45.9984”W | NA    |
