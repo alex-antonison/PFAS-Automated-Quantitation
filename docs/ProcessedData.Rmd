@@ -12,5 +12,5 @@ library(arrow)
 ```{r}
 analyte_concen_df <- arrow::read_parquet("../data/processed/analyte_concentrations.parquet")
 
-head(analyte_concen_df)
+knitr::kable(head(analyte_concen_df))
 ```
