@@ -65,3 +65,5 @@ knitr::kable(head(batch_source_df))
 | Batch_13     | Hillsborough County | HIL-2447-099 | 4                | aug102021              |            287.8 |              38.1 |         249.7 | 28°0’46.764”N 82°21’11.7”W     | NA    |
 | Batch_13     | Brevard County      | BRE-2429-083 | 5                | aug102021              |            317.8 |              40.3 |         277.5 | 28°13’42.996”N 80°45’37.98”W   | NA    |
 | Batch_13     | Volusia County      | VOL-2477-060 | 6                | aug102021              |            314.8 |              38.1 |         276.7 | 28°56’3.9984”N 80°49’45.9984”W | NA    |
+
+### IS_Mix_source.xlsx
