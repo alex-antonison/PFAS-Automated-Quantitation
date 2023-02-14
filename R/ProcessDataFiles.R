@@ -1,11 +1,3 @@
-library(dplyr)
-library(readxl)
-library(stringr)
-library(janitor)
-library(readr)
-library(arrow)
-library(tidyr)
-
 source("R/GetSourceData.R")
 
 ####################################
@@ -113,7 +105,7 @@ extraact_is_mix <- function(file_name, sheet_name) {
     col_names = c("mix_label")
   )
   is_mix_mpfac_24es <- readxl::read_excel(
-    excel_file,
+    file_name,
     sheet = sheet_name,
     range = "G33:G51",
     col_names = c("IS_mix_ppb")
@@ -133,13 +125,13 @@ extraact_is_mix <- function(file_name, sheet_name) {
   # MFTA-MXA
 
   is_label_mfta_mxa <- readxl::read_excel(
-    excel_file,
+    file_name,
     sheet = sheet_name,
     range = "A54:A56",
     col_names = c("mix_label")
   )
   is_mix_mfta_mxa <- readxl::read_excel(
-    excel_file,
+    file_name,
     sheet = sheet_name,
     range = "G54:G56",
     col_names = c("IS_mix_ppb")
@@ -157,13 +149,13 @@ extraact_is_mix <- function(file_name, sheet_name) {
   # Extra_IS_Mix
 
   is_label_extra_is_mix <- readxl::read_excel(
-    excel_file,
+    file_name,
     sheet = sheet_name,
     range = "A59:A63",
     col_names = c("mix_label")
   )
   is_mix_extra_is_mix <- readxl::read_excel(
-    excel_file,
+    file_name,
     sheet = sheet_name,
     range = "G59:G63",
     col_names = c("IS_mix_ppb")

@@ -67,3 +67,20 @@ knitr::kable(head(batch_source_df))
 | Batch_13     | Volusia County      | VOL-2477-060 | 6                | aug102021              |            314.8 |              38.1 |         276.7 | 28°56’3.9984”N 80°49’45.9984”W | NA    |
 
 ### IS_Mix_source.xlsx
+
+This
+
+``` r
+is_mix_source <- arrow::read_parquet("../data/processed/is_mix_source.parquet")
+
+knitr::kable(head(is_mix_source))
+```
+
+| sheet_name       | mix_name   | mix_label | IS_mix_ppb |
+|:-----------------|:-----------|:----------|-----------:|
+| IS-Mix_Oct282021 | MPFAC-24ES | M4PFBA    |   85.47593 |
+| IS-Mix_Oct282021 | MPFAC-24ES | M5PFPeA   |   85.47593 |
+| IS-Mix_Oct282021 | MPFAC-24ES | M5PFHxA   |   85.47593 |
+| IS-Mix_Oct282021 | MPFAC-24ES | M4PFHpA   |   85.47593 |
+| IS-Mix_Oct282021 | MPFAC-24ES | M8PFOA    |   85.47593 |
+| IS-Mix_Oct282021 | MPFAC-24ES | M9PFNA    |   85.47593 |

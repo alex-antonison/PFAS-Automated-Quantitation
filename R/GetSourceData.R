@@ -1,6 +1,3 @@
-library(paws)
-library(fs)
-
 s3 <- paws::s3()
 
 bucket_name <- "univ-of-fl-data-collaboration"
