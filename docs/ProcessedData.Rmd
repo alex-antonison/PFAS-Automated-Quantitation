@@ -1,0 +1,16 @@
+---
+title: "Processed Data"
+date: 2023-02-14
+output: github_document
+---
+
+```{r include=FALSE}
+library(dplyr)
+library(arrow)
+```
+
+```{r}
+analyte_concen_df <- arrow::read_parquet("../data/processed/analyte_concentrations.parquet")
+
+head(analyte_concen_df)
+```
