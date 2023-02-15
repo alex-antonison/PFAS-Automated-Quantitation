@@ -5,11 +5,11 @@ output: github_document
 ---
 
 ```{r setup}
-path_list = fs::path_split(getwd())[[1]]
-path_length = length(path_list)
-path_minus_docs = path_list[1:(path_length-1)]
-path = fs::path(path_minus_docs)
-project_path = fs::path_join(path)
+path_list <- fs::path_split(getwd())[[1]]
+path_length <- length(path_list)
+path_minus_docs <- path_list[1:(path_length - 1)]
+path <- fs::path(path_minus_docs)
+project_path <- fs::path_join(path)
 knitr::opts_knit$set(root.dir = project_path)
 ```
 
