@@ -17,13 +17,13 @@ The Sep2021Calibration_Curve_source.xlsx was split into two tables since the upp
 ```{r}
 analyte_concen_df <- arrow::read_parquet("../data/processed/analyte_concentrations.parquet")
 
-knitr::kable(head(analyte_concen_df))
+knitr::kable(head(analyte_concen_df,25))
 ```
 
 ```{r}
 is_label_df <- arrow::read_parquet("../data/processed/is_label_source.parquet")
 
-knitr::kable(head(is_label_df))
+knitr::kable(head(is_label_df,25))
 ```
 
 ### Extraction_Batches_source.xlsx
@@ -33,15 +33,15 @@ For Extraction_Batches_source.xlsx, all of the excel tabs were combined into a s
 ```{r}
 batch_source_df <- arrow::read_parquet("../data/processed/processed_extract_batch_source.parquet")
 
-knitr::kable(head(batch_source_df))
+knitr::kable(head(batch_source_df,25))
 ```
 
 ### IS_Mix_source.xlsx
 
-This 
+For the IS_Mix_source.xlsx file, I pulled the the isotopically-labeled standards from each tab and put them in a single table.
 
 ```{r}
 is_mix_source <- arrow::read_parquet("../data/processed/is_mix_source.parquet")
 
-knitr::kable(head(is_mix_source))
+knitr::kable(head(is_mix_source,25))
 ```
