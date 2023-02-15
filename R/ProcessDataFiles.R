@@ -1,4 +1,4 @@
-source("R/GetSourceData.R")
+library(magrittr)
 
 ####################################
 # Process Batch File Info
@@ -76,14 +76,6 @@ process_batch_file <- function(data) {
     ) %>%
     readr::write_excel_csv("data/processed/processed_extract_batch_source.csv")
 }
-
-df <- read_batch_file("data/source/Extraction_Batches_source.xlsx")
-
-process_batch_file(df)
-
-clean_df <- arrow::read_parquet(
-  "data/processed/processed_extract_batch_source.parquet"
-)
 
 ####################################
 # Process IS_Mix_source File
@@ -204,8 +196,6 @@ process_is_excel <- function(file_name) {
   )
 }
 
-process_is_excel("data/source/IS_Mix_source.xlsx")
-
 ####################################
 # Process Calibration Curve Source File
 ####################################
@@ -322,6 +312,3 @@ process_cal_source <- function(file_name) {
     is_label_df, "data/processed/is_label_source.csv"
   )
 }
-
-# run process cal source
-process_cal_source("data/source/Sep2021Calibration_Curve_source.xlsx")
