@@ -25,6 +25,6 @@ This will upload the file to a similar path in S3. For consistency, please place
 
 ```{r echo=TRUE}
 source("R/PutSourceData.R")
-upload_file_to_s3("data/source/", "Extraction_Batches_source.xlsx")
+returnValue <- upload_file_to_s3("data/source/", "Extraction_Batches_source.xlsx")
 ```
 

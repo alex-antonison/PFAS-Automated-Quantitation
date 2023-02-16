@@ -1,0 +1,44 @@
+---
+title: "Processed Data"
+date: 2023-02-14
+output: github_document
+always_allow_html: true
+---
+
+# Logic Flow
+
+```{r}
+DiagrammeR::grViz("digraph {
+
+graph [layout = dot]
+
+# define the global styles of the nodes. We can override these in box if we wish
+node [shape = rectangle, style = filled, fillcolor = white]
+
+sourceData [label = 'Raw Data from mass spec', shape = folder, fillcolor = Linen]
+step1 [label = 'Convert Sheet seperated data into single table for calculations']
+step2 [label = 'Calculate Cal Curve (see Cal Curve Caluclation Diagram)']
+
+# edge definitions with the node IDs
+sourceData -> step10 -> step20 -> step21 
+}")
+```
+
+# Cal Curve Calculation
+
+```{r}
+DiagrammeR::grViz("digraph {
+
+graph [layout = dot]
+
+# define the global styles of the nodes. We can override these in box if we wish
+node [shape = rectangle, style = filled, fillcolor = white]
+
+sourceData [label = 'Raw Data from mass spec', shape = folder, fillcolor = Linen]
+step1 [label = 'Convert Sheet seperated data into single table for calculations']
+step2 [label = 'Calculate Cal Curve (see Cal Curve Caluclation Diagram)']
+
+# edge definitions with the node IDs
+sourceData -> step10 -> step20 -> step21 
+}")
+```
