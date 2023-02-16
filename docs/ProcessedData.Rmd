@@ -14,13 +14,13 @@ knitr::opts_knit$set(root.dir = project_path)
 ```
 
 
-```{r include=FALSE}
+```{r echo=TRUE}
 source("R/GetSourceData.R")
 source("R/ProcessDataFiles.R")
 source("R/PutSourceData.R")
 ```
 
-```{r include=FALSE}
+```{r echo=TRUE}
 # pull source data from S3
 get_source_data()
 
@@ -45,13 +45,13 @@ The Extraction_Batches_source.xlsx, IS_Mix_source.xlsx, and Sep2021Calibration_C
 
 The Sep2021Calibration_Curve_source.xlsx was split into two tables since the upper table was the native analyte concentrations and the lower table was the isotopically-labeled standards concentrations.
 
-```{r}
+```{r echo=TRUE}
 analyte_concen_df <- arrow::read_parquet("data/processed/analyte_concentrations.parquet")
 
 knitr::kable(head(analyte_concen_df, 25))
 ```
 
-```{r}
+```{r echo=TRUE}
 is_label_df <- arrow::read_parquet("data/processed/is_label_source.parquet")
 
 knitr::kable(head(is_label_df, 25))
@@ -61,7 +61,7 @@ knitr::kable(head(is_label_df, 25))
 
 For Extraction_Batches_source.xlsx, all of the excel tabs were combined into a single file.
 
-```{r}
+```{r echo=TRUE}
 batch_source_df <- arrow::read_parquet("data/processed/processed_extract_batch_source.parquet")
 
 knitr::kable(head(batch_source_df, 25))
@@ -71,7 +71,7 @@ knitr::kable(head(batch_source_df, 25))
 
 For the IS_Mix_source.xlsx file, I pulled the the isotopically-labeled standards from each tab and put them in a single table.
 
-```{r}
+```{r echo=TRUE}
 is_mix_source <- arrow::read_parquet("data/processed/is_mix_source.parquet")
 
 knitr::kable(head(is_mix_source, 25))
