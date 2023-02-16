@@ -17,6 +17,7 @@ Depends:
     R (>= 4.1.0)
 Imports: 
     arrow (>= 10.0.1),
+    DiagrammeR (>= 1.0.9),
     dplyr (>= 1.1.0),
     fs (>= 1.6.0),
     janitor (>= 2.2.0),

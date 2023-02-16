@@ -27,13 +27,9 @@ Packages are both managed with the DESCRIPTION file and specifically installed v
 
 This project uses [styler](https://styler.r-lib.org/) to auto-format code.
 
-### linting
-
-This project uses the [lintr](https://github.com/r-lib/lintr) for checking for code quality.
-
 ### renv setup
 
-* Used `renv::settings$snapshot.type("all")` to capture all packages installed in project.
+* Used `renv::settings$snapshot.type("explicit")` to manage packages using the DESCRIPTION file.
 
 ### pre-commit
 
