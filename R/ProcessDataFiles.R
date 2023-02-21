@@ -60,9 +60,6 @@ process_batch_file <- function(data) {
     dplyr::rename(
       notes = "x11"
     ) %>%
-    # replace NA values with blanks to clean
-    # up output file
-    tidyr::replace_na(list(notes = "")) %>%
     # fix column data types
     dplyr::mutate(
       full_bottle_mass = as.double(full_bottle_mass),
@@ -76,6 +73,13 @@ process_batch_file <- function(data) {
     # write dataframe out to csv file
     arrow::write_parquet(
       sink = "data/processed/processed_extract_batch_source.parquet"
+    ) %>%
+    # replace NA values with blanks to clean
+    # up output file
+    tidyr::replace_na(
+      list(
+        notes = ""
+      )
     ) %>%
     readr::write_excel_csv("data/processed/processed_extract_batch_source.csv")
 }
