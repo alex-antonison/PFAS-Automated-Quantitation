@@ -1,12 +1,17 @@
 ---
 title: "Processed Data"
 date: 2023-02-14
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
 ---
 
 # Logic Flow
 
-```{r}
+## Calculation Steps
+
+```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
 
 graph [layout = dot]
@@ -16,28 +21,130 @@ node [shape = rectangle, style = filled, fillcolor = white]
 
 sourceData [label = 'Raw Data from mass spec', shape = folder, fillcolor = Linen]
 step1 [label = 'Convert Sheet seperated data into single table for calculations']
-step2 [label = 'Calculate Cal Curve (see Cal Curve Caluclation Diagram)']
+step2 [label = 'Build the Cal Curve (see Building the Cal Curve Diagram)']
+step3 [label = 'Quantifying the samples (see Quantifying Samples Diagram)']
+step4 [label = 'Produce Data outputs (see Produce Data Outputs Diagram)']
 
 # edge definitions with the node IDs
-sourceData -> step10 -> step20 -> step21 
+sourceData -> step1 -> step2 -> step3 -> step4
 }")
 ```
 
-# Cal Curve Calculation
+### Building the Cal Curve
 
-```{r}
+```{r echo=FALSE, out.height="1200px"}
 DiagrammeR::grViz("digraph {
 
 graph [layout = dot]
 
-# define the global styles of the nodes. We can override these in box if we wish
 node [shape = rectangle, style = filled, fillcolor = white]
 
-sourceData [label = 'Raw Data from mass spec', shape = folder, fillcolor = Linen]
-step1 [label = 'Convert Sheet seperated data into single table for calculations']
-step2 [label = 'Calculate Cal Curve (see Cal Curve Caluclation Diagram)']
+sourceSample [label = 'Set2_1_138_short.XLS', shape = folder, fillcolor = linen]
+
+sourceCalCurve [label = 'Sep2021Calibration_Curve_source.xlsx', shape = folder, fillcolor = linen]
+
+step1 [label = 'Join Analyte Peak Area with corresponding IS Peak Area']
+
+step2 [nojustify=true label = 'Calculate Analyte Peak Area Ration
+Analyte Peak Area Ratio = Analyte Peak Area / IS Peak Area']
+
+step3 [label = 'Calculate average for peak area ratio for a given sample']
+
+step4 [nojustify=true label = 'Join the following:
+1. Average for peak area ratio
+2. Native Analyte Concentration
+3. Isotopically Labled Concentration']
+
+step5 [label = 'Calculate Concentration Ratio:
+Concentration Ratio = Native Analyte Concentration / Isotopically Labled Concentration']
+
+step6 [label = 'Calculate slope of the cal curve:
+y-axis = Average Peak Area Ratio
+x-axis = Analyte Concentration Ratio']
+
+step7 [label = 'Is R^2 < 0.99 or R^2 >= 0.99?', shape = diamond]
+
+step8 [label = 'Remove upper and lower levels until R^2 >= 0.99']
+
+step9 [label = 'Get Slope and y-intercept']
 
 # edge definitions with the node IDs
-sourceData -> step10 -> step20 -> step21 
+sourceSample -> step1 -> step2 -> step3 -> step4 -> step5 -> step6 -> step7
+sourceCalCurve -> step2
+step7 -> step8 [label = 'R^2 < 0.99', center=true]
+step8 -> step9
+step8 -> step7
+step7 -> step9 [label = 'R^2 >= 0.99']
+}")
+```
+
+Questions/TODO:
+
+1. [Building the Cal Curve] Build a list of corresponding native analytes and isotopically labeled concentrations.
+2. [Building the Cal Curve] Based on slide six, you must have at least 5 samples to build the cal curve.
+
+### Quantifying Samples Diagram
+
+```{r echo=FALSE, out.height="1200px"}
+DiagrammeR::grViz("digraph {
+
+graph [layout = dot]
+
+node [shape = rectangle, style = filled, fillcolor = white]
+
+isMixSource [label = 'IS_Mix_source.xlsx', shape = folder, fillcolor = linen]
+
+extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, fillcolor = linen]
+
+step1 [label = 'Use the Extraction Batch Source sheet to determine which
+isotopically-labled standard to use (will be the same from the building the cal curve)']
+
+step2 [label = 'Calculate Amount IS in each Sample
+1. IS Conc (ng/g) or (ppb) * 1000
+2. IS Conc (nglL) or (ppt) / 1000000
+3. IS Conc ng/uL * 25']
+
+step3 [label = 'C_a = ((A_R - b) / m) * C_IS
+m = slope of cal curve trendline
+b = y-intercept of cal curve trendline
+A_a = Peak area of analyte
+A_IS = peak area of internal standard
+C_a = concentration of analyte
+C_IS = concentration of internal standard
+A_R = peak area ratio
+']
+
+extractionBatchSource -> step1
+
+isMixSource -> step1 -> step2 -> step3
+}")
+```
+
+### Produce Data Outputs
+
+```{r echo=FALSE, out.height="1200px"}
+DiagrammeR::grViz("digraph {
+
+graph [layout = dot]
+
+node [shape = rectangle, style = filled, fillcolor = white]
+
+batchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, fillcolor = linen]
+
+calcData [label = 'Quantified Sample Data', shape = folder, fillcolor = linen]
+
+step1 [label = 'Match Filenames to Cartridge Number in the source file']
+
+step2 [label = 'Deal with missing data:
+1. Blank filter all Samples
+2. Filter out Extraction Blank samples
+3. Take the average of all of the extraction blanks in ng for each analyte
+4. Subtract this average value from all the other sample types for each compound']
+
+step3 [label = '']
+
+batchSource -> step1
+calcData -> step1 -> step2
+
 }")
 ```
