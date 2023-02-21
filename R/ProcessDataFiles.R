@@ -60,6 +60,8 @@ process_batch_file <- function(data) {
     dplyr::rename(
       notes = "x11"
     ) %>%
+    # replace NA values with blanks to clean
+    # up output file
     tidyr::replace_na(list(notes = "")) %>%
     # fix column data types
     dplyr::mutate(
