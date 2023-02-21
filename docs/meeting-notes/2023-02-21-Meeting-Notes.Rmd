@@ -30,6 +30,8 @@
     
 ## Extract Batch Source
 
+No changes necessary.
+
 ## Raw Data
 
 * source_file_name: Not relevant to quantitative steps but useful for tracking where data is sourced from.
