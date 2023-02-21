@@ -60,6 +60,7 @@ process_batch_file <- function(data) {
     dplyr::rename(
       notes = "x11"
     ) %>%
+    tidyr::replace_na(list(notes = "")) %>%
     # fix column data types
     dplyr::mutate(
       full_bottle_mass = as.double(full_bottle_mass),
