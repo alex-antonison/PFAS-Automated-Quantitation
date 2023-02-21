@@ -6,7 +6,8 @@
 
 ### R Setup
 
-Set install R Version 4.2.2. It is recommended to use [rig](https://github.com/r-lib/rig)
+* Set install R Version 4.2.2. It is recommended to use [rig](https://github.com/r-lib/rig)
+* Install RStudio on Mac via [Homebrew](https://brew.sh/) (`brew install --cask rstudio`)
 
 ### Project Setup
 
@@ -35,11 +36,11 @@ This project uses [styler](https://styler.r-lib.org/) to auto-format code.
 
 ### Setup pre-commit
 
-Set up pre-commits from [https://github.com/lorenzwalthert/precommit](https://github.com/lorenzwalthert/precommit)
+Setup pre-commits from [https://github.com/lorenzwalthert/precommit](https://github.com/lorenzwalthert/precommit)
 
 ### Setup GitHub Actions
 
-From [https://github.com/r-lib/actions/tree/v2-branch/examples](https://github.com/r-lib/actions/tree/v2-branch/examples):
+Setup GitHub Actions, some examples are here: [https://github.com/r-lib/actions/tree/v2-branch/examples](https://github.com/r-lib/actions/tree/v2-branch/examples):
 
 * `usethis::use_github_action("render-rmarkdown")`
 * `usethis::use_github_action("style")`
