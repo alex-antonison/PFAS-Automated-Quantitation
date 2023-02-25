@@ -72,7 +72,7 @@ process_batch_file <- function(data) {
     ) %>%
     # write dataframe out to csv file
     arrow::write_parquet(
-      sink = "data/processed/processed_extract_batch_source.parquet"
+      sink = "data/processed/extract_batch_source.parquet"
     ) %>%
     # replace NA values with blanks to clean
     # up output file
@@ -81,7 +81,7 @@ process_batch_file <- function(data) {
         notes = ""
       )
     ) %>%
-    readr::write_excel_csv("data/processed/processed_extract_batch_source.csv")
+    readr::write_excel_csv("data/processed/extract_batch_source.csv")
 }
 
 ####################################
@@ -101,24 +101,24 @@ extraact_is_mix <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = "A33:A51",
-    col_names = c("mix_label")
+    col_names = c("internal_standard_concentration_name")
   )
   is_mix_mpfac_24es <- readxl::read_excel(
     file_name,
     sheet = sheet_name,
     range = "G33:G51",
-    col_names = c("IS_mix_ppb")
+    col_names = c("internal_standard_concentration_ppb")
   )
   df_mpfac_24es <- dplyr::bind_cols(
     is_label_mpfac_24es,
     is_mix_mpfac_24es
   )
 
-  df_mpfac_24es$mix_name <- "MPFAC-24ES"
+  df_mpfac_24es$stock_mix <- "MPFAC-24ES"
 
   df_mpfac_24es <- dplyr::relocate(
     df_mpfac_24es,
-    mix_name
+    stock_mix
   )
 
   # MFTA-MXA
@@ -127,22 +127,22 @@ extraact_is_mix <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = "A54:A56",
-    col_names = c("mix_label")
+    col_names = c("internal_standard_concentration_name")
   )
   is_mix_mfta_mxa <- readxl::read_excel(
     file_name,
     sheet = sheet_name,
     range = "G54:G56",
-    col_names = c("IS_mix_ppb")
+    col_names = c("internal_standard_concentration_ppb")
   )
   df_mfta_mxa <- dplyr::bind_cols(
     is_label_mfta_mxa,
     is_mix_mfta_mxa
   )
-  df_mfta_mxa$mix_name <- "MFTA-MXA"
+  df_mfta_mxa$stock_mix <- "MFTA-MXA"
   df_mfta_mxa <- dplyr::relocate(
     df_mfta_mxa,
-    mix_name
+    stock_mix
   )
 
   # Extra_IS_Mix
@@ -151,29 +151,36 @@ extraact_is_mix <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = "A59:A63",
-    col_names = c("mix_label")
+    col_names = c("internal_standard_concentration_name")
   )
   is_mix_extra_is_mix <- readxl::read_excel(
     file_name,
     sheet = sheet_name,
     range = "G59:G63",
-    col_names = c("IS_mix_ppb")
+    col_names = c("internal_standard_concentration_ppb")
   )
   df_extra_is_mix <- dplyr::bind_cols(
     is_label_extra_is_mix,
     is_mix_extra_is_mix
   )
-  df_extra_is_mix$mix_name <- "Extra_IS_Mix"
+  df_extra_is_mix$stock_mix <- "Extra_IS_Mix"
   df_extra_is_mix <- dplyr::relocate(
     df_extra_is_mix,
-    mix_name
+    stock_mix
   )
 
   is_mix_df <- dplyr::bind_rows(df_mpfac_24es, df_mfta_mxa, df_extra_is_mix)
 
-  is_mix_df$sheet_name <- sheet_name
 
-  is_mix_df <- dplyr::relocate(is_mix_df, sheet_name)
+  internal_standard_mix <- stringr::str_replace(
+    sheet_name,
+    "IS-Mix_",
+    ""
+  )
+
+  is_mix_df$internal_standard_mix <- internal_standard_mix
+
+  is_mix_df <- dplyr::relocate(is_mix_df, internal_standard_mix)
 
   return(is_mix_df)
 }
@@ -196,10 +203,10 @@ process_is_excel <- function(file_name) {
 
   arrow::write_parquet(
     combined_is_df,
-    sink = "data/processed/is_mix_source.parquet"
+    sink = "data/processed/internal_standard_mix.parquet"
   )
   readr::write_excel_csv(
-    combined_is_df, "data/processed/is_mix_source.csv"
+    combined_is_df, "data/processed/internal_standard_mix.csv"
   )
 }
 
@@ -224,7 +231,7 @@ extract_analyte_source <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = sheet_range_col,
-    col_names = c("analyte_concentration", "a", "b", "c", "d", "e", "cal_curve")
+    col_names = c("native_analyte_name", "a", "b", "c", "d", "e", "native_analyte_concentration_ppt")
   )
 
   return(analyte_df)
@@ -247,7 +254,7 @@ extract_is_label <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = sheet_range_col,
-    col_names = c("isotopically_labeled_standard", "a", "b", "c", "d", "e", "cal_curve")
+    col_names = c("internal_standard_name", "a", "b", "c", "d", "e", "internal_standard_concentration")
   )
 
   return(iso_label_df)
@@ -267,18 +274,42 @@ process_cal_source <- function(file_name) {
     if (stringr::str_detect(sheet, "Cal_")) {
       print(sheet)
 
+      # process sheet name into
+      # calibration level and
+      # calibration mix
+      split_values <- stringr::str_split(sheet, "_")[[1]]
+
+      calibration_level <- paste(
+        split_values[1],
+        split_values[2],
+        sep = "_"
+      )
+
+      calibration_mix <- split_values[3]
+
+      ########
+      # run native_analyte code
+      ########
+      # pull in sheet values
       temp_analyte <- extract_analyte_source(file_name, sheet)
 
-      temp_analyte$calibration_level <- sheet
+      # add in calibration_level and calibration_mix columns
+      temp_analyte$calibration_level <- calibration_level
+      temp_analyte$calibration_mix <- calibration_mix
 
       analyte_source_df <- dplyr::bind_rows(
         temp_analyte,
         analyte_source_df
       )
 
+      ########
+      # run internal standard code
+      ########
+
       temp_is_label <- extract_is_label(file_name, sheet)
 
-      temp_is_label$calibration_level <- sheet
+      temp_is_label$calibration_level <- calibration_level
+      temp_is_label$calibration_mix <- calibration_mix
 
       is_label_df <- dplyr::bind_rows(
         temp_is_label,
@@ -291,31 +322,115 @@ process_cal_source <- function(file_name) {
   analyte_source_df <- analyte_source_df %>%
     dplyr::select(
       calibration_level,
-      analyte_concentration,
-      cal_curve
+      calibration_mix,
+      native_analyte_name,
+      native_analyte_concentration_ppt
     )
 
   is_label_df <- is_label_df %>%
     dplyr::select(
       calibration_level,
-      isotopically_labeled_standard,
-      cal_curve
+      calibration_mix,
+      internal_standard_name,
+      internal_standard_concentration
     )
 
   # write files out to parquet and excel
   arrow::write_parquet(
     analyte_source_df,
-    sink = "data/processed/analyte_concentrations.parquet"
+    sink = "data/processed/native_analyte_concentration.parquet"
   )
   readr::write_excel_csv(
-    analyte_source_df, "data/processed/analyte_concentrations.csv"
+    analyte_source_df, "data/processed/native_analyte_concentration.csv"
   )
 
   arrow::write_parquet(
     is_label_df,
-    sink = "data/processed/is_label_source.parquet"
+    sink = "data/processed/internal_standard_concentration.parquet"
   )
   readr::write_excel_csv(
-    is_label_df, "data/processed/is_label_source.csv"
+    is_label_df, "data/processed/internal_standard_concentration.csv"
   )
 }
+
+####################################
+# Process Measured Data
+####################################
+
+readxl::excel_sheets("data/source/Set2_1_138_Short.XLS")
+
+n_analyte_is_match <- readxl::read_excel("data/source/Native_analyte_ISmatch_source.xlsx", "Sheet1")
+
+n_analyte_is_match <- janitor::clean_names(n_analyte_is_match)
+
+df <- dplyr::tibble()
+
+for (sheet in readxl::excel_sheets("data/source/Set2_1_138_Short.XLS")) {
+  print(paste("Sheet Name is :", sheet))
+
+  sheet_name_length <- stringr::str_length(sheet)
+
+  if (stringr::str_detect(sheet, "_EPA")) {
+    print("EPA sheet")
+    match_name <- "EPA"
+    source_type <- "EPA"
+  } else if (stringr::str_detect(sheet, "_3M")) {
+    print("3M Sheet")
+    match_name <- "3M"
+    source_type <- "3M"
+  } else {
+    source_type <- "internal_standard_or_native_analyte"
+
+    match_not_found <- TRUE
+    internal_standard_match_not_found <- TRUE
+
+    # first checking to see if an internal standard is found
+    for (internal_standard in n_analyte_is_match$internal_standard) {
+      if (stringr::str_detect(sheet, internal_standard)) {
+        if (stringr::str_length(internal_standard) == sheet_name_length) {
+          print(internal_standard)
+          match_name <- internal_standard
+          print("Internal Standard")
+          match_not_found <- FALSE
+          internal_standard_match_not_found <- FALSE
+          source_type <- "internal_standard"
+          break
+        }
+      }
+    }
+
+    # if an internal standard is found, will not look further
+    # since native analyte names contain the internal standard
+    # string in them as well
+    if (internal_standard_match_not_found) {
+      last_two_char <- stringr::str_sub(sheet, -2)
+
+      if (last_two_char == "_2" || last_two_char == "_1") {
+        source_type <- "native_analyte"
+        match_not_found <- FALSE
+      }
+    }
+
+    if (match_not_found) {
+      print("Other")
+      match_name <- "None"
+      source_type <- "other"
+    }
+  }
+
+  temp_df <- dplyr::tibble(
+    sheet = sheet,
+    match_name = match_name,
+    source_type = source_type
+  )
+
+  df <- dplyr::bind_rows(
+    df,
+    temp_df
+  )
+
+  print(paste("Source Type is:", source_type))
+}
+
+
+readr::write_csv(df, "data/processed/explore_raw_data_processing_naming.csv")
