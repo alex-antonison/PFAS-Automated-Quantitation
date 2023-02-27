@@ -21,14 +21,15 @@ if (fs::file_exists("data/source/Extraction_Batches_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   source("R/GetSourceData.R")
+  # pull source data from S3
+  get_source_data()
 }
 source("R/ProcessDataFiles.R")
 source("R/PutSourceData.R")
 ```
 
 ```{r echo=TRUE}
-# pull source data from S3
-get_source_data()
+
 
 # process Extraction_Batches_source.xlsx
 df <- read_batch_file("data/source/Extraction_Batches_source.xlsx")
