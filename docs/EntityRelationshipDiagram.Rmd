@@ -44,7 +44,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>calibration_level: text (NOT NULL)</td></tr>
             <tr><td align='left'>calibration_mix: text (NOT NULL)</td></tr>
             <tr><td align='left'>internal_standard_name: text (NOT NULL)</td></tr>
-            <tr><td align='left'>internal_standard_concentration: float (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_concentration_ppt: float (NOT NULL)</td></tr>
         </table>
     >]
 
