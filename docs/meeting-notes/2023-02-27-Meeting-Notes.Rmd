@@ -1,0 +1,8 @@
+# Meeting 2023-02-27 Data and Quantitative Steps Review
+
+## Agenda
+
+1. Finish setting up R Environment
+2. Review Updated Data Diagrams
+3. Review naming matches for processing raw source data
+4. Continue Reviewing Quantitative steps

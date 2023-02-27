@@ -71,7 +71,7 @@ In the absence of a replicate number - it is rep 1
 If I see rep in the name, I can ignore it
 
 
-Oak13_1 - _1 is the transition we are focused on. Qunatitatively, we are not looking at `_2`
+Oak13_1 - _1 is the transition we are focused on. Quantitatively, we are not looking at `_2`
 
 If I see EPA or _3M - are not in the cal curve - All qualitative 
 
