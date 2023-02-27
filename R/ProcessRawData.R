@@ -140,3 +140,29 @@ for (file_name in file_list) {
 # save the results out for review
 readr::write_csv(combined_data_df, "data/processed/raw_data_processing_output.csv")
 readr::write_csv(combined_naming_df, "data/processed/raw_data_processing_naming.csv")
+
+
+####################################
+# Split Data Into Separate Tables
+####################################
+
+# create_analyte_table <- function(df) {
+combined_data_df %>% 
+    dplyr::filter(source_type == "native_analyte") %>%
+    dplyr::filter(stringr::str_detect(stringr::str_to_lower(filename), "cal")) %>% 
+    dplyr::mutate(
+      # calculate the length of the analyte name to trim the number
+      # off the end
+      analyte_name_length = stringr::str_length(sheet_name),
+      # remove the _# from the end of the analyte name
+      analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
+      # capture the transition number
+      transition_number = stringr::str_sub(sheet_name, -1),
+      underscore_count = stringr::str_count(filename, "_")
+    ) %>% 
+  
+  head()
+
+
+
+# }
