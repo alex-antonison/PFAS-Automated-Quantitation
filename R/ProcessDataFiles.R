@@ -254,7 +254,7 @@ extract_is_label <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = sheet_range_col,
-    col_names = c("internal_standard_name", "a", "b", "c", "d", "e", "internal_standard_concentration")
+    col_names = c("internal_standard_name", "a", "b", "c", "d", "e", "internal_standard_concentration_ppt")
   )
 
   return(iso_label_df)
@@ -332,7 +332,7 @@ process_cal_source <- function(file_name) {
       calibration_level,
       calibration_mix,
       internal_standard_name,
-      internal_standard_concentration
+      internal_standard_concentration_ppt
     )
 
   # write files out to parquet and excel
