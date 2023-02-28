@@ -29,63 +29,111 @@ read_in_raw_data <- function(source_file_name, sheet_name, source_type) {
   return(df)
 }
 
+check_analyte_name <- function(analyte_name, match_list) {
+  analyte_name <- stringr::str_to_lower(analyte_name)
+  match_ist <- stringr::str_to_lower(match_list$processing_method_name)
+
+  if (analyte_name %in% match_ist) {
+    analyte_match <- "Match Found"
+  } else {
+    analyte_match <- "No Match Found"
+    print(analyte_name)
+    print("Match Not Found")
+  }
+
+  return(analyte_match)
+}
+
 process_raw_file <- function(file_name) {
   # initialize dataframes for adding files
   data_df <- dplyr::tibble()
   naming_df <- dplyr::tibble()
 
-  # read in matching file for internal standards
+  # read in matching file for internal standards and
+  # native analyte
   n_analyte_is_match <- readxl::read_excel(
-    "data/source/Native_analyte_ISmatch_source.xlsx", "Sheet1"
+    "data/source/Native_analyte_ISmatch_source.xlsx",
+    sheet = "Sheet1"
   ) %>%
     janitor::clean_names()
 
+  # loop through each sheet in the source excel file
   for (sheet in readxl::excel_sheets(file_name)) {
-    analyte_match <- "NA"
+    # setting null for non-native analytes
+    analyte_match <- NA
 
-    print(paste("Sheet Name is :", sheet))
+    # set to NA initially so it doesn't incorrectly
+    # set an incorrect value
+    source_type <- NA
 
     sheet_name_length <- stringr::str_length(sheet)
-
     last_two_char <- stringr::str_sub(sheet, -2)
+    last_four_analyte <- stringr::str_sub(sheet, -4)
 
     # ignore non-data sheets
     if (sheet %in% c("Component", "mdlCalcs")) next
 
     # check if there is EPA in the sheet name
     if (stringr::str_detect(sheet, "_EPA")) {
-      print("EPA sheet")
       source_type <- "EPA"
       temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "EPA")
 
       # check if there is _3M in the sheet name
     } else if (stringr::str_detect(sheet, "_3M")) {
-      print("3M Sheet")
       source_type <- "3M"
       temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "3M")
 
-
       # check if there is an internal standard match
     } else if (sheet %in% n_analyte_is_match$internal_standard) {
-      print("Internal Standard")
       source_type <- "internal_standard"
-      read_in_raw_data(file_name, sheet, source_type = "internal_standard")
+      temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "internal_standard")
       # check to see if there is a _1 or _2 in the name as
       # this indicates it is a native analyte
     } else if (last_two_char == "_1" || last_two_char == "_2") {
       source_type <- "native_analyte"
+
       temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "native_analyte")
 
-      str_length <- stringr::str_length(sheet)
-      analyte_name <- stringr::str_sub(sheet, 0, str_length - 2)
+      # checking to see if analyte name is found in document
+      analyte_name <- stringr::str_sub(sheet, 1, sheet_name_length - 2)
+      analyte_match <- check_analyte_name(analyte_name, n_analyte_is_match)
+      temp_data_df$analyte_match <- analyte_match
+
+      # checking for Peaks
+    } else if (last_four_analyte == "Peak") {
+      source_type <- "native_analyte"
+
+      analyte_name <- stringr::str_sub(sheet, 0, sheet_name_length - 10)
 
       # checking to see if analyte name is found in document
-      if (analyte_name %in% n_analyte_is_match$processing_method_name) {
-        analyte_match <- "Match Found"
-      } else {
-        analyte_match <- "No Match Found"
-      }
-      
+      analyte_match <- check_analyte_name(analyte_name, n_analyte_is_match)
+
+      temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "native_analyte")
+
+      # removing _1stPeak from the end of each of the sheets that match this name
+      temp_data_df$sheet_name <- stringr::str_sub(sheet, 0, sheet_name_length - 8)
+      temp_data_df$analyte_match <- analyte_match
+    } else if (last_four_analyte == "eaks") {
+      source_type <- "native_analyte"
+
+      temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "native_analyte")
+
+      # removing _2peaks from the end of each of the sheets that match this name
+      temp_data_df$sheet_name <- stringr::str_sub(sheet, 0, sheet_name_length - 7)
+
+      # checking to see if analyte name is found in document
+      analyte_name <- stringr::str_sub(sheet, 0, sheet_name_length - 9)
+      analyte_match <- check_analyte_name(analyte_name, n_analyte_is_match)
+      temp_data_df$analyte_match <- analyte_match
+    } else if (sheet == "diSamPAP") {
+      source_type <- "native_analyte"
+
+      analyte_match <- check_analyte_name(sheet, n_analyte_is_match)
+      temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "native_analyte")
+      # adding an _1 in order to have it line up with other naming conventions
+      temp_data_df$sheet_name <- "diSamPAP_1"
+      temp_data_df$analyte_match <- analyte_match
+
       # if no match is found, will flag as other and review
       # to determine if logic needs to be adjusted
     } else {
@@ -114,7 +162,8 @@ process_raw_file <- function(file_name) {
   return(list(data_df, naming_df))
 }
 
-file_list <- c("data/source/Set2_1_138_Short.XLS", "data/source/Set2_139_273_Short.XLS", "data/source/Set2_274_314_Short.XLS")
+# file_list <- c("data/source/Set2_1_138_Short.XLS", "data/source/Set2_139_273_Short.XLS", "data/source/Set2_274_314_Short.XLS")
+file_list <- c("data/source/Set2_1_138_Short.XLS")
 
 combined_data_df <- dplyr::tibble()
 combined_naming_df <- dplyr::tibble()
@@ -146,23 +195,180 @@ readr::write_csv(combined_naming_df, "data/processed/raw_data_processing_naming.
 # Split Data Into Separate Tables
 ####################################
 
+####################################
+# Create Analyte Table
+####################################
+
 # create_analyte_table <- function(df) {
-combined_data_df %>% 
-    dplyr::filter(source_type == "native_analyte") %>%
-    dplyr::filter(stringr::str_detect(stringr::str_to_lower(filename), "cal")) %>% 
-    dplyr::mutate(
-      # calculate the length of the analyte name to trim the number
-      # off the end
-      analyte_name_length = stringr::str_length(sheet_name),
-      # remove the _# from the end of the analyte name
-      analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
-      # capture the transition number
-      transition_number = stringr::str_sub(sheet_name, -1),
-      underscore_count = stringr::str_count(filename, "_")
-    ) %>% 
+temp_analyte_df <- combined_data_df %>%
+  dplyr::filter(source_type == "native_analyte") %>%
+  # filter down to analytes that have a match in the reference file
+  dplyr::filter(analyte_match == "Match Found") %>%
+  # filter down to cal values
+  dplyr::filter(
+    stringr::str_detect(stringr::str_to_lower(filename), "cal")
+  ) %>%
+  dplyr::mutate(
+    # calculate the length of the analyte name to trim the number
+    # off the end
+    analyte_name_length = stringr::str_length(sheet_name),
+    # remove the _# from the end of the analyte name
+    analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
+    # capture the transition number
+    transition_number = stringr::str_sub(sheet_name, -1),
+    underscore_count = stringr::str_count(filename, "_")
+  ) %>%
+  # only interested in the first transition for an analyte
+  dplyr::filter(transition_number == 1)
+
+without_rep_number_df <- temp_analyte_df %>%
+  dplyr::filter(underscore_count == 1) %>%
+  dplyr::mutate(
+    replicate_number = 1,
+    split_filename = stringr::str_split_fixed(filename, "_", 2),
+    calibration_level = as.integer(split_filename[, 2])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    area,
+    analyte_name_length,
+    analyte_name,
+    transition_number,
+    replicate_number,
+    calibration_level
+  )
+
+with_rep_number_df <- temp_analyte_df %>%
+  dplyr::filter(underscore_count == 2) %>% 
+  dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
+  dplyr::mutate(
+    split_filename = stringr::str_split_fixed(filename, "_", 3),
+    replicate_number = as.integer(split_filename[, 2]),
+    calibration_level = as.integer(split_filename[, 3])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    area,
+    analyte_name_length,
+    analyte_name,
+    transition_number,
+    replicate_number,
+    calibration_level
+  )
+
+# handle rep number in name
+
+temp_analyte_rep_df <- temp_analyte_df %>%
+  dplyr::filter(underscore_count == 2) %>% 
+  dplyr::filter(stringr::str_detect(filename, "rep")) %>%
+  dplyr::mutate(
+    split_filename = stringr::str_split_fixed(filename, "_", 3),
+    replicate_number = as.integer(stringr::str_remove(split_filename[, 3], "rep")),
+    calibration_level = as.integer(split_filename[, 2])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    area,
+    analyte_name_length,
+    analyte_name,
+    transition_number,
+    replicate_number,
+    calibration_level
+  )
+
+dplyr::bind_rows(
+  without_rep_number_df,
+  with_rep_number_df,
+  temp_analyte_rep_df
+) %>%
+  # head()
+  readr::write_csv("data/processed/individual_native_analyte.csv")
+
+####################################
+# Create Individual Standard Table
+####################################
+
+temp_ind_df <- combined_data_df %>% 
+  # filter down to internal_standard
+  dplyr::filter(source_type == "internal_standard") %>% 
+  # filter down to cal levels
+  dplyr::filter(
+    stringr::str_detect(stringr::str_to_lower(filename), "cal")
+  ) %>%
+  dplyr::mutate(
+    individual_standard = sheet_name,
+    underscore_count = stringr::str_count(filename, "_")
+  )
+
+temp_ind_without_rep_df <- temp_ind_df %>% 
+  dplyr::filter(underscore_count == 1) %>%
+  dplyr::mutate(
+    replicate_number = 1,
+    split_filename = stringr::str_split_fixed(filename, "_", 2),
+    calibration_level = as.integer(split_filename[, 2])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    area,
+    individual_standard,
+    replicate_number,
+    calibration_level
+  )
   
-  head()
+temp_ind_with_rep_df <- temp_ind_df %>% 
+  dplyr::filter(underscore_count == 2) %>% 
+  dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
+  dplyr::mutate(
+    split_filename = stringr::str_split_fixed(filename, "_", 3),
+    replicate_number = as.integer(split_filename[, 2]),
+    calibration_level = as.integer(split_filename[, 3])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    area,
+    individual_standard,
+    replicate_number,
+    calibration_level
+  )
 
+temp_ind_rep_df <- temp_ind_df %>%
+  dplyr::filter(underscore_count == 2) %>% 
+  dplyr::filter(stringr::str_detect(filename, "rep")) %>%
+  dplyr::mutate(
+    split_filename = stringr::str_split_fixed(filename, "_", 3),
+    replicate_number = as.integer(stringr::str_remove(split_filename[, 3], "rep")),
+    calibration_level = as.integer(split_filename[, 2])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    area,
+    individual_standard,
+    replicate_number,
+    calibration_level
+  )
 
-
-# }
+dplyr::bind_rows(
+  temp_ind_without_rep_df,
+  temp_ind_with_rep_df,
+  temp_ind_rep_df
+) %>%
+  # head()
+  readr::write_csv("data/processed/individual_standard.csv")
