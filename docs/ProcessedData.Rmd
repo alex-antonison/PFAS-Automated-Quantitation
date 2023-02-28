@@ -29,8 +29,6 @@ source("R/PutSourceData.R")
 ```
 
 ```{r echo=TRUE}
-
-
 # process Extraction_Batches_source.xlsx
 df <- read_batch_file("data/source/Extraction_Batches_source.xlsx")
 process_batch_file(df)
