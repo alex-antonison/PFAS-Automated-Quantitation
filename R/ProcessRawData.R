@@ -1,6 +1,35 @@
 library(magrittr)
 
 ####################################
+# Get Source Data if Missing
+####################################
+
+
+reference_file_list <- "data/source/Native_analyte_ISmatch_source.xlsx"
+source_file_list <- c("data/source/Set2_1_138_Short.XLS", "data/source/Set2_139_273_Short.XLS", "data/source/Set2_274_314_Short.XLS")
+
+full_file_list <- c(reference_file_list, source_file_list)
+
+# setting this to false
+missing_file <- FALSE
+
+for (file_path in full_file_list) {
+  if (!fs::file_exists(file_path)) {
+    # if a source file is missing, this will trigger
+    # downloading source data from S3
+    missing_file <- TRUE
+  }
+}
+
+# if a file is missing pull source data from S3
+if (missing_file) {
+  source("R/GetSourceData.R")
+} else {
+  # if all files are downloaded, skip downloading data
+  print("Source Data Downloaded")
+}
+
+####################################
 # Process Measured Data
 ####################################
 
@@ -29,6 +58,10 @@ read_in_raw_data <- function(source_file_name, sheet_name, source_type) {
   return(df)
 }
 
+#' A function that takes care of checking if an analyte matches a reference
+#' native analyte name
+#' @param analyte_name The native analyte name being checked
+#' @param match_list A list of native analytes to check against
 check_analyte_name <- function(analyte_name, match_list) {
   analyte_name <- stringr::str_to_lower(analyte_name)
   match_ist <- stringr::str_to_lower(match_list$processing_method_name)
@@ -44,6 +77,9 @@ check_analyte_name <- function(analyte_name, match_list) {
   return(analyte_match)
 }
 
+
+#' A that takes care of processing all sheets in a source data file
+#' @param file_name A path to where the file is located
 process_raw_file <- function(file_name) {
   # initialize dataframes for adding files
   data_df <- dplyr::tibble()
@@ -162,13 +198,16 @@ process_raw_file <- function(file_name) {
   return(list(data_df, naming_df))
 }
 
-# file_list <- c("data/source/Set2_1_138_Short.XLS", "data/source/Set2_139_273_Short.XLS", "data/source/Set2_274_314_Short.XLS")
-file_list <- c("data/source/Set2_1_138_Short.XLS")
+####################################
+# Run Processing Function for all files
+####################################
 
 combined_data_df <- dplyr::tibble()
 combined_naming_df <- dplyr::tibble()
 
-for (file_name in file_list) {
+# This loops over each of the source files in the
+# previously configured source_file_list
+for (file_name in source_file_list) {
   df_list <- process_raw_file(file_name)
 
   # combines the different processed data file
@@ -187,9 +226,8 @@ for (file_name in file_list) {
 }
 
 # save the results out for review
-readr::write_csv(combined_data_df, "data/processed/raw_data_processing_output.csv")
-readr::write_csv(combined_naming_df, "data/processed/raw_data_processing_naming.csv")
-
+readr::write_csv(combined_data_df, "data/processed/troubleshoot/raw_data_processing_output.csv")
+readr::write_csv(combined_naming_df, "data/processed/troubleshoot/raw_data_processing_naming.csv")
 
 ####################################
 # Split Data Into Separate Tables
@@ -242,7 +280,7 @@ without_rep_number_df <- temp_analyte_df %>%
   )
 
 with_rep_number_df <- temp_analyte_df %>%
-  dplyr::filter(underscore_count == 2) %>% 
+  dplyr::filter(underscore_count == 2) %>%
   dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
   dplyr::mutate(
     split_filename = stringr::str_split_fixed(filename, "_", 3),
@@ -265,7 +303,7 @@ with_rep_number_df <- temp_analyte_df %>%
 # handle rep number in name
 
 temp_analyte_rep_df <- temp_analyte_df %>%
-  dplyr::filter(underscore_count == 2) %>% 
+  dplyr::filter(underscore_count == 2) %>%
   dplyr::filter(stringr::str_detect(filename, "rep")) %>%
   dplyr::mutate(
     split_filename = stringr::str_split_fixed(filename, "_", 3),
@@ -291,15 +329,15 @@ dplyr::bind_rows(
   temp_analyte_rep_df
 ) %>%
   # head()
-  readr::write_csv("data/processed/individual_native_analyte.csv")
+  readr::write_csv("data/processed/source/source_data_individual_native_analyte.csv")
 
 ####################################
 # Create Individual Standard Table
 ####################################
 
-temp_ind_df <- combined_data_df %>% 
+temp_ind_df <- combined_data_df %>%
   # filter down to internal_standard
-  dplyr::filter(source_type == "internal_standard") %>% 
+  dplyr::filter(source_type == "internal_standard") %>%
   # filter down to cal levels
   dplyr::filter(
     stringr::str_detect(stringr::str_to_lower(filename), "cal")
@@ -309,7 +347,7 @@ temp_ind_df <- combined_data_df %>%
     underscore_count = stringr::str_count(filename, "_")
   )
 
-temp_ind_without_rep_df <- temp_ind_df %>% 
+temp_ind_without_rep_df <- temp_ind_df %>%
   dplyr::filter(underscore_count == 1) %>%
   dplyr::mutate(
     replicate_number = 1,
@@ -326,9 +364,9 @@ temp_ind_without_rep_df <- temp_ind_df %>%
     replicate_number,
     calibration_level
   )
-  
-temp_ind_with_rep_df <- temp_ind_df %>% 
-  dplyr::filter(underscore_count == 2) %>% 
+
+temp_ind_with_rep_df <- temp_ind_df %>%
+  dplyr::filter(underscore_count == 2) %>%
   dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
   dplyr::mutate(
     split_filename = stringr::str_split_fixed(filename, "_", 3),
@@ -347,7 +385,7 @@ temp_ind_with_rep_df <- temp_ind_df %>%
   )
 
 temp_ind_rep_df <- temp_ind_df %>%
-  dplyr::filter(underscore_count == 2) %>% 
+  dplyr::filter(underscore_count == 2) %>%
   dplyr::filter(stringr::str_detect(filename, "rep")) %>%
   dplyr::mutate(
     split_filename = stringr::str_split_fixed(filename, "_", 3),
@@ -370,5 +408,4 @@ dplyr::bind_rows(
   temp_ind_with_rep_df,
   temp_ind_rep_df
 ) %>%
-  # head()
-  readr::write_csv("data/processed/individual_standard.csv")
+  readr::write_csv("data/processed/source/source_data_individual_standard.csv")
