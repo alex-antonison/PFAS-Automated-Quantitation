@@ -150,14 +150,30 @@ DiagrammeR::grViz("digraph {
     //
     // Entities
     //
-    sensor_data_TBD [label=<
+    individual_native_analyte [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>sensor_data_TBD</td></tr>
+            <tr><td bgcolor='lightblue'>individual_native_analyte</td></tr>
             // columns
-            <tr><td align='left'>internal_standard_mix: text (NOT NULL)</td></tr>
-            <tr><td align='left'>stock_mix: text (NOT NULL)</td></tr>
+            <tr><td align='left'>source_file_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>filename: text (NOT NULL)</td></tr>
+            <tr><td align='left'>transition_number: text (NOT NULL)</td></tr>
+            <tr><td align='left'>replicate_number: text (NOT NULL)</td></tr>
+            <tr><td align='left'>calibration_level: text (NOT NULL)</td></tr>
+            <tr><td align='left'>individual_native_analyte_peak_area: text (NOT NULL)</td></tr>
+        </table>
+    >]
+    
+    internal_standard [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>internal_standard</td></tr>
+            // columns
+            <tr><td align='left'>source_file_name: text (NOT NULL)</td></tr>
             <tr><td align='left'>internal_standard_name: text (NOT NULL)</td></tr>
-            <tr><td align='left'>internal_standard_concentration_ppb: float (NOT NULL)</td></tr>
+            <tr><td align='left'>filename: text (NOT NULL)</td></tr>
+            <tr><td align='left'>replicate_number: text (NOT NULL)</td></tr>
+            <tr><td align='left'>calibration_level: text (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_peak_area: text (NOT NULL)</td></tr>
         </table>
     >]
 

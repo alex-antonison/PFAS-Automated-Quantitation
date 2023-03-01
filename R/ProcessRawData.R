@@ -315,7 +315,7 @@ temp_analyte_rep_df <- temp_analyte_df %>%
     source_type,
     sheet_name,
     filename,
-    area,
+    individual_native_analyte_peak_area = area,
     analyte_name_length,
     analyte_name,
     transition_number,
@@ -343,7 +343,7 @@ temp_ind_df <- combined_data_df %>%
     stringr::str_detect(stringr::str_to_lower(filename), "cal")
   ) %>%
   dplyr::mutate(
-    individual_standard = sheet_name,
+    internal_standard = sheet_name,
     underscore_count = stringr::str_count(filename, "_")
   )
 
@@ -360,7 +360,7 @@ temp_ind_without_rep_df <- temp_ind_df %>%
     sheet_name,
     filename,
     area,
-    individual_standard,
+    internal_standard,
     replicate_number,
     calibration_level
   )
@@ -379,7 +379,7 @@ temp_ind_with_rep_df <- temp_ind_df %>%
     sheet_name,
     filename,
     area,
-    individual_standard,
+    internal_standard,
     replicate_number,
     calibration_level
   )
@@ -397,8 +397,8 @@ temp_ind_rep_df <- temp_ind_df %>%
     source_type,
     sheet_name,
     filename,
-    area,
-    individual_standard,
+    internal_standard_analyte_peak_area = area,
+    internal_standard,
     replicate_number,
     calibration_level
   )
@@ -408,4 +408,4 @@ dplyr::bind_rows(
   temp_ind_with_rep_df,
   temp_ind_rep_df
 ) %>%
-  readr::write_csv("data/processed/source/source_data_individual_standard.csv")
+  readr::write_csv("data/processed/source/source_data_internal_standard.csv")
