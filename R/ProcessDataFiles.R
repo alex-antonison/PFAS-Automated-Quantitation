@@ -84,6 +84,10 @@ process_batch_file <- function(data) {
     readr::write_excel_csv("data/processed/extract_batch_source.csv")
 }
 
+# process Extraction_Batches_source.xlsx
+df <- read_batch_file("data/source/Extraction_Batches_source.xlsx")
+process_batch_file(df)
+
 ####################################
 # Process IS_Mix_source File
 ####################################
@@ -209,6 +213,9 @@ process_is_excel <- function(file_name) {
     combined_is_df, "data/processed/internal_standard_mix.csv"
   )
 }
+
+# Process IS_mix_source.xlsx file
+process_is_excel("data/source/IS_Mix_source.xlsx")
 
 ####################################
 # Process Calibration Curve Source File
@@ -352,3 +359,6 @@ process_cal_source <- function(file_name) {
     is_label_df, "data/processed/internal_standard_concentration.csv"
   )
 }
+
+# Process Sep2021Calibration_Curve_source.xlsx
+process_cal_source("data/source/Sep2021Calibration_Curve_source.xlsx")
