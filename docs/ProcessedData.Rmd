@@ -13,31 +13,15 @@ project_path <- fs::path_join(path)
 knitr::opts_knit$set(root.dir = project_path)
 ```
 
-```{r}
-```
-
 ```{r echo=TRUE}
 if (fs::file_exists("data/source/Extraction_Batches_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
-  source("R/GetSourceData.R")
   # pull source data from S3
-  get_source_data()
+  source("R/GetSourceData.R")
 }
 source("R/ProcessDataFiles.R")
 source("R/PutSourceData.R")
-```
-
-```{r echo=TRUE}
-# process Extraction_Batches_source.xlsx
-df <- read_batch_file("data/source/Extraction_Batches_source.xlsx")
-process_batch_file(df)
-
-# Process IS_mix_source.xlsx file
-process_is_excel("data/source/IS_Mix_source.xlsx")
-
-# Process Sep2021Calibration_Curve_source.xlsx
-process_cal_source("data/source/Sep2021Calibration_Curve_source.xlsx")
 ```
 
 # Overview
