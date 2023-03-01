@@ -1,0 +1,28 @@
+# Meeting 2023-02-27 Data and Quantitative Steps Review
+
+## Agenda
+
+1. Finish setting up R Environment
+2. Review Updated Data Diagrams
+3. Review naming matches for processing raw source data
+4. Continue Reviewing Quantitative steps
+
+## Review Mass Spec Raw Data
+
+* EPA and 3M are native analyte values - save off in table using native analyte naming convention
+
+Add condition to capture these as analytes:
+
+BrPFOS_1_1stPeak (go away - captured by PFOS_1_2ndPeak)
+P4MOA_1_1stPeak
+PFNA_1_2ndPeak
+PFOS_1_2ndPeak
+N-MeFOSAA_1_2peaks
+N-MeFOSAA_2_2peaks
+N-EtFOSAA_2_2peaks
+N-EtFOSAA_1_2peaks
+diSamPAP (transition 1)
+
+## Notes on Raw Data
+
+1. Remove MeOH from native analyate table - this is for 

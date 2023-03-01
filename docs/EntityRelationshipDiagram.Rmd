@@ -26,23 +26,25 @@ DiagrammeR::grViz("digraph {
     //
     // Entities
     //
-    analyte_concentrations [label=<
+    native_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_concentrations</td></tr>
+            <tr><td bgcolor='lightblue'>native_analyte_concentration</td></tr>
             // columns
             <tr><td align='left'>calibration_level: text (NOT NULL)</td></tr>
-            <tr><td align='left'>analyte_concentration: text (NOT NULL)</td></tr>
-            <tr><td align='left'>cal_curve: float (NOT NULL)</td></tr>
+            <tr><td align='left'>calibration_mix: text (NOT NULL)</td></tr>
+            <tr><td align='left'>native_analyte_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>native_analyte_concentration_ppt: float (NOT NULL)</td></tr>
         </table>
     >]
 
-    is_label_source [label=<
+    internal_standard_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_concentrations</td></tr>
+            <tr><td bgcolor='lightblue'>internal_standard_concentration</td></tr>
             // columns
             <tr><td align='left'>calibration_level: text (NOT NULL)</td></tr>
-            <tr><td align='left'>isotopically_labeled_standard: text (NOT NULL)</td></tr>
-            <tr><td align='left'>cal_curve: float (NOT NULL)</td></tr>
+            <tr><td align='left'>calibration_mix: text (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_concentration_ppt: float (NOT NULL)</td></tr>
         </table>
     >]
 
@@ -71,14 +73,14 @@ DiagrammeR::grViz("digraph {
     //
     // Entities
     //
-    is_mix_source [label=<
+    internal_standard_mix [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_concentrations</td></tr>
+            <tr><td bgcolor='lightblue'>internal_standard_mix</td></tr>
             // columns
-            <tr><td align='left'>sheet_name: text (NOT NULL)</td></tr>
-            <tr><td align='left'>mix_name: text (NOT NULL)</td></tr>
-            <tr><td align='left'>mix_label: text (NOT NULL)</td></tr>
-            <tr><td align='left'>IS_mix_ppb: float (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_mix: text (NOT NULL)</td></tr>
+            <tr><td align='left'>stock_mix: text (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_concentration_ppb: float (NOT NULL)</td></tr>
         </table>
     >]
 
@@ -106,9 +108,9 @@ DiagrammeR::grViz("digraph {
     //
     // Entities
     //
-    is_mix_source [label=<
+    extract_batch_source [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_concentrations</td></tr>
+            <tr><td bgcolor='lightblue'>extract_batch_source</td></tr>
             // columns
             <tr><td align='left'>batch_number: text (NOT NULL)</td></tr>
             <tr><td align='left'>county: text (NOT NULL)</td></tr>
@@ -120,6 +122,58 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>sample_mass_g: float (NULLABLE)</td></tr>
             <tr><td align='left'>coordinates: text (NULLABLE)</td></tr>
             <tr><td align='left'>notes: text (NULLABLE)</td></tr>
+        </table>
+    >]
+
+    //
+    // Relationships
+    //
+}
+}")
+```
+
+
+## Sourced from Set#_XXX_XXX_Short.XLS
+
+```{r}
+DiagrammeR::grViz("digraph {
+    //
+    // Defaults
+    //
+
+    // Box for entities
+    node [shape=none, margin=0]
+
+    // One-to-many relation (from one, to many)
+    edge [arrowhead=crow, arrowtail=none, dir=both]
+
+    //
+    // Entities
+    //
+    individual_native_analyte [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>individual_native_analyte</td></tr>
+            // columns
+            <tr><td align='left'>source_file_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>filename: text (NOT NULL)</td></tr>
+            <tr><td align='left'>transition_number: text (NOT NULL)</td></tr>
+            <tr><td align='left'>replicate_number: text (NOT NULL)</td></tr>
+            <tr><td align='left'>calibration_level: text (NOT NULL)</td></tr>
+            <tr><td align='left'>individual_native_analyte_peak_area: text (NOT NULL)</td></tr>
+        </table>
+    >]
+    
+    internal_standard [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>internal_standard</td></tr>
+            // columns
+            <tr><td align='left'>source_file_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_name: text (NOT NULL)</td></tr>
+            <tr><td align='left'>filename: text (NOT NULL)</td></tr>
+            <tr><td align='left'>replicate_number: text (NOT NULL)</td></tr>
+            <tr><td align='left'>calibration_level: text (NOT NULL)</td></tr>
+            <tr><td align='left'>internal_standard_peak_area: text (NOT NULL)</td></tr>
         </table>
     >]
 

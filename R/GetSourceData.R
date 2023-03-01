@@ -22,3 +22,5 @@ get_source_data <- function() {
     )
   }
 }
+
+get_source_data()
