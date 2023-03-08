@@ -1,0 +1,12 @@
+# Meeting Notes
+
+1. When naming `Average Analyte Peak Area Ratio` - set the name to be `Cal-{Calibration Level}`
+2. Call out names of output files
+
+## With Native Analyte Source Data
+
+1. Create a new Table for a Given Native Analyte + 1st Trasnition with number Filename
+  a. These numbered Filenames correlated to Cartridge Numbers in the Extract Batch Sources file
+  
+  
+AR = Peak Area Ratio -> 
