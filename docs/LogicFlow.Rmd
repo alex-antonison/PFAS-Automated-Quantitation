@@ -492,7 +492,6 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>batch_number: integer</td></tr>
             <tr><td align='left'>catridge_number: integer</td></tr>
             <tr><td align='left'>internal_standard_used: text</td></tr>
-            <tr><td align='left'>sample_mass_g: numeric</td></tr>
         </table>
     >]
     
@@ -514,20 +513,24 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>internal_standard_used: text</td></tr>
-            <tr><td align='left'>sample_mass_g: numeric</td></tr>
-            <tr><td align='left'>internal_standard_concentration_ppb: numeric</td></tr>
-            <tr><td align='left'>slope: numeric</td></tr>
-            <tr><td align='left'>y_intercept: numeric</td></tr>
-            <tr><td align='left'>peak_area_ratio: numeric</td></tr>
+            <tr><td align='left'>internal_standard_concentration_ng (C_IS): numeric</td></tr>
+            <tr><td align='left'>slope (m): numeric</td></tr>
+            <tr><td align='left'>y_intercept (b): numeric</td></tr>
+            <tr><td align='left'>peak_area_ratio (A_R): numeric</td></tr>
         </table>
     >]
+    
+step2 [label = 'Calculate the Amount of Internal Standard in each Sample
+1. Internal Standard Concentration (ng/g) or (ppb) * 1000
+2. Internal Standard Concentration (nglL) or (ppt) / 1000000
+3. Internal Standard Concentration ng/uL * 25', shape = rectangle, style = filled, fillcolor = white]
     
     
     peak_area_ratio -> calibration_curve_output [label = 'Join Calculated Calibration Curve Table \n on Native Analyte Name']
     peak_area_ratio -> extraction_batch_source [label = 'Join Extraction Batch Source \non batch_number and cartridge_number']
     extraction_batch_source -> internal_standard_mix [label = 'Join Internal Standard Mix on\nInternal Standard Used and Internal Standard Name']
     peak_area_ratio -> internal_standard_mix
-    internal_standard_mix -> analyte_concentration_calculation
+    internal_standard_mix -> step2 -> analyte_concentration_calculation
 
 }")
 
@@ -553,31 +556,20 @@ calibration_curve_output [label = 'calibration_curve_output', shape = folder, fi
 
 analyte_concentration_calculation [label = 'analyte_concentration_calculation', shape = folder, fillcolor = lightblue]
 
-step1 [label = 'Use the Extraction Batch Source sheet to determine which
-isotopically-labled standard to use (will be the same from the building the cal curve)']
 
-step2 [label = 'Calculate Amount IS in each Sample
-1. IS Conc (ng/g) or (ppb) * 1000
-2. IS Conc (nglL) or (ppt) / 1000000
-3. IS Conc ng/uL * 25']
 
 step3 [label = 'C_a = ((A_R - b) / m) * C_IS
 C_a = concentration of analyte
-m = slope of cal curve trendline
-b = y-intercept of cal curve trendline
-A_a = Peak area of analyte
-A_IS = peak area of internal standard
-C_IS = concentration of internal standard
 A_R = peak area ratio
-']
+b = y-intercept of cal curve trendline
+m = slope of cal curve trendline
+C_IS = concentration of internal standard']
 
-peak_area_ratio -> step1
-calibration_curve_output -> step1
-extractionBatchSource -> step1
-isMixSource -> step1
+peak_area_ratio -> analyte_concentration_calculation
+calibration_curve_output -> analyte_concentration_calculation
+extractionBatchSource -> analyte_concentration_calculation
+isMixSource -> analyte_concentration_calculation
 
-step1 -> step2 -> analyte_concentration_calculation -> step3
-
-
+analyte_concentration_calculation -> step3
 }")
 ```
