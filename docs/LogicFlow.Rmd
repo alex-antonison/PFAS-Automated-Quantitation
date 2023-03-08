@@ -39,24 +39,28 @@ graph [layout = dot]
 
 node [shape = rectangle, style = filled, fillcolor = white]
 
-sourceSample [label = 'Set2_1_138_short.XLS', shape = folder, fillcolor = linen]
+sourceSample [label = 'SetX_XXX_XXX_short.XLS', shape = folder, fillcolor = linen]
+
+sourceReference [label = 'Native_analyte_ISmatch_source.xlsx', shape = folder, fillcolor = linen]
 
 sourceCalCurve [label = 'Sep2021Calibration_Curve_source.xlsx', shape = folder, fillcolor = linen]
 
-step1 [label = 'Join Analyte Peak Area with corresponding IS Peak Area']
+step1 [label = 'Join Analyte Peak Area with corresponding Internal Standard Peak Area
+Using Reference Native_analyte_ISmatch_source.xlsx to get the associated Internal Standard
+Joining on Corresponding Internal Standard + Filename']
 
-step2 [nojustify=true label = 'Calculate Analyte Peak Area Ration
-Analyte Peak Area Ratio = Analyte Peak Area / IS Peak Area']
+step2 [label = 'Calculate Analyte Peak Area Ration
+Analyte Peak Area Ratio = Analyte Peak Area / Internal Standard Peak Area']
 
-step3 [label = 'Calculate average for peak area ratio for a given sample']
+step3 [label = 'For a given Analyte + Calibration Level, calculate Average Analyte Peak Area Ratio']
 
-step4 [nojustify=true label = 'Join the following:
-1. Average for peak area ratio
-2. Native Analyte Concentration
-3. Isotopically Labled Concentration']
+step4 [label = 'Join the Average Analyte Peak Area Ratio to
+1. Native Analyte Concentration On Native Analyte Name + Calibration Level
+2. Internal Standard Concentration On Referenced Internal Standard Name + Calibration Level
+']
 
 step5 [label = 'Calculate Concentration Ratio:
-Concentration Ratio = Native Analyte Concentration / Isotopically Labled Concentration']
+Concentration Ratio = Native Analyte Concentration / Internal Standard Concentration']
 
 step6 [label = 'Calculate slope of the cal curve:
 y-axis = Average Peak Area Ratio
@@ -64,14 +68,28 @@ x-axis = Analyte Concentration Ratio']
 
 step7 [label = 'Is R^2 < 0.99 or R^2 >= 0.99?', shape = diamond]
 
-step8 [label = 'Remove upper and lower levels until R^2 >= 0.99']
+step8 [label = 'Remove single lower and then upper level until R^2 >= 0.99']
 
-step9 [label = 'Get Slope and y-intercept']
+step9 [label = 'Create Ouptut Table:
+1. Native Analyte Name
+2. Slope
+3. y-intercept
+4. Final R^2
+5. If required, note removed calibration levels
+6. Determine calibration range (i.e 14 Point Calibration)']
+
+step10 [label = 'Create R^2 Troubelshoot Table:
+1. Native Analyte Name
+2. Calibration Range
+2. R^2
+']
 
 # edge definitions with the node IDs
 sourceSample -> step1 -> step2 -> step3 -> step4 -> step5 -> step6 -> step7
-sourceCalCurve -> step2
+sourceReference -> step1
+sourceCalCurve -> step4
 step7 -> step8 [label = 'R^2 < 0.99', center=true]
+step8 -> step10
 step8 -> step9
 step8 -> step7
 step7 -> step9 [label = 'R^2 >= 0.99']
