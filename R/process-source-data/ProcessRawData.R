@@ -23,7 +23,7 @@ for (file_path in full_file_list) {
 
 # if a file is missing pull source data from S3
 if (missing_file) {
-  source("R/GetSourceData.R")
+  source("R/utility/GetSourceData.R")
 } else {
   # if all files are downloaded, skip downloading data
   print("Source Data Downloaded")

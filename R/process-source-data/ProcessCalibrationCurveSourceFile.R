@@ -4,7 +4,7 @@ if (fs::file_exists("data/source/Sep2021Calibration_Curve_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   # pull source data from S3
-  source("R/GetSourceData.R")
+  source("R/utility/GetSourceData.R")
 }
 
 # This script takes in the Sep2021Calibration_Curve_source.xlsx file

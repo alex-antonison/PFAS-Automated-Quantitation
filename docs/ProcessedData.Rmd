@@ -14,10 +14,10 @@ knitr::opts_knit$set(root.dir = project_path)
 ```
 
 ```{r include=FALSE}
-source("R/ProcessCalibrationCurveSourceFile.R")
-source("R/ProcessExtractionBatchSource.R")
-source("R/ProcessInternalStandardMixFile.R")
-source("R/ProcessRawData.R")
+source("R/process-source-data/ProcessCalibrationCurveSourceFile.R")
+source("R/process-source-data/ProcessExtractionBatchSource.R")
+source("R/process-source-data/ProcessInternalStandardMixFile.R")
+source("R/process-source-data/ProcessRawData.R")
 ```
 
 # Overview

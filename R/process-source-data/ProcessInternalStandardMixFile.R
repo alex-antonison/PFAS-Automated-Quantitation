@@ -11,7 +11,7 @@ if (fs::file_exists("data/source/IS_Mix_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   # pull source data from S3
-  source("R/GetSourceData.R")
+  source("R/utility/GetSourceData.R")
 }
 
 #' Extract IS Mixes from Excel file
