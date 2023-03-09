@@ -189,14 +189,12 @@ DiagrammeR::grViz("digraph {
     // Box for entities
     node [shape=none, margin=0]
     
-    average_peak_area_ratio [label=<
+    native_analyte_internal_standard_mapping [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
+            <tr><td bgcolor='lightblue'>native_analyte_internal_standard_mapping</td></tr>
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
-            <tr><td align='left'>calibration_level: text</td></tr>
-            <tr><td align='left'>average_analyte_peak_area_ratio: numeric</td></tr>
         </table>
     >]
     
@@ -238,9 +236,9 @@ DiagrammeR::grViz("digraph {
     >]
     
     
-average_peak_area_ratio -> concentration_ratio_calculation
-native_analyte_concentration -> average_peak_area_ratio
-internal_standard_concentration -> average_peak_area_ratio
+native_analyte_internal_standard_mapping -> concentration_ratio_calculation
+native_analyte_concentration -> native_analyte_internal_standard_mapping
+internal_standard_concentration -> native_analyte_internal_standard_mapping
 }")
 ```
 
@@ -287,6 +285,28 @@ DiagrammeR::grViz("digraph {
     // Box for entities
     node [shape=none, margin=0]
     
+    average_peak_area_ratio [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>calibration_level: text</td></tr>
+            <tr><td align='left'>average_analyte_peak_area_ratio: numeric</td></tr>
+        </table>
+    >]
+    
+    concentration_ratio [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>concentration_ratio</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>calibration_level: text</td></tr>
+            <tr><td align='left'>concentration_ratio: numeric</td></tr>
+        </table>
+    >]
+    
     calibration_curve_input [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_input</td></tr>
@@ -299,6 +319,9 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
     
+    
+average_peak_area_ratio -> calibration_curve_input
+concentration_ratio -> calibration_curve_input
 }")
 
 ```
