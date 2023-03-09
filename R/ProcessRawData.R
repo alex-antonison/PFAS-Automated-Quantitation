@@ -304,11 +304,15 @@ dplyr::bind_rows(
   without_rep_number_df,
   with_rep_number_df
 ) %>%
-  # head()
-  readr::write_csv("data/processed/source/source_data_individual_native_analyte.csv")
+  readr::write_csv(
+    "data/processed/source/source_data_individual_native_analyte.csv"
+  ) %>%
+  arrow::write_parquet(
+    sink = "data/processed/source/source_data_individual_native_analyte.parquet"
+  )
 
 ####################################
-# Create Individual Standard Table
+# Create Internal Standard Table
 ####################################
 
 temp_ind_df <- combined_data_df %>%
@@ -364,4 +368,9 @@ dplyr::bind_rows(
   temp_ind_without_rep_df,
   temp_ind_with_rep_df
 ) %>%
-  readr::write_csv("data/processed/source/source_data_internal_standard.csv")
+  readr::write_csv(
+    "data/processed/source/source_data_internal_standard.csv"
+  ) %>%
+  arrow::write_parquet(
+    sink = "data/processed/source/source_data_internal_standard.parquet"
+  )

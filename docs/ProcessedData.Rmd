@@ -13,15 +13,11 @@ project_path <- fs::path_join(path)
 knitr::opts_knit$set(root.dir = project_path)
 ```
 
-```{r echo=TRUE}
-if (fs::file_exists("data/source/Extraction_Batches_source.xlsx")) {
-  print("Source Data Downloaded")
-} else {
-  # pull source data from S3
-  source("R/GetSourceData.R")
-}
-source("R/ProcessDataFiles.R")
-source("R/PutSourceData.R")
+```{r include=FALSE}
+source("R/ProcessCalibrationCurveSourceFile.R")
+source("R/ProcessExtractionBatchSource.R")
+source("R/ProcessInternalStandardMixFile.R")
+source("R/ProcessRawData.R")
 ```
 
 # Overview
@@ -51,7 +47,7 @@ knitr::kable(head(is_label_df, 25))
 For Extraction_Batches_source.xlsx, all of the excel tabs were combined into a single file.
 
 ```{r echo=TRUE}
-batch_source_df <- arrow::read_parquet("data/processed/extract_batch_source.parquet")
+batch_source_df <- arrow::read_parquet("data/processed/extraction_batch_source.parquet")
 
 knitr::kable(head(batch_source_df, 25))
 ```
@@ -64,4 +60,22 @@ For the IS_Mix_source.xlsx file, I pulled the the isotopically-labeled standards
 is_mix_source <- arrow::read_parquet("data/processed/internal_standard_mix.parquet")
 
 knitr::kable(head(is_mix_source, 25))
+```
+
+#### Process Raw Data
+
+#### Individual Native Analyte
+
+```{r echo=TRUE}
+source_ind_native_analyte <- arrow::read_parquet("data/processed/source/source_data_individual_native_analyte.parquet")
+
+knitr::kable(head(source_ind_native_analyte, 25))
+```
+
+#### Internal Standard
+
+```{r echo=TRUE}
+source_internal_standard <- arrow::read_parquet("data/processed/source/source_data_internal_standard.parquet")
+
+knitr::kable(head(source_internal_standard, 25))
 ```
