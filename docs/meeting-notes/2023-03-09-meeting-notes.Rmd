@@ -1,0 +1,4 @@
+# 
+
+* Add reference in Cocentration Ratio for using mapping table
+* Remove Average Peak Ratio from Concentration Ratio Calculation
