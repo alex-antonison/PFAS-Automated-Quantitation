@@ -163,7 +163,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>individual_native_analyte_peak_area: text (NOT NULL)</td></tr>
         </table>
     >]
-    
+
     internal_standard [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard</td></tr>

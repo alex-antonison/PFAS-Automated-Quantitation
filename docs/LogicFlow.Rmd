@@ -63,7 +63,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>individual_native_analyte_peak_area: numeric</td></tr>
         </table>
     >]
-    
+
     internal_standard [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard</td></tr>
@@ -75,7 +75,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_peak_area: numeric</td></tr>
         </table>
     >]
-    
+
     native_analyte_internal_standard_mapping [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>native_analyte_internal_standard_mapping</td></tr>
@@ -98,12 +98,12 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_peak_area: numeric</td></tr>
         </table>
     >]
-    
+
 
     //
     // Relationships
     //
-    
+
     individual_native_analyte -> native_analyte_internal_standard_mapping
     internal_standard -> native_analyte_internal_standard_mapping
     native_analyte_internal_standard_mapping -> average_peak_area_ratio_calculation
@@ -161,7 +161,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>analyte_peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
     average_peak_area_ratio [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
@@ -172,7 +172,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>average_analyte_peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
    average_peak_area_ratio_calculation -> average_peak_area_ratio
 }")
 ```
@@ -182,13 +182,12 @@ DiagrammeR::grViz("digraph {
 ##### Build Concentration Ratio Table
 
 ```{r, echo=FALSE}
-
 DiagrammeR::grViz("digraph {
 
 
     // Box for entities
     node [shape=none, margin=0]
-    
+
     native_analyte_internal_standard_mapping [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>native_analyte_internal_standard_mapping</td></tr>
@@ -197,7 +196,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_name: text</td></tr>
         </table>
     >]
-    
+
     native_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>native_analyte_concentration</td></tr>
@@ -219,9 +218,9 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_concentration_ppt: numeric</td></tr>
         </table>
     >]
-    
-    
-    
+
+
+
     concentration_ratio_calculation [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>concentration_ratio_calculation</td></tr>
@@ -234,8 +233,8 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_concentration_ppt: numeric</td></tr>
         </table>
     >]
-    
-    
+
+
 native_analyte_internal_standard_mapping -> concentration_ratio_calculation
 native_analyte_concentration -> native_analyte_internal_standard_mapping
 internal_standard_concentration -> native_analyte_internal_standard_mapping
@@ -278,13 +277,12 @@ step4 -> step5 -> calibration_curve_input
 ##### Concentration Ratio Calculation Output
 
 ```{r echo=FALSE}
-
 DiagrammeR::grViz("digraph {
 
 
     // Box for entities
     node [shape=none, margin=0]
-    
+
     average_peak_area_ratio [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
@@ -295,7 +293,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>average_analyte_peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
     concentration_ratio [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>concentration_ratio</td></tr>
@@ -306,7 +304,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>concentration_ratio: numeric</td></tr>
         </table>
     >]
-    
+
     calibration_curve_input [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_input</td></tr>
@@ -318,12 +316,11 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>concentration_ratio: numeric</td></tr>
         </table>
     >]
-    
-    
+
+
 average_peak_area_ratio -> calibration_curve_input
 concentration_ratio -> calibration_curve_input
 }")
-
 ```
 
 ##### Calculate Calibration Curve
@@ -363,13 +360,12 @@ step8 -> calibration_curve_troubleshoot
 ##### Calibration Curve Output
 
 ```{r echo=FALSE}
-
 DiagrammeR::grViz("digraph {
 
 
     // Box for entities
     node [shape=none, margin=0]
-    
+
   calibration_curve_troubleshoot [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_troubleshoot</td></tr>
@@ -379,8 +375,8 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>r_squared: numeric</td></tr>
         </table>
     >]
-    
-    
+
+
     calibration_curve_output [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_output</td></tr>
@@ -393,10 +389,9 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>removed_calibration_levels: text</td></tr>
         </table>
     >]
-    
+
 
 }")
-
 ```
 
 ### Quantifying Samples
@@ -410,13 +405,12 @@ The batch number is noted when processing the sample in order to tie to the appr
 The filename matches to catridge_number in the extraction_batch_sources file.
 
 ```{r echo=FALSE}
-
 DiagrammeR::grViz("digraph {
 
 
   // Box for entities
   node [shape=none, margin=0]
-    
+
   individual_native_analyte [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>individual_native_analyte</td></tr>
@@ -427,7 +421,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>individual_native_analyte_area: numeric</td></tr>
         </table>
     >]
-    
+
   internal_standard [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard</td></tr>
@@ -438,7 +432,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_area: numeric</td></tr>
         </table>
     >]
-    
+
     native_analyte_internal_standard_mapping [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>native_analyte_internal_standard_mapping</td></tr>
@@ -447,8 +441,8 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_name: text</td></tr>
         </table>
     >]
-    
-    
+
+
   peak_area_ratio [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>peak_area_ratio</td></tr>
@@ -462,26 +456,24 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
     individual_native_analyte -> native_analyte_internal_standard_mapping
     internal_standard -> native_analyte_internal_standard_mapping
     native_analyte_internal_standard_mapping -> peak_area_ratio
 
 }")
-
 ```
 
 ##### Build Analyte Concentration Calculation Table
 
 ```{r echo=FALSE}
-
 DiagrammeR::grViz("digraph {
 
 
   // Box for entities
   node [shape=none, margin=0]
-    
-    
+
+
   peak_area_ratio [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>peak_area_ratio</td></tr>
@@ -495,7 +487,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
 
     calibration_curve_output [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
@@ -507,7 +499,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>r_squared: numeric</td></tr>
         </table>
     >]
-    
+
     extraction_batch_source [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>extraction_batch_source</td></tr>
@@ -517,7 +509,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_used: text</td></tr>
         </table>
     >]
-    
+
     internal_standard_mix [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard_mix</td></tr>
@@ -528,7 +520,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_concentration_ppb: float (NOT NULL)</td></tr>
         </table>
     >]
-    
+
     analyte_concentration_calculation [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>analyte_concentration_calculation</td></tr>
@@ -542,13 +534,13 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>peak_area_ratio (A_R): numeric</td></tr>
         </table>
     >]
-    
+
 step2 [label = 'Calculate the Amount of Internal Standard in each Sample
 1. Internal Standard Concentration (ng/g) or (ppb) * 1000
 2. Internal Standard Concentration (nglL) or (ppt) / 1000000
 3. Internal Standard Concentration ng/uL * 25', shape = rectangle, style = filled, fillcolor = white]
-    
-    
+
+
     peak_area_ratio -> calibration_curve_output [label = 'Join Calculated Calibration Curve Table \n on Native Analyte Name']
     peak_area_ratio -> extraction_batch_source [label = 'Join Extraction Batch Source \non batch_number and cartridge_number']
     extraction_batch_source -> internal_standard_mix [label = 'Join Internal Standard Mix on\nInternal Standard Used and Internal Standard Name']
@@ -556,7 +548,6 @@ step2 [label = 'Calculate the Amount of Internal Standard in each Sample
     internal_standard_mix -> step2 -> analyte_concentration_calculation
 
 }")
-
 ```
 
 
