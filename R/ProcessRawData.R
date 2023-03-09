@@ -300,33 +300,9 @@ with_rep_number_df <- temp_analyte_df %>%
     calibration_level
   )
 
-# handle rep number in name
-
-temp_analyte_rep_df <- temp_analyte_df %>%
-  dplyr::filter(underscore_count == 2) %>%
-  dplyr::filter(stringr::str_detect(filename, "rep")) %>%
-  dplyr::mutate(
-    split_filename = stringr::str_split_fixed(filename, "_", 3),
-    replicate_number = as.integer(stringr::str_remove(split_filename[, 3], "rep")),
-    calibration_level = as.integer(split_filename[, 2])
-  ) %>%
-  dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
-    individual_native_analyte_peak_area = area,
-    analyte_name_length,
-    analyte_name,
-    transition_number,
-    replicate_number,
-    calibration_level
-  )
-
 dplyr::bind_rows(
   without_rep_number_df,
-  with_rep_number_df,
-  temp_analyte_rep_df
+  with_rep_number_df
 ) %>%
   # head()
   readr::write_csv("data/processed/source/source_data_individual_native_analyte.csv")
@@ -384,28 +360,8 @@ temp_ind_with_rep_df <- temp_ind_df %>%
     calibration_level
   )
 
-temp_ind_rep_df <- temp_ind_df %>%
-  dplyr::filter(underscore_count == 2) %>%
-  dplyr::filter(stringr::str_detect(filename, "rep")) %>%
-  dplyr::mutate(
-    split_filename = stringr::str_split_fixed(filename, "_", 3),
-    replicate_number = as.integer(stringr::str_remove(split_filename[, 3], "rep")),
-    calibration_level = as.integer(split_filename[, 2])
-  ) %>%
-  dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
-    internal_standard_analyte_peak_area = area,
-    internal_standard,
-    replicate_number,
-    calibration_level
-  )
-
 dplyr::bind_rows(
   temp_ind_without_rep_df,
-  temp_ind_with_rep_df,
-  temp_ind_rep_df
+  temp_ind_with_rep_df
 ) %>%
   readr::write_csv("data/processed/source/source_data_internal_standard.csv")
