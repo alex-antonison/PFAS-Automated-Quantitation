@@ -1,5 +1,12 @@
 #' Calculate the calibration Curve
 #' 
+#' This is done with the following calculation
+#' 
+#' y = average_peak_area_ratio
+#' x = analyte_concentration_rate
+#' 
+#' lm(y ~ x)
+
 library(magrittr)
 
 source("R/build-calibration-curve/BuildCalibrationCurveInput.R")
@@ -44,10 +51,12 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
   iteration = 1
 
   for (calibration_level in base_df$calibration_level) {
+    # use R's built in linear model function
     cur_model <- lm(average_peak_area_ratio ~ analyte_concentration_ratio,
       data = base_df
     )
-
+    
+    # pull r.squared from R summary of model
     r_squared <- summary(cur_model)$r.squared
 
     if (r_squared < 0.99) {
