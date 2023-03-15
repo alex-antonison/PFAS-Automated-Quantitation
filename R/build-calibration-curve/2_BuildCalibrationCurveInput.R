@@ -13,8 +13,8 @@
 #' Output:
 #'   - data/processed/calibration-curve/calibration_curve_input.parquet
 
-source("R/build-calibration-curve/CalculateAveragePeakRatio.R")
-source("R/build-calibration-curve/CalculateConcentrationRatio.R")
+source("R/build-calibration-curve/1_CalculateAveragePeakRatio.R")
+source("R/build-calibration-curve/1_CalculateConcentrationRatio.R")
 
 average_peak_area_ratio_df <- arrow::read_parquet("data/processed/calibration-curve/average_peak_area_ratio.parquet")
 

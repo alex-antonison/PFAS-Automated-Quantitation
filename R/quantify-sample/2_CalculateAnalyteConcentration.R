@@ -5,9 +5,9 @@
 #'
 #'
 
-source("R/quantify-sample/BuildSamplePeakAreaRatio.R")
-source("R/build-calibration-curve/CalculateCalibrationCurve.R")
 source("R/process-source-data/ProcessExtractionBatchSource.R")
+source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
+source("R/quantify-sample/1_BuildSamplePeakAreaRatio.R")
 
 peak_area_ratio <- arrow::read_parquet(
   "data/processed/quantify-sample/peak_area_ratio.parquet"

@@ -9,7 +9,7 @@
 
 library(magrittr)
 
-source("R/build-calibration-curve/BuildCalibrationCurveInput.R")
+source("R/build-calibration-curve/2_BuildCalibrationCurveInput.R")
 
 calibration_curve_input_df <- arrow::read_parquet("data/processed/calibration-curve/calibration_curve_input.parquet")
 
