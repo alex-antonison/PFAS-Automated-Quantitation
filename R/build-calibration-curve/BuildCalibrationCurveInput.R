@@ -4,6 +4,14 @@
 #' Concentration Ratio Output
 #'
 #' TODO: At this stage, come back and build some validation steps before doing more calculations
+#'
+#' Input:
+#'   Data:
+#'     - data/processed/calibration-curve/average_peak_area_ratio.parquet
+#'     - data/processed/calibration-curve/concentration_ratio.parquet
+#'
+#' Output:
+#'   - data/processed/calibration-curve/calibration_curve_input.parquet
 
 source("R/build-calibration-curve/CalculateAveragePeakRatio.R")
 source("R/build-calibration-curve/CalculateConcentrationRatio.R")
@@ -30,4 +38,6 @@ average_peak_area_ratio_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_input.parquet"
   ) %>%
-  readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_input.csv")
+  readr::write_excel_csv(
+    "data/processed/calibration-curve/calibration_curve_input.csv"
+  )
