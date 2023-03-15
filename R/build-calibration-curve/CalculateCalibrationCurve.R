@@ -2,7 +2,7 @@
 #' 
 library(magrittr)
 
-# source("R/build-calibration-curve/BuildCalibrationCurveInput.R")
+source("R/build-calibration-curve/BuildCalibrationCurveInput.R")
 
 calibration_curve_input_df <- arrow::read_parquet("data/processed/calibration-curve/calibration_curve_input.parquet")
 
@@ -44,7 +44,7 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
   iteration = 1
 
   for (calibration_level in base_df$calibration_level) {
-    cur_model <- lm(average_analyte_peak_area_ratio ~ analyte_concentration_ratio,
+    cur_model <- lm(average_peak_area_ratio ~ analyte_concentration_ratio,
       data = base_df
     )
 

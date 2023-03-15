@@ -86,7 +86,7 @@ individual_native_analyte_df %>%
     calibration_level
   ) %>%
   dplyr::summarise(
-    average_analyte_peak_area_ratio = mean(analyte_peak_area_ratio),
+    average_peak_area_ratio = mean(analyte_peak_area_ratio),
     .groups = "keep"
   ) %>%
   dplyr::ungroup() %>%
