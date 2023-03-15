@@ -10,6 +10,8 @@
 #'
 #'
 
+source("R/process-source-data/RefCreateMappingFiles.R")
+source("R/process-source-data/ProcessRawData.R")
 
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/processed/reference/native_analyte_internal_standard_mapping.parquet")
 

@@ -4,6 +4,9 @@
 
 library(magrittr)
 
+source("R/process-source-data/ProcessCalibrationCurveSourceFile.R")
+source("R/process-source-data/RefCreateMappingFiles.R")
+
 native_analyte_concentration_df <- arrow::read_parquet("data/processed/native_analyte_concentration.parquet")
 
 internal_standard_concentration_df <- arrow::read_parquet("data/processed/internal_standard_concentration.parquet")

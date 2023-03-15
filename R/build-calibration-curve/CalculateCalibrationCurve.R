@@ -94,7 +94,7 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
       cur_successful_df <- dplyr::tibble(
         individual_native_analyte_name = analyte,
         slope = cf[["analyte_concentration_ratio"]],
-        intercept = cf[["(Intercept)"]],
+        y_intercept = cf[["(Intercept)"]],
         r_squared = r_squared,
         calibration_point = nrow(base_df),
         min_calibration_range = min(base_df$calibration_level),
