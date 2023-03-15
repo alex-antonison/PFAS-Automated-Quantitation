@@ -95,6 +95,14 @@ process_raw_file <- function(file_name) {
 
   # loop through each sheet in the source excel file
   for (sheet in readxl::excel_sheets(file_name)) {
+    
+    #pull batch number from source file name
+    str_start = stringr::str_locate(file_name, "Set")[[1,"end"]]
+    str_end = stringr::str_locate(file_name, "_")[[1, "end"]]
+    batch_number = stringr::str_sub(file_name, str_start + 1, str_end - 1)
+    # convert to integer
+    batch_number = as.integer(batch_number)
+    
     # setting null for non-native analytes
     analyte_match <- NA
 
@@ -182,12 +190,16 @@ process_raw_file <- function(file_name) {
       file_name = file_name,
       sheet = sheet,
       source_type = source_type,
-      analyte_match = analyte_match
+      analyte_match = analyte_match,
+      batch_number = batch_number
     )
     naming_df <- dplyr::bind_rows(
       naming_df,
       temp_naming_df
     )
+    
+    # add batch number to final df
+    temp_data_df$batch_number = batch_number
 
     # combine the final df and the naming df
     data_df <- dplyr::bind_rows(
@@ -234,7 +246,7 @@ readr::write_csv(combined_naming_df, "data/processed/troubleshoot/raw_data_proce
 ####################################
 
 ####################################
-# Create Analyte Table
+# Create Analyte Calibration Table
 ####################################
 
 # create_analyte_table <- function(df) {
@@ -316,7 +328,7 @@ dplyr::bind_rows(
   )
 
 ####################################
-# Create Internal Standard Table
+# Create Internal Standard Calibration Table
 ####################################
 
 temp_ind_df <- combined_data_df %>%
@@ -382,3 +394,69 @@ dplyr::bind_rows(
   arrow::write_parquet(
     sink = "data/processed/source/source_data_internal_standard.parquet"
   )
+
+####################################
+# Create Analyte Sample Table
+####################################
+
+combined_data_df %>%
+  dplyr::filter(source_type == "native_analyte") %>%
+  # filter down to analytes that have a match in the reference file
+  dplyr::filter(analyte_match == "Match Found") %>%
+  # filter down to only filenames that have a number
+  dplyr::filter(!grepl("\\D", filename)) %>% 
+  # only filenames with values that are not NF
+  dplyr::filter(area != "NF") %>%
+  dplyr::mutate(
+    # rename to cartridge_number for joining later
+    cartridge_number = as.integer(filename),
+    # convert peak area to numeric
+    individual_native_analyte_peak_area = as.numeric(area),
+    # calculate analyte name
+    analyte_name_length = stringr::str_length(sheet_name),
+    individual_native_analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
+    # calculate transition number
+    transition_number = stringr::str_sub(sheet_name, -1)
+    ) %>% 
+  # filter to transition 1
+  dplyr::filter(transition_number == 1) %>% 
+  dplyr::select(
+    individual_native_analyte_name,
+    cartridge_number,
+    batch_number,
+    individual_native_analyte_peak_area
+  ) %>% 
+  arrow::write_parquet(
+    sink = "data/processed/source/sample_individual_native_analyte.parquet"
+  ) %>% 
+  readr::write_excel_csv("data/processed/source/sample_individual_native_analyte.csv")
+
+####################################
+# Create Internal Standard Sample Table
+####################################
+
+combined_data_df %>%
+  dplyr::filter(source_type == "internal_standard") %>%
+  # filter down to only filenames that are a number
+  dplyr::filter(!grepl("\\D", filename)) %>% 
+  # only filenames with values that are not NF
+  dplyr::filter(area != "NF") %>%
+  dplyr::mutate(
+    internal_standard_name = sheet_name,
+    # rename to cartridge_number for joining later
+    cartridge_number = as.integer(filename),
+    # convert peak area to numeric
+    internal_standard_peak_area = as.numeric(area)
+  ) %>% 
+  dplyr::select(
+    internal_standard_name,
+    cartridge_number,
+    batch_number,
+    internal_standard_peak_area
+  ) %>% 
+  arrow::write_parquet(
+    sink = "data/processed/source/sample_internal_standard.parquet"
+  ) %>%
+  readr::write_excel_csv("data/processed/source/sample_internal_standard.csv")
+# 
+
