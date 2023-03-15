@@ -1,4 +1,6 @@
 #' Calculate the calibration Curve
+#' 
+library(magrittr)
 
 # source("R/build-calibration-curve/BuildCalibrationCurveInput.R")
 
@@ -34,6 +36,7 @@ calibration_curve_troublehsoot_df <- dplyr::tibble()
 
 for (analyte in analyte_name_df$individual_native_analyte_name) {
   min_flag <- TRUE
+  removed_calibration = ""
 
   base_df <- calibration_curve_input_df %>%
     dplyr::filter(individual_native_analyte_name == analyte)
@@ -55,6 +58,7 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
       base_df <- return_val[[1]]
       min_flag <- return_val[[2]]
       remove_val <- return_val[[3]]
+      removed_calibration <- paste(removed_calibration, remove_val, sep=":")
       
       cur_eval_df <- dplyr::tibble(
         individual_native_analyte_name = analyte,
@@ -63,7 +67,8 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
         min_calibration_range = min(base_df$calibration_level),
         max_calibration_range = max(base_df$calibration_level),
         calibration_range = paste0(min(base_df$calibration_level), ":", max(base_df$calibration_level)),
-        r_squared = r_squared
+        r_squared = r_squared,
+        current_removed_calibration = stringr::str_sub(removed_calibration, start = 2)
         
       )
       
@@ -75,6 +80,7 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
       iteration = iteration + 1
       
     } else {
+      
       cf <- coef(cur_model)
 
       print("Successful R^2")
@@ -86,9 +92,11 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
         slope = cf[["analyte_concentration_ratio"]],
         intercept = cf[["(Intercept)"]],
         r_squared = r_squared,
+        calibration_point = nrow(base_df),
         min_calibration_range = min(base_df$calibration_level),
         max_calibration_range = max(base_df$calibration_level),
-        calibration_range = paste0(min(base_df$calibration_level), ":", max(base_df$calibration_level))
+        calibration_range = paste0(min(base_df$calibration_level), ":", max(base_df$calibration_level)),
+        removed_calibrations = stringr::str_sub(removed_calibration, start = 2)
       )
 
       calibration_curve_output_df <- dplyr::bind_rows(
@@ -99,3 +107,16 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
     }
   }
 }
+
+
+calibration_curve_output_df %>% 
+  arrow::write_parquet(
+    sink = "data/processed/calibration-curve/calibration_curve_output.parquet"
+  ) %>% 
+  readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_output.csv")
+
+calibration_curve_troublehsoot_df %>% 
+  arrow::write_parquet(
+    sink = "data/processed/calibration-curve/calibration_curve_troublehsoot.parquet"
+  ) %>% 
+  readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_troublehsoot.csv")
