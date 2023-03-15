@@ -29,4 +29,5 @@ average_peak_area_ratio_df %>%
   dplyr::filter(!is.na(analyte_concentration_ratio)) %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_input.parquet"
-  )
+  ) %>%
+  readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_input.csv")

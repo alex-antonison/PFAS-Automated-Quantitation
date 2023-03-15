@@ -35,4 +35,5 @@ native_analyte_concentration_df %>%
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/concentration_ratio.parquet"
-  )
+  ) %>% 
+  readr::write_excel_csv("data/processed/calibration-curve/concentration_ratio.csv")

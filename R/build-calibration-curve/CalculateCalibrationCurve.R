@@ -1,10 +1,10 @@
 #' Calculate the calibration Curve
-#' 
+#'
 #' This is done with the following calculation
-#' 
+#'
 #' y = average_peak_area_ratio
 #' x = analyte_concentration_rate
-#' 
+#'
 #' lm(y ~ x)
 
 library(magrittr)
@@ -43,32 +43,30 @@ calibration_curve_troublehsoot_df <- dplyr::tibble()
 
 for (analyte in analyte_name_df$individual_native_analyte_name) {
   min_flag <- TRUE
-  removed_calibration = ""
+  removed_calibration <- ""
 
   base_df <- calibration_curve_input_df %>%
     dplyr::filter(individual_native_analyte_name == analyte)
-  
-  iteration = 1
+
+  iteration <- 1
 
   for (calibration_level in base_df$calibration_level) {
     # use R's built in linear model function
     cur_model <- lm(average_peak_area_ratio ~ analyte_concentration_ratio,
       data = base_df
     )
-    
+
     # pull r.squared from R summary of model
     r_squared <- summary(cur_model)$r.squared
 
     if (r_squared < 0.99) {
-      
-
       print(r_squared)
       return_val <- remove_cal_level(base_df, min_flag)
       base_df <- return_val[[1]]
       min_flag <- return_val[[2]]
       remove_val <- return_val[[3]]
-      removed_calibration <- paste(removed_calibration, remove_val, sep=":")
-      
+      removed_calibration <- paste(removed_calibration, remove_val, sep = ":")
+
       cur_eval_df <- dplyr::tibble(
         individual_native_analyte_name = analyte,
         iteration_count = iteration,
@@ -78,18 +76,15 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
         calibration_range = paste0(min(base_df$calibration_level), ":", max(base_df$calibration_level)),
         r_squared = r_squared,
         current_removed_calibration = stringr::str_sub(removed_calibration, start = 2)
-        
       )
-      
+
       calibration_curve_troublehsoot_df <- dplyr::bind_rows(
         calibration_curve_troublehsoot_df,
         cur_eval_df
       )
-      
-      iteration = iteration + 1
-      
+
+      iteration <- iteration + 1
     } else {
-      
       cf <- coef(cur_model)
 
       print("Successful R^2")
@@ -118,14 +113,14 @@ for (analyte in analyte_name_df$individual_native_analyte_name) {
 }
 
 
-calibration_curve_output_df %>% 
+calibration_curve_output_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_output.parquet"
-  ) %>% 
+  ) %>%
   readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_output.csv")
 
-calibration_curve_troublehsoot_df %>% 
+calibration_curve_troublehsoot_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_troublehsoot.parquet"
-  ) %>% 
+  ) %>%
   readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_troublehsoot.csv")
