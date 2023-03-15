@@ -92,5 +92,5 @@ individual_native_analyte_df %>%
   dplyr::ungroup() %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/average_peak_area_ratio.parquet"
-  ) %>% 
+  ) %>%
   readr::write_excel_csv("data/processed/calibration-curve/average_peak_area_ratio.csv")
