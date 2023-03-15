@@ -11,7 +11,7 @@ if (fs::file_exists("data/source/Extraction_Batches_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   # pull source data from S3
-  source("R/GetSourceData.R")
+  source("R/utility/GetSourceData.R")
 }
 
 #' Read in the batch sample excel file

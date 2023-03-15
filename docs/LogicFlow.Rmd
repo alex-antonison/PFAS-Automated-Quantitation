@@ -69,6 +69,7 @@ DiagrammeR::grViz("digraph {
             <tr><td bgcolor='lightblue'>internal_standard</td></tr>
             // columns
             <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>source_file_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
             <tr><td align='left'>replicate_number: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
@@ -90,6 +91,7 @@ DiagrammeR::grViz("digraph {
             <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation</td></tr>
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>source_file_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
             <tr><td align='left'>replicate_number: text</td></tr>
@@ -264,7 +266,7 @@ step4 [label = 'Join the Average Analyte Peak Area Ratio to
 ']
 
 step5 [label = 'Calculate Concentration Ratio:
-Concentration Ratio = Native Analyte Concentration / Internal Standard Concentration']
+Analyte Concentration Ratio = Native Analyte Concentration / Internal Standard Concentration']
 
 
 sourceCalCurve -> step4
@@ -313,7 +315,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
             <tr><td align='left'>average_peak_area_ratio: numeric</td></tr>
-            <tr><td align='left'>concentration_ratio: numeric</td></tr>
+            <tr><td align='left'>analyte_concentration_ratio: numeric</td></tr>
         </table>
     >]
 

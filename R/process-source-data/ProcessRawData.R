@@ -23,7 +23,7 @@ for (file_path in full_file_list) {
 
 # if a file is missing pull source data from S3
 if (missing_file) {
-  source("R/GetSourceData.R")
+  source("R/utility/GetSourceData.R")
 } else {
   # if all files are downloaded, skip downloading data
   print("Source Data Downloaded")
@@ -257,7 +257,13 @@ temp_analyte_df <- combined_data_df %>%
     underscore_count = stringr::str_count(filename, "_")
   ) %>%
   # only interested in the first transition for an analyte
-  dplyr::filter(transition_number == 1)
+  dplyr::filter(transition_number == 1) %>%
+  # only filenames with values that are not NF
+  dplyr::filter(area != "NF") %>%
+  # convert area to numeric
+  dplyr::mutate(
+    individual_native_analyte_peak_area = as.numeric(area)
+  )
 
 without_rep_number_df <- temp_analyte_df %>%
   dplyr::filter(underscore_count == 1) %>%
@@ -271,12 +277,11 @@ without_rep_number_df <- temp_analyte_df %>%
     source_type,
     sheet_name,
     filename,
-    area,
-    analyte_name_length,
-    analyte_name,
+    individual_native_analyte_name = analyte_name,
     transition_number,
     replicate_number,
-    calibration_level
+    calibration_level,
+    individual_native_analyte_peak_area
   )
 
 with_rep_number_df <- temp_analyte_df %>%
@@ -292,12 +297,11 @@ with_rep_number_df <- temp_analyte_df %>%
     source_type,
     sheet_name,
     filename,
-    area,
-    analyte_name_length,
-    analyte_name,
+    individual_native_analyte_name = analyte_name,
     transition_number,
     replicate_number,
-    calibration_level
+    calibration_level,
+    individual_native_analyte_peak_area
   )
 
 dplyr::bind_rows(
@@ -322,10 +326,14 @@ temp_ind_df <- combined_data_df %>%
   dplyr::filter(
     stringr::str_detect(stringr::str_to_lower(filename), "cal")
   ) %>%
+  # only filenames with values that are not NF
+  dplyr::filter(area != "NF") %>%
   dplyr::mutate(
     internal_standard = sheet_name,
-    underscore_count = stringr::str_count(filename, "_")
+    underscore_count = stringr::str_count(filename, "_"),
+    internal_standard_peak_area = as.numeric(area)
   )
+
 
 temp_ind_without_rep_df <- temp_ind_df %>%
   dplyr::filter(underscore_count == 1) %>%
@@ -339,10 +347,10 @@ temp_ind_without_rep_df <- temp_ind_df %>%
     source_type,
     sheet_name,
     filename,
-    area,
-    internal_standard,
+    internal_standard_name = internal_standard,
     replicate_number,
-    calibration_level
+    calibration_level,
+    internal_standard_peak_area
   )
 
 temp_ind_with_rep_df <- temp_ind_df %>%
@@ -358,10 +366,10 @@ temp_ind_with_rep_df <- temp_ind_df %>%
     source_type,
     sheet_name,
     filename,
-    area,
-    internal_standard,
+    internal_standard_name = internal_standard,
     replicate_number,
-    calibration_level
+    calibration_level,
+    internal_standard_peak_area
   )
 
 dplyr::bind_rows(

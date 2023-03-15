@@ -4,7 +4,7 @@ if (fs::file_exists("data/source/Sep2021Calibration_Curve_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   # pull source data from S3
-  source("R/GetSourceData.R")
+  source("R/utility/GetSourceData.R")
 }
 
 # This script takes in the Sep2021Calibration_Curve_source.xlsx file
@@ -33,7 +33,7 @@ extract_analyte_source <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = sheet_range_col,
-    col_names = c("native_analyte_name", "a", "b", "c", "d", "e", "native_analyte_concentration_ppt")
+    col_names = c("individual_native_analyte_name", "a", "b", "c", "d", "e", "native_analyte_concentration_ppt")
   )
 
   return(analyte_df)
@@ -125,7 +125,7 @@ process_cal_source <- function(file_name) {
     dplyr::select(
       calibration_level,
       calibration_mix,
-      native_analyte_name,
+      individual_native_analyte_name,
       native_analyte_concentration_ppt
     )
 

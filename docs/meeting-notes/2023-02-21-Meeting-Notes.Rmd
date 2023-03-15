@@ -75,8 +75,6 @@ Oak13_1 - _1 is the transition we are focused on. Quantitatively, we are not loo
 
 If I see EPA or _3M - are not in the cal curve - All qualitative 
 
-TODO:
-
 - Alex: will update data documentation and code according to above feedback
 - Camden: Will create a mapping file between IS and Native Analytes
 - Camden: Provide corrected file for Set2
