@@ -105,9 +105,9 @@ native_analyte_concentration_df %>%
     "data/processed/troubleshoot/matching-issue/concentration_table_to_mapping_table_issue.csv"
   )
 
-##########
+##################################
 # Identify Matching Issues between Concentration Ratio and Average Peak Ratio
-#########
+#################################
 
 average_peak_area_ratio_df <- arrow::read_parquet("data/processed/calibration-curve/average_peak_area_ratio.parquet")
 
@@ -139,3 +139,52 @@ average_peak_area_ratio_df %>%
   readr::write_excel_csv(
     "data/processed/troubleshoot/matching-issue/source_calibration_analyte_to_concentratio_ratio_match_issue.csv"
     )
+
+
+##################
+# Identify Matching issues for Analyte Concentration Table
+#################
+
+peak_area_ratio <- arrow::read_parquet(
+  "data/processed/quantify-sample/peak_area_ratio.parquet"
+)
+
+calibration_curve_output <- arrow::read_parquet(
+  "data/processed/calibration-curve/calibration_curve_output.parquet"
+) %>%
+  dplyr::select(
+    individual_native_analyte_name,
+    slope,
+    y_intercept,
+    r_squared
+  )
+
+extraction_batch_source <- arrow::read_parquet(
+  "data/processed/extraction_batch_source.parquet"
+) %>%
+  dplyr::select(
+    batch_number,
+    cartridge_number,
+    internal_standard_used
+  )
+
+internal_standard_mix <- arrow::read_parquet(
+  "data/processed/internal_standard_mix.parquet"
+) %>%
+  dplyr::select(
+    internal_standard_used = internal_standard_mix,
+    internal_standard_name = internal_standard_concentration_name,
+    stock_mix,
+    internal_standard_concentration_ppb
+  )
+
+
+temp_df <- peak_area_ratio %>%
+  dplyr::left_join(
+    calibration_curve_output,
+    by = "individual_native_analyte_name"
+  ) %>%
+  dplyr::left_join(
+    extraction_batch_source,
+    by = c("batch_number", "cartridge_number")
+  )
