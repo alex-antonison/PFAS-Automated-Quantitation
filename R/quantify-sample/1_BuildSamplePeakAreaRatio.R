@@ -14,8 +14,8 @@
 
 library(magrittr)
 
-# source("R/process-source-data/ProcessRawData.R")
-# source("R/process-source-data/RefCreateMappingFiles.R)
+source("R/process-source-data/ProcessRawData.R")
+source("R/process-source-data/RefCreateMappingFiles.R")
 
 sample_native_analyte_df <- arrow::read_parquet(
   "data/processed/source/sample_individual_native_analyte.parquet"
