@@ -9,6 +9,8 @@ source("R/process-source-data/ProcessExtractionBatchSource.R")
 source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
 source("R/quantify-sample/1_BuildSamplePeakAreaRatio.R")
 
+library(magrittr)
+
 peak_area_ratio <- arrow::read_parquet(
   "data/processed/quantify-sample/peak_area_ratio.parquet"
 )
@@ -20,7 +22,9 @@ calibration_curve_output <- arrow::read_parquet(
     individual_native_analyte_name,
     slope,
     y_intercept,
-    r_squared
+    r_squared,
+    calibration_point,
+    calibration_range
   )
 
 extraction_batch_source <- arrow::read_parquet(
@@ -42,7 +46,13 @@ internal_standard_mix <- arrow::read_parquet(
     internal_standard_concentration_ppb
   )
 
+concen_internal_stanard_mapping <- readxl::read_excel(
+  "data/source/concentration_internal_standard_mapping.xlsx"
+)
+
+
 peak_area_ratio %>%
+  # dplyr::filter(individual_native_analyte_name == "4_2FTS") %>% 
   dplyr::left_join(
     calibration_curve_output,
     by = "individual_native_analyte_name"
@@ -51,16 +61,28 @@ peak_area_ratio %>%
     extraction_batch_source,
     by = c("batch_number", "cartridge_number")
   ) %>%
+  dplyr::rename(
+    source_internal_standard_name = internal_standard_name
+  ) %>% 
+  dplyr::left_join(
+    concen_internal_stanard_mapping,
+    by = c("source_internal_standard_name" = "mapped_internal_standard_name")
+  ) %>% 
+  dplyr::mutate(
+    internal_standard_name = ifelse(is.na(concentration_internal_standard_name),
+                                    source_internal_standard_name,
+                                    concentration_internal_standard_name)
+  ) %>% 
   dplyr::left_join(
     internal_standard_mix,
     by = c("internal_standard_name", "internal_standard_used")
   ) %>%
-  # calculate amount of internal standard in each sample
+  # # calculate amount of internal standard in each sample
   dplyr::mutate(
     # TODO make the value 25 a configurable number
     internal_standard_concentration_ng = ((internal_standard_concentration_ppb * 1000) / 1000000) * 25
   ) %>%
-  # calculate Analyte Concentration
+  # # calculate Analyte Concentration
   dplyr::mutate(
     analyte_concentration = ((peak_area_ratio - y_intercept) / slope) * internal_standard_concentration_ng
   ) %>%
@@ -69,4 +91,14 @@ peak_area_ratio %>%
   ) %>%
   readr::write_excel_csv(
     "data/processed/quantify-sample/analyte_concentration.csv"
+  ) 
+
+
+temp_df <- arrow::read_parquet("data/processed/quantify-sample/analyte_concentration.parquet")
+temp_df <- as.data.frame(temp_df)
+xlsx::write.xlsx(
+    temp_df,
+    file = "data/processed/quantify-sample/analyte_concentration.xlsx",
+    row.names = FALSE,
+    showNA = FALSE
   )
