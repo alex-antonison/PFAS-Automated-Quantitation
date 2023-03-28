@@ -25,6 +25,14 @@
 #'     - Mapping file to tie native analytes to internal standards
 #'     
 #' Ouput: Average Peak Area Ratio
+#' 
+#' 
+#' Note:
+#' 
+#' When there are duplicate filenames - this could be as a result of mid-run 
+#' when the person running the mass spec needs to restart, they would start where
+#' they left off. We take the highest value in the event that when finding the
+#' area under the curve, they do ignore it because it is a duplicate filename.
 
 source("R/process-source-data/RefCreateMappingFiles.R")
 source("R/process-source-data/ProcessRawData.R")
