@@ -33,8 +33,8 @@ cal_name_native_analyte_mapping_df <- arrow::read_parquet(
 ) %>%
   dplyr::rename(mapped_analyte_name = individual_native_analyte_name)
 
-concen_internal_stanard_mapping <- readxl::read_excel(
-  "data/source/concentration_internal_standard_mapping.xlsx"
+concen_internal_stanard_mapping <- arrow::read_parquet(
+  "data/processed/reference/concentration_internal_standard_mapping.parquet"
 )
 
 analyte_concentration_df %>%
@@ -70,7 +70,6 @@ analyte_concentration_df %>%
     internal_standard_concen_df,
     by = c("internal_standard_name", "calibration_mix", "calibration_level")
   ) %>%
-  dplyr::filter(is.na(internal_standard_concentration_ppt)) %>%
   dplyr::mutate(
     analyte_concentration_ratio = native_analyte_concentration_ppt / internal_standard_concentration_ppt # nolint
   ) %>%
@@ -91,3 +90,4 @@ analyte_concentration_df %>%
     "data/processed/calibration-curve/concentration_ratio.xlsx",
     row.names = FALSE
   )
+
