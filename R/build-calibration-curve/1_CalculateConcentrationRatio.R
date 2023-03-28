@@ -37,9 +37,6 @@ concen_internal_stanard_mapping <- readxl::read_excel(
   "data/source/concentration_internal_standard_mapping.xlsx"
 )
 
-# TODO - when the names line up in SepCalibration file, use that. Only use the mapping file for names that
-# do not have a matching analyte.
-
 analyte_concentration_df %>%
   dplyr::rename(source_analyte_name = individual_native_analyte_name) %>%
   dplyr::left_join(
@@ -52,8 +49,6 @@ analyte_concentration_df %>%
       mapped_analyte_name
     )
   ) %>%
-  # dropping instances where there is not a mapped analyte name TODO
-  # dplyr::filter(!is.na(individual_native_analyte_name)) %>%
   dplyr::left_join(
     native_analyte_internal_standard_mapping_df,
     by = c("individual_native_analyte_name")
@@ -75,8 +70,7 @@ analyte_concentration_df %>%
     internal_standard_concen_df,
     by = c("internal_standard_name", "calibration_mix", "calibration_level")
   ) %>%
-  # remove instances where there are not mapped calibration values TODO
-  dplyr::filter(!is.na(internal_standard_concentration_ppt)) %>%
+  dplyr::filter(is.na(internal_standard_concentration_ppt)) %>%
   dplyr::mutate(
     analyte_concentration_ratio = native_analyte_concentration_ppt / internal_standard_concentration_ppt # nolint
   ) %>%
