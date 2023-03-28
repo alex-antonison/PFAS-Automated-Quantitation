@@ -124,3 +124,20 @@ calibration_curve_troublehsoot_df %>%
     sink = "data/processed/calibration-curve/calibration_curve_troublehsoot.parquet"
   ) %>%
   readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_troublehsoot.csv")
+
+
+calibration_curve_output_df <- as.data.frame(calibration_curve_output_df)
+xlsx::write.xlsx(
+  calibration_curve_output_df,
+  file = "data/processed/calibration-curve/calibration_curve_output.xlsx",
+  row.names = FALSE,
+  showNA = FALSE
+)
+
+calibration_curve_troublehsoot_df <- as.data.frame(calibration_curve_troublehsoot_df)
+xlsx::write.xlsx(
+  calibration_curve_troublehsoot_df,
+  file = "data/processed/calibration-curve/calibration_curve_troublehsoot.xlsx",
+  row.names = FALSE,
+  showNA = FALSE
+)
