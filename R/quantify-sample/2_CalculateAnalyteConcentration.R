@@ -87,19 +87,30 @@ peak_area_ratio %>%
   dplyr::mutate(
     analyte_concentration = ((peak_area_ratio - y_intercept) / slope) * internal_standard_concentration_ng
   ) %>%
+  dplyr::select(
+    cartridge_number,
+    batch_number,
+    individual_native_analyte_name,
+    individual_native_analyte_peak_area,
+    internal_standard_name,
+    internal_standard_peak_area,
+    peak_area_ratio,
+    slope,
+    y_intercept,
+    r_squared,
+    calibration_point,
+    calibration_range,
+    internal_standard_used,
+    stock_mix,
+    internal_standard_concentration_ppb,
+    internal_standard_concentration_ng,
+    analyte_concentration
+  ) %>% 
   arrow::write_parquet(
     sink = "data/processed/quantify-sample/analyte_concentration.parquet"
   ) %>%
-  readr::write_excel_csv(
-    "data/processed/quantify-sample/analyte_concentration.csv"
+  as.data.frame() %>% 
+  xlsx::write.xlsx(
+    "data/processed/quantify-sample/analyte_concentration.xlsx",
+    row.names = FALSE
   )
-
-
-temp_df <- arrow::read_parquet("data/processed/quantify-sample/analyte_concentration.parquet")
-temp_df <- as.data.frame(temp_df)
-xlsx::write.xlsx(
-  temp_df,
-  file = "data/processed/quantify-sample/analyte_concentration.xlsx",
-  row.names = FALSE,
-  showNA = FALSE
-)
