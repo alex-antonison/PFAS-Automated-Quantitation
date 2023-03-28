@@ -46,7 +46,7 @@ sample_native_analyte_df %>%
   arrow::write_parquet(
     sink = "data/processed/quantify-sample/peak_area_ratio.parquet"
   ) %>%
-  as.data.frame() %>% 
+  as.data.frame() %>%
   xlsx::write.xlsx(
     "data/processed/quantify-sample/peak_area_ratio.xlsx",
     row.names = FALSE

@@ -105,11 +105,11 @@ peak_area_ratio %>%
     internal_standard_concentration_ppb,
     internal_standard_concentration_ng,
     analyte_concentration
-  ) %>% 
+  ) %>%
   arrow::write_parquet(
     sink = "data/processed/quantify-sample/analyte_concentration.parquet"
   ) %>%
-  as.data.frame() %>% 
+  as.data.frame() %>%
   xlsx::write.xlsx(
     "data/processed/quantify-sample/analyte_concentration.xlsx",
     row.names = FALSE
