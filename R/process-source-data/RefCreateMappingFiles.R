@@ -10,7 +10,8 @@ library(magrittr)
 
 full_file_list <- c(
   "data/source/Native_analyte_ISmatch_source.xlsx",
-  "data/source/calibration_concentration_name_mapping.csv"
+  "data/source/calibration_concentration_name_mapping.csv",
+  "data/source/concentration_internal_standard_mapping.xlsx"
 )
 
 # setting this to false
@@ -53,7 +54,7 @@ readxl::read_excel(
 # Create Calibration Analyte Name to Source Analyte Name Reference File
 ###########################
 
-readr::read_csv("data/source/calibration_concentration_name_mapping.csv") %>%
+readxl::read_excel("data/source/analyte_concentration_name_mapping.xlsx") %>%
   janitor::clean_names() %>%
   dplyr::rename(
     source_analyte_name = individual_native_analyte_name,
@@ -61,4 +62,15 @@ readr::read_csv("data/source/calibration_concentration_name_mapping.csv") %>%
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/reference/calibration_concentration_name_mapping.parquet"
+  )
+
+############################
+# Create Calibration Internal Standard Name to Source Analyte Name Reference File
+###########################
+
+readxl::read_excel(
+  "data/source/internal_standard_concentration_name_mapping.xlsx"
+) %>%
+  arrow::write_parquet(
+    sink = "data/processed/reference/concentration_internal_standard_mapping.parquet"
   )

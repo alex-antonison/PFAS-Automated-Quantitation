@@ -1,8 +1,6 @@
 library(magrittr)
 
-#########################
-# Check Source Calibration Internal Standard to Native Analyte
-#########################
+# Check Source Internal Standard to Native Analyte Matching ----
 
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/processed/reference/native_analyte_internal_standard_mapping.parquet")
 
@@ -74,119 +72,121 @@ check_df <- individual_native_analyte_df %>%
 
 # no issues found
 
-#########################
-# Check Concentration Table Matching
-#########################
+# Check Analyte Concentration To Source ----
+# Looking for instances where there is not a matching analyte concentration
+# to a given source analyte value
 
-native_analyte_concentration_df <- arrow::read_parquet("data/processed/native_analyte_concentration.parquet")
 
-internal_standard_concentration_df <- arrow::read_parquet("data/processed/internal_standard_concentration.parquet")
+# processed from Sep2021Calibration_Curve_source.xlsx
+analyte_concentration_df <- arrow::read_parquet(
+  "data/processed/native_analyte_concentration.parquet"
+)
 
-native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/processed/reference/native_analyte_internal_standard_mapping.parquet")
+# native analyte name mapping between source
+# and Sep2021Calibration_Curve_source.xlsx
+cal_name_native_analyte_mapping_df <- arrow::read_parquet(
+  "data/processed/reference/calibration_concentration_name_mapping.parquet"
+) %>%
+  dplyr::rename(mapped_analyte_name = individual_native_analyte_name)
 
-cal_name_native_analyte_mapping_df <- arrow::read_parquet("data/processed/reference/calibration_concentration_name_mapping.parquet")
+average_peak_ratio <- arrow::read_parquet(
+  "data/processed/calibration-curve/average_peak_area_ratio.parquet"
+)
 
-match_df <- native_analyte_concentration_df %>%
+processed_analyte_concentration <- analyte_concentration_df %>%
   dplyr::rename(source_analyte_name = individual_native_analyte_name) %>%
-  dplyr::left_join(cal_name_native_analyte_mapping_df, by = "source_analyte_name") %>%
-  # dropping instances where there is not a mapped analyte name TODO
+  dplyr::left_join(
+    cal_name_native_analyte_mapping_df,
+    by = "source_analyte_name"
+  ) %>%
   dplyr::mutate(
-    match_found = ifelse(is.na(individual_native_analyte_name),
-      "no match found",
-      "match found"
+    individual_native_analyte_name = ifelse(is.na(mapped_analyte_name),
+      source_analyte_name,
+      mapped_analyte_name
     )
   ) %>%
-  dplyr::distinct(
-    concentration_file_analyte_name = source_analyte_name,
-    mapping_file_analyte_name = individual_native_analyte_name,
-    match_found
+  dplyr::mutate(
+    calibration_level = readr::parse_number(calibration_level)
   ) %>%
-  as.data.frame() %>%
-  xlsx::write.xlsx(
-    "data/processed/troubleshoot/matching-issue/source_analyte_to_concentration_match_issue.xlsx",
-    row.names = FALSE
-  )
-
-##################################
-# Identify Matching Issues between Concentration Ratio and Average Peak Ratio
-#################################
-
-average_peak_area_ratio_df <- arrow::read_parquet("data/processed/calibration-curve/average_peak_area_ratio.parquet")
-
-concentration_ratio_df <- arrow::read_parquet("data/processed/calibration-curve/concentration_ratio.parquet") %>%
   dplyr::select(
     individual_native_analyte_name,
     calibration_level,
-    analyte_concentration_ratio
+    native_analyte_concentration_ppt
   )
 
-average_peak_area_ratio_df %>%
+average_peak_ratio %>%
   dplyr::left_join(
-    concentration_ratio_df,
-    by = c(
-      "individual_native_analyte_name",
-      "calibration_level"
+    processed_analyte_concentration,
+    by = c("individual_native_analyte_name", "calibration_level")
+  ) %>%
+  dplyr::filter(is.na(native_analyte_concentration_ppt)) %>%
+  dplyr::distinct(
+    individual_native_analyte_name,
+    internal_standard_name
+  ) %>%
+  as.data.frame() %>%
+  xlsx::write.xlsx(
+    "data/processed/troubleshoot/matching-issue/missing_source_analyte_name_from_concentration.xlsx",
+    row.names = FALSE
+  )
+
+# Check Internal Standard Source to Concentration Mapping  ----
+# Looking for instances where there is not a valid mapped internal standard
+# name between the average analyte file and the concentration file
+
+# processed from Sep2021Calibration_Curve_source.xlsx
+internal_standard_concen_df <- arrow::read_parquet(
+  "data/processed/internal_standard_concentration.parquet"
+) %>%
+  dplyr::rename(
+    concentration_internal_standard_name = internal_standard_name
+  )
+
+internal_standard_name_mapping <- arrow::read_parquet(
+  "data/processed/reference/concentration_internal_standard_mapping.parquet"
+)
+
+adjusted_int_st_concen <- internal_standard_concen_df %>%
+  dplyr::left_join(
+    internal_standard_name_mapping,
+    by = c("concentration_internal_standard_name")
+  ) %>%
+  dplyr::mutate(
+    internal_standard_name = ifelse(is.na(mapped_internal_standard_name),
+      concentration_internal_standard_name,
+      mapped_internal_standard_name
     )
   ) %>%
   dplyr::mutate(
-    concentration_ratio_match_found = ifelse(is.na(analyte_concentration_ratio),
-      "no match found",
-      "match found"
-    )
+    calibration_level = readr::parse_number(calibration_level)
   ) %>%
   dplyr::distinct(
-    source_calibration_analyte_name = individual_native_analyte_name,
-    concentration_ratio_match_found
-  ) %>%
-  readr::write_excel_csv(
-    "data/processed/troubleshoot/matching-issue/source_calibration_analyte_to_concentratio_ratio_match_issue.csv"
+    internal_standard_name,
+    calibration_level,
+    internal_standard_concentration_ppt
   )
 
-
-##################
-# Identify Matching issues for Analyte Concentration Table
-#################
-
-peak_area_ratio <- arrow::read_parquet(
-  "data/processed/quantify-sample/peak_area_ratio.parquet"
-)
-
-calibration_curve_output <- arrow::read_parquet(
-  "data/processed/calibration-curve/calibration_curve_output.parquet"
+source_data_int_st <- arrow::read_parquet(
+  "data/processed/source/source_data_internal_standard.parquet"
 ) %>%
-  dplyr::select(
-    individual_native_analyte_name,
-    slope,
-    y_intercept,
-    r_squared
+  dplyr::distinct(
+    internal_standard_name,
+    calibration_level
   )
 
-extraction_batch_source <- arrow::read_parquet(
-  "data/processed/extraction_batch_source.parquet"
-) %>%
-  dplyr::select(
-    batch_number,
-    cartridge_number,
-    internal_standard_used
-  )
-
-internal_standard_mix <- arrow::read_parquet(
-  "data/processed/internal_standard_mix.parquet"
-) %>%
-  dplyr::select(
-    internal_standard_used = internal_standard_mix,
-    internal_standard_name = internal_standard_concentration_name,
-    stock_mix,
-    internal_standard_concentration_ppb
-  )
-
-
-temp_df <- peak_area_ratio %>%
+source_data_int_st %>%
   dplyr::left_join(
-    calibration_curve_output,
-    by = "individual_native_analyte_name"
+    adjusted_int_st_concen,
+    by = c("internal_standard_name", "calibration_level")
   ) %>%
-  dplyr::left_join(
-    extraction_batch_source,
-    by = c("batch_number", "cartridge_number")
+  dplyr::filter(
+    is.na(internal_standard_concentration_ppt)
+  ) %>%
+  dplyr::distinct(
+    internal_standard_name
+  ) %>%
+  as.data.frame() %>%
+  xlsx::write.xlsx(
+    "data/processed/troubleshoot/matching-issue/internal-standard-source-to-concentration-mapping-issue.xlsx",
+    row.names = FALSE
   )
