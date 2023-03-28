@@ -1,11 +1,11 @@
 #' Calculate the Average Peak Ratio from the source data
-#' 
+#'
 #' This uses the largest peak area for each native analyte and internal standard
 #' for a given replicate and calibration level.
-#' 
-#' With the largest peak area found, the native analyte will be joined with its corresponding 
+#'
+#' With the largest peak area found, the native analyte will be joined with its corresponding
 #' internal standard, replicate, and calibration level to calculate the ratio.
-#' 
+#'
 #' The average for each calibration level will then be calculated.
 #'
 #' This uses the processed files from Set2_1_138_Short.XLS
@@ -20,16 +20,16 @@
 #'    Data:
 #'     - Raw Analyte Peak values filtered down to calibration filename
 #'     - Raw Internal Standard Peak values filtered down to calibration filename
-#'     
+#'
 #'    Ref:
 #'     - Mapping file to tie native analytes to internal standards
-#'     
+#'
 #' Ouput: Average Peak Area Ratio
-#' 
-#' 
+#'
+#'
 #' Note:
-#' 
-#' When there are duplicate filenames - this could be as a result of mid-run 
+#'
+#' When there are duplicate filenames - this could be as a result of mid-run
 #' when the person running the mass spec needs to restart, they would start where
 #' they left off. We take the highest value in the event that when finding the
 #' area under the curve, they do ignore it because it is a duplicate filename.

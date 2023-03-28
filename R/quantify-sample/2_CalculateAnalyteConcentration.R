@@ -52,7 +52,7 @@ concen_internal_stanard_mapping <- readxl::read_excel(
 
 
 peak_area_ratio %>%
-  # dplyr::filter(individual_native_analyte_name == "4_2FTS") %>% 
+  # dplyr::filter(individual_native_analyte_name == "4_2FTS") %>%
   dplyr::left_join(
     calibration_curve_output,
     by = "individual_native_analyte_name"
@@ -63,16 +63,17 @@ peak_area_ratio %>%
   ) %>%
   dplyr::rename(
     source_internal_standard_name = internal_standard_name
-  ) %>% 
+  ) %>%
   dplyr::left_join(
     concen_internal_stanard_mapping,
     by = c("source_internal_standard_name" = "mapped_internal_standard_name")
-  ) %>% 
+  ) %>%
   dplyr::mutate(
     internal_standard_name = ifelse(is.na(concentration_internal_standard_name),
-                                    source_internal_standard_name,
-                                    concentration_internal_standard_name)
-  ) %>% 
+      source_internal_standard_name,
+      concentration_internal_standard_name
+    )
+  ) %>%
   dplyr::left_join(
     internal_standard_mix,
     by = c("internal_standard_name", "internal_standard_used")
@@ -91,14 +92,14 @@ peak_area_ratio %>%
   ) %>%
   readr::write_excel_csv(
     "data/processed/quantify-sample/analyte_concentration.csv"
-  ) 
+  )
 
 
 temp_df <- arrow::read_parquet("data/processed/quantify-sample/analyte_concentration.parquet")
 temp_df <- as.data.frame(temp_df)
 xlsx::write.xlsx(
-    temp_df,
-    file = "data/processed/quantify-sample/analyte_concentration.xlsx",
-    row.names = FALSE,
-    showNA = FALSE
-  )
+  temp_df,
+  file = "data/processed/quantify-sample/analyte_concentration.xlsx",
+  row.names = FALSE,
+  showNA = FALSE
+)

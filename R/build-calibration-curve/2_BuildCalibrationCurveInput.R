@@ -13,6 +13,8 @@
 #' Output:
 #'   - data/processed/calibration-curve/calibration_curve_input.parquet
 
+library(magrittr)
+
 source("R/build-calibration-curve/1_CalculateAveragePeakRatio.R")
 source("R/build-calibration-curve/1_CalculateConcentrationRatio.R")
 
@@ -33,8 +35,6 @@ average_peak_area_ratio_df %>%
       "calibration_level"
     )
   ) %>%
-  # TODO sort out missing calibration matching
-  dplyr::filter(!is.na(analyte_concentration_ratio)) %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_input.parquet"
   ) %>%

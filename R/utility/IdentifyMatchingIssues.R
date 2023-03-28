@@ -86,7 +86,7 @@ native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/process
 
 cal_name_native_analyte_mapping_df <- arrow::read_parquet("data/processed/reference/calibration_concentration_name_mapping.parquet")
 
-native_analyte_concentration_df %>%
+match_df <- native_analyte_concentration_df %>%
   dplyr::rename(source_analyte_name = individual_native_analyte_name) %>%
   dplyr::left_join(cal_name_native_analyte_mapping_df, by = "source_analyte_name") %>%
   # dropping instances where there is not a mapped analyte name TODO
@@ -101,8 +101,10 @@ native_analyte_concentration_df %>%
     mapping_file_analyte_name = individual_native_analyte_name,
     match_found
   ) %>%
-  readr::write_excel_csv(
-    "data/processed/troubleshoot/matching-issue/concentration_table_to_mapping_table_issue.csv"
+  as.data.frame() %>%
+  xlsx::write.xlsx(
+    "data/processed/troubleshoot/matching-issue/source_analyte_to_concentration_match_issue.xlsx",
+    row.names = FALSE
   )
 
 ##################################
@@ -118,7 +120,7 @@ concentration_ratio_df <- arrow::read_parquet("data/processed/calibration-curve/
     analyte_concentration_ratio
   )
 
-average_peak_area_ratio_df %>% 
+average_peak_area_ratio_df %>%
   dplyr::left_join(
     concentration_ratio_df,
     by = c(
@@ -128,17 +130,17 @@ average_peak_area_ratio_df %>%
   ) %>%
   dplyr::mutate(
     concentration_ratio_match_found = ifelse(is.na(analyte_concentration_ratio),
-                                             "no match found",
-                                             "match found"
+      "no match found",
+      "match found"
     )
-  ) %>% 
+  ) %>%
   dplyr::distinct(
     source_calibration_analyte_name = individual_native_analyte_name,
     concentration_ratio_match_found
-  ) %>% 
+  ) %>%
   readr::write_excel_csv(
     "data/processed/troubleshoot/matching-issue/source_calibration_analyte_to_concentratio_ratio_match_issue.csv"
-    )
+  )
 
 
 ##################
