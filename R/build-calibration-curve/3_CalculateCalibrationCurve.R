@@ -9,7 +9,7 @@
 
 library(magrittr)
 
-source("R/build-calibration-curve/BuildCalibrationCurveInput.R")
+source("R/build-calibration-curve/2_BuildCalibrationCurveInput.R")
 
 calibration_curve_input_df <- arrow::read_parquet("data/processed/calibration-curve/calibration_curve_input.parquet")
 
@@ -117,10 +117,18 @@ calibration_curve_output_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_output.parquet"
   ) %>%
-  readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_output.csv")
+  as.data.frame() %>%
+  xlsx::write.xlsx(
+    "data/processed/calibration-curve/calibration_curve_output.xlsx",
+    row.names = FALSE
+  )
 
 calibration_curve_troublehsoot_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_troublehsoot.parquet"
   ) %>%
-  readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_troublehsoot.csv")
+  as.data.frame() %>%
+  xlsx::write.xlsx(
+    "data/processed/calibration-curve/calibration_curve_troublehsoot.xlsx",
+    row.names = FALSE
+  )

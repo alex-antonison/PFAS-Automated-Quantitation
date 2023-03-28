@@ -3,10 +3,18 @@
 #' Combines the Average Peak Area Ratio output to the
 #' Concentration Ratio Output
 #'
-#' TODO: At this stage, come back and build some validation steps before doing more calculations
+#' Input:
+#'   Data:
+#'     - data/processed/calibration-curve/average_peak_area_ratio.parquet
+#'     - data/processed/calibration-curve/concentration_ratio.parquet
+#'
+#' Output:
+#'   - data/processed/calibration-curve/calibration_curve_input.parquet
 
-source("R/build-calibration-curve/CalculateAveragePeakRatio.R")
-source("R/build-calibration-curve/CalculateConcentrationRatio.R")
+library(magrittr)
+
+source("R/build-calibration-curve/1_CalculateAveragePeakRatio.R")
+source("R/build-calibration-curve/1_CalculateConcentrationRatio.R")
 
 average_peak_area_ratio_df <- arrow::read_parquet("data/processed/calibration-curve/average_peak_area_ratio.parquet")
 
@@ -25,9 +33,11 @@ average_peak_area_ratio_df %>%
       "calibration_level"
     )
   ) %>%
-  # TODO sort out missing calibration matching
-  dplyr::filter(!is.na(analyte_concentration_ratio)) %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_input.parquet"
   ) %>%
-  readr::write_excel_csv("data/processed/calibration-curve/calibration_curve_input.csv")
+  as.data.frame() %>%
+  xlsx::write.xlsx(
+    "data/processed/calibration-curve/calibration_curve_input.xlsx",
+    row.names = FALSE
+  )
