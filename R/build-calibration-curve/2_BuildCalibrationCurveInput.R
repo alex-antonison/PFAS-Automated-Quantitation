@@ -3,8 +3,6 @@
 #' Combines the Average Peak Area Ratio output to the
 #' Concentration Ratio Output
 #'
-#' TODO: At this stage, come back and build some validation steps before doing more calculations
-#'
 #' Input:
 #'   Data:
 #'     - data/processed/calibration-curve/average_peak_area_ratio.parquet
@@ -38,6 +36,8 @@ average_peak_area_ratio_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/calibration_curve_input.parquet"
   ) %>%
-  readr::write_excel_csv(
-    "data/processed/calibration-curve/calibration_curve_input.csv"
+  as.data.frame() %>%
+  xlsx::write.xlsx(
+    "data/processed/calibration-curve/calibration_curve_input.xlsx",
+    row.names = FALSE
   )
