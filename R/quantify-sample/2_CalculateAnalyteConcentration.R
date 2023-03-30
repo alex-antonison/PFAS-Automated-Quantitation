@@ -46,7 +46,7 @@ internal_standard_mix <- arrow::read_parquet(
     internal_standard_concentration_ppb
   )
 
-concen_internal_stanard_mapping <- readxl::read_excel(
+concen_internal_stanard_mapping <- arrow::read_parquet(
   "data/processed/reference/concentration_internal_standard_mapping.parquet"
 )
 
