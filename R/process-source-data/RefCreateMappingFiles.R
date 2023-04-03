@@ -10,8 +10,8 @@ library(magrittr)
 
 full_file_list <- c(
   "data/source/Native_analyte_ISmatch_source.xlsx",
-  "data/source/calibration_concentration_name_mapping.csv",
-  "data/source/concentration_internal_standard_mapping.xlsx"
+  "data/source/analyte_concentration_name_mapping.xlsx",
+  "data/source/internal_standard_concentration_name_mapping.xlsx"
 )
 
 # setting this to false
