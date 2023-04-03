@@ -408,7 +408,7 @@ combined_data_df %>%
   dplyr::filter(area != "NF") %>%
   dplyr::mutate(
     # rename to cartridge_number for joining later
-    cartridge_number = as.integer(filename),
+    cartridge_number = filename,
     # convert peak area to numeric
     individual_native_analyte_peak_area = as.numeric(area),
     # calculate analyte name
