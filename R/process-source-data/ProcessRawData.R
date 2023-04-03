@@ -443,7 +443,7 @@ combined_data_df %>%
   dplyr::mutate(
     internal_standard_name = sheet_name,
     # rename to cartridge_number for joining later
-    cartridge_number = as.integer(filename),
+    cartridge_number = filename,
     # convert peak area to numeric
     internal_standard_peak_area = as.numeric(area)
   ) %>%
