@@ -52,7 +52,6 @@ concen_internal_stanard_mapping <- arrow::read_parquet(
 
 
 peak_area_ratio %>%
-  # dplyr::filter(individual_native_analyte_name == "4_2FTS") %>%
   dplyr::left_join(
     calibration_curve_output,
     by = "individual_native_analyte_name"
