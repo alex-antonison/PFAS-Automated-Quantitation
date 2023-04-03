@@ -1,0 +1,10 @@
+# Produce Data Outputs
+
+Q: What is Blank Filter?
+A: Removing whatever contamination from sample or blanks from the actual sample.
+
+Remove the Extraction Blanks from all other sample types.
+
+Field Blanks
+Surface Water Samples
+QC Samples
