@@ -589,3 +589,17 @@ isMixSource -> analyte_concentration_calculation
 analyte_concentration_calculation -> step3
 }")
 ```
+
+### Produce Data Outputs
+
+#### Blank Filtering
+
+Produce a variation on the Analyte Concnetration Table except this will include NF values and for QC/Extraction Blank/Field Blanks
+
+Pre1: Produce a data file that includes all of the Extract Blank, even if NF.
+1. Remove the average of Extraction Blanks from the other analyte concentrations.
+
+
+Blank Filtering means to subtract the value in the blank from the sample.
+
+1. Produce an output table that includes all of the blanks noted from the Extraction Batch Sources

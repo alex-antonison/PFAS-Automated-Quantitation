@@ -37,6 +37,8 @@
 source("R/process-source-data/RefCreateMappingFiles.R")
 source("R/process-source-data/ProcessRawData.R")
 
+library(magrittr)
+
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/processed/reference/native_analyte_internal_standard_mapping.parquet")
 
 individual_native_analyte_df <- arrow::read_parquet("data/processed/source/source_data_individual_native_analyte.parquet") %>%
@@ -53,8 +55,6 @@ individual_native_analyte_df <- arrow::read_parquet("data/processed/source/sourc
   # ranking to find the highest value of peak area
   dplyr::group_by(
     individual_native_analyte_name,
-    source_file_name,
-    filename,
     replicate_number,
     calibration_level
   ) %>%
@@ -86,7 +86,6 @@ internal_standard_df <- arrow::read_parquet("data/processed/source/source_data_i
   dplyr::distinct_all() %>%
   dplyr::group_by(
     internal_standard_name,
-    source_file_name,
     filename
   ) %>%
   # rank internal standard + source file name + filename to identify the row with

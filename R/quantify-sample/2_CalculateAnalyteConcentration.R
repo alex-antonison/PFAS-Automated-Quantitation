@@ -46,13 +46,12 @@ internal_standard_mix <- arrow::read_parquet(
     internal_standard_concentration_ppb
   )
 
-concen_internal_stanard_mapping <- readxl::read_excel(
+concen_internal_stanard_mapping <- arrow::read_parquet(
   "data/processed/reference/concentration_internal_standard_mapping.parquet"
 )
 
 
 peak_area_ratio %>%
-  # dplyr::filter(individual_native_analyte_name == "4_2FTS") %>%
   dplyr::left_join(
     calibration_curve_output,
     by = "individual_native_analyte_name"
@@ -114,3 +113,4 @@ peak_area_ratio %>%
     "data/processed/quantify-sample/analyte_concentration.xlsx",
     row.names = FALSE
   )
+
