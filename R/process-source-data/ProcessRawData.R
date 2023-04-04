@@ -6,7 +6,11 @@ library(magrittr)
 
 
 reference_file_list <- "data/source/Native_analyte_ISmatch_source.xlsx"
-source_file_list <- c("data/source/Set2_1_138_Short.XLS", "data/source/Set2_139_273_Short.XLS", "data/source/Set2_274_314_Short.XLS")
+source_file_list <- c(
+  "data/source/Set2_1_138_Short.XLS",
+  "data/source/Set2_139_273_Short.XLS",
+  "data/source/Set2_274_314_Short.XLS"
+)
 
 full_file_list <- c(reference_file_list, source_file_list)
 
@@ -236,14 +240,17 @@ for (file_name in source_file_list) {
   )
 }
 
-# save the results out for review
-readr::write_csv(combined_data_df, "data/processed/troubleshoot/raw_data_processing_output.csv")
+# troubleshoot naming
 readr::write_csv(combined_naming_df, "data/processed/troubleshoot/raw_data_processing_naming.csv")
 
+# write full output to parquet for processing
 arrow::write_parquet(
   combined_data_df,
   sink = "data/processed/source/full_raw_data.parquet"
 )
 
-
-
+# write full output to csv
+readr::write_csv(
+  combined_data_df,
+  "data/processed/source/full_raw_data.csv"
+)
