@@ -35,9 +35,167 @@
 #' area under the curve, they do ignore it because it is a duplicate filename.
 
 source("R/process-source-data/RefCreateMappingFiles.R")
-source("R/process-source-data/ProcessRawData.R")
 
 library(magrittr)
+
+####################################
+# Build raw data tables
+####################################
+
+####################################
+# Create Analyte Calibration Table
+####################################
+
+combined_data_df <- arrow::read_parquet(
+  "data/processed/source/full_raw_data.parquet"
+)
+
+# create_analyte_table <- function(df) {
+temp_analyte_df <- combined_data_df %>%
+  dplyr::filter(source_type == "native_analyte") %>%
+  # filter down to analytes that have a match in the reference file
+  dplyr::filter(analyte_match == "Match Found") %>%
+  # filter down to cal values
+  dplyr::filter(
+    stringr::str_detect(stringr::str_to_lower(filename), "cal")
+  ) %>%
+  dplyr::mutate(
+    # calculate the length of the analyte name to trim the number
+    # off the end
+    analyte_name_length = stringr::str_length(sheet_name),
+    # remove the _# from the end of the analyte name
+    analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
+    # capture the transition number
+    transition_number = stringr::str_sub(sheet_name, -1),
+    underscore_count = stringr::str_count(filename, "_")
+  ) %>%
+  # only interested in the first transition for an analyte
+  dplyr::filter(transition_number == 1) %>%
+  # only filenames with values that are not NF
+  dplyr::filter(area != "NF") %>%
+  # convert area to numeric
+  dplyr::mutate(
+    individual_native_analyte_peak_area = as.numeric(area)
+  )
+
+without_rep_number_df <- temp_analyte_df %>%
+  dplyr::filter(underscore_count == 1) %>%
+  dplyr::mutate(
+    replicate_number = 1,
+    split_filename = stringr::str_split_fixed(filename, "_", 2),
+    calibration_level = as.integer(split_filename[, 2])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    individual_native_analyte_name = analyte_name,
+    transition_number,
+    replicate_number,
+    calibration_level,
+    individual_native_analyte_peak_area
+  )
+
+with_rep_number_df <- temp_analyte_df %>%
+  dplyr::filter(underscore_count == 2) %>%
+  dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
+  dplyr::mutate(
+    split_filename = stringr::str_split_fixed(filename, "_", 3),
+    replicate_number = as.integer(split_filename[, 2]),
+    calibration_level = as.integer(split_filename[, 3])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    individual_native_analyte_name = analyte_name,
+    transition_number,
+    replicate_number,
+    calibration_level,
+    individual_native_analyte_peak_area
+  )
+
+dplyr::bind_rows(
+  without_rep_number_df,
+  with_rep_number_df
+) %>%
+  readr::write_csv(
+    "data/processed/source/source_data_individual_native_analyte.csv"
+  ) %>%
+  arrow::write_parquet(
+    sink = "data/processed/source/source_data_individual_native_analyte.parquet"
+  )
+
+####################################
+# Create Internal Standard Calibration Table
+####################################
+
+temp_ind_df <- combined_data_df %>%
+  # filter down to internal_standard
+  dplyr::filter(source_type == "internal_standard") %>%
+  # filter down to cal levels
+  dplyr::filter(
+    stringr::str_detect(stringr::str_to_lower(filename), "cal")
+  ) %>%
+  # only filenames with values that are not NF
+  dplyr::filter(area != "NF") %>%
+  dplyr::mutate(
+    internal_standard = sheet_name,
+    underscore_count = stringr::str_count(filename, "_"),
+    internal_standard_peak_area = as.numeric(area)
+  )
+
+
+temp_ind_without_rep_df <- temp_ind_df %>%
+  dplyr::filter(underscore_count == 1) %>%
+  dplyr::mutate(
+    replicate_number = 1,
+    split_filename = stringr::str_split_fixed(filename, "_", 2),
+    calibration_level = as.integer(split_filename[, 2])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    internal_standard_name = internal_standard,
+    replicate_number,
+    calibration_level,
+    internal_standard_peak_area
+  )
+
+temp_ind_with_rep_df <- temp_ind_df %>%
+  dplyr::filter(underscore_count == 2) %>%
+  dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
+  dplyr::mutate(
+    split_filename = stringr::str_split_fixed(filename, "_", 3),
+    replicate_number = as.integer(split_filename[, 2]),
+    calibration_level = as.integer(split_filename[, 3])
+  ) %>%
+  dplyr::select(
+    source_file_name,
+    source_type,
+    sheet_name,
+    filename,
+    internal_standard_name = internal_standard,
+    replicate_number,
+    calibration_level,
+    internal_standard_peak_area
+  )
+
+dplyr::bind_rows(
+  temp_ind_without_rep_df,
+  temp_ind_with_rep_df
+) %>%
+  readr::write_csv(
+    "data/processed/source/source_data_internal_standard.csv"
+  ) %>%
+  arrow::write_parquet(
+    sink = "data/processed/source/source_data_internal_standard.parquet"
+  )
+############################### Start Calculating Average Peak Ratio #####################
 
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/processed/reference/native_analyte_internal_standard_mapping.parquet")
 
