@@ -22,7 +22,7 @@ source("R/process-source-data/RefCreateMappingFiles.R")
 
 combined_data_df <- arrow::read_parquet(
   "data/processed/source/full_raw_data.parquet"
-  )
+)
 
 combined_data_df %>%
   dplyr::filter(source_type == "native_analyte") %>%
