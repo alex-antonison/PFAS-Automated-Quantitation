@@ -594,12 +594,46 @@ analyte_concentration_calculation -> step3
 
 #### Blank Filtering
 
-Produce a variation on the Analyte Concnetration Table except this will include NF values and for QC/Extraction Blank/Field Blanks
-
-Pre1: Produce a data file that includes all of the Extract Blank, even if NF.
-1. Remove the average of Extraction Blanks from the other analyte concentrations.
-
-
 Blank Filtering means to subtract the value in the blank from the sample.
 
 1. Produce an output table that includes all of the blanks noted from the Extraction Batch Sources
+2. Subtract the Extraction Blank from the Analyte Value
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+  node [shape=none, margin=0]
+    
+
+    
+    // sourced tables
+    extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
+    sourceSample [label = 'SetX_XXX_XXX_short.XLS', shape = folder, style = filled, fillcolor = linen]
+    
+    
+    step1 [label = 'Filter to Extraction Blank values from Raw Source data using County column', shape = rectangle, style = filled, fillcolor = white]
+    
+        step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
+    
+
+    analyte_in_blank_sample [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>analyte_in_blank_sample</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>cartridge_number: text</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>county: text</td></tr>
+            <tr><td align='left'>sample_id: text</td></tr>
+            <tr><td align='left'>sample_mass_g: numeric</td></tr>
+            <tr><td align='left'>individual_analyte_native_peak_area: numeric</td></tr>
+        </table>
+    >]
+    
+    extractionBatchSource -> step1
+    sourceSample -> step1
+    step1 -> step2
+    step2 -> analyte_in_blank_sample
+    
+}")
+```

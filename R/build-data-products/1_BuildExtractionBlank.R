@@ -36,13 +36,13 @@ analyte_peak_area <- source_data_df %>%
   )
 
 
-test_cart <- analyte_peak_area %>%
+cur_df <- analyte_peak_area %>%
   dplyr::left_join(
     extraction_batch_source,
     by = c("batch_number", "cartridge_number")
   ) %>%
   # filter down to blanks and QC
-  dplyr::filter(stringr::str_detect(county, "Blank") | stringr::str_detect(county, "QC")) %>%
+  dplyr::filter(stringr::str_detect(county, "Extraction Blank")) %>%
   # instances where NF, set to 0
   dplyr::mutate(
     individual_native_analyte_peak_area = dplyr::if_else(
@@ -50,4 +50,13 @@ test_cart <- analyte_peak_area %>%
       0,
       individual_native_analyte_peak_area
     )
+  ) %>%
+  dplyr::select(
+    batch_number,
+    cartridge_number,
+    individual_native_analyte_name,
+    county,
+    sample_id,
+    sample_mass_g,
+    individual_native_analyte_peak_area
   )
