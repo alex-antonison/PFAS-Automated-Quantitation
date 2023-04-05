@@ -284,7 +284,7 @@ DiagrammeR::grViz("digraph {
 
     // Box for entities
     node [shape=none, margin=0]
-    
+
     analyte_reference_table [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>analyte_reference_table</td></tr>
@@ -663,18 +663,18 @@ Blank Filtering means to subtract the value in the blank from the sample.
 DiagrammeR::grViz("digraph {
 
   node [shape=none, margin=0]
-    
 
-    
+
+
     // sourced tables
     extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
     sourceSample [label = 'SetX_XXX_XXX_short.XLS', shape = folder, style = filled, fillcolor = linen]
-    
-    
+
+
     step1 [label = 'Filter to Extraction Blank values from Raw Source data using County column', shape = rectangle, style = filled, fillcolor = white]
-    
+
         step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
-    
+
 
     analyte_in_blank_sample [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
@@ -689,11 +689,11 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>individual_analyte_native_peak_area: numeric</td></tr>
         </table>
     >]
-    
+
     extractionBatchSource -> step1
     sourceSample -> step1
     step1 -> step2
     step2 -> analyte_in_blank_sample
-    
+
 }")
 ```
