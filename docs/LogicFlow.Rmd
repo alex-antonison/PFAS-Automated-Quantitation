@@ -284,6 +284,15 @@ DiagrammeR::grViz("digraph {
 
     // Box for entities
     node [shape=none, margin=0]
+    
+    analyte_reference_table [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>analyte_reference_table</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>minimum_limit_of_quantitation: text</td></tr>
+        </table>
+    >]
 
     average_peak_area_ratio [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
@@ -302,7 +311,7 @@ DiagrammeR::grViz("digraph {
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
-            <tr><td align='left'>calibration_level: text</td></tr>
+            <tr><td align='left'>calibration_level: numeric</td></tr>
             <tr><td align='left'>concentration_ratio: numeric</td></tr>
         </table>
     >]
@@ -313,15 +322,17 @@ DiagrammeR::grViz("digraph {
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
-            <tr><td align='left'>calibration_level: text</td></tr>
+            <tr><td align='left'>calibration_level: numeric</td></tr>
             <tr><td align='left'>average_peak_area_ratio: numeric</td></tr>
             <tr><td align='left'>analyte_concentration_ratio: numeric</td></tr>
+            <tr><td align='left'>minimum_limit_of_quantitation: text</td></tr>
         </table>
     >]
 
 
 average_peak_area_ratio -> calibration_curve_input
 concentration_ratio -> calibration_curve_input
+analyte_reference_table -> calibration_curve_input
 }")
 ```
 
@@ -340,6 +351,10 @@ calibration_curve_output [label = 'calibration_curve_output', shape = folder, fi
 
 calibration_curve_troubleshoot [label = 'calibration_curve_troubleshoot', shape = folder, fillcolor = lightblue]
 
+calibration_recovery_troubleshoot [label = 'calibration_recovery_troubleshoot', shape = folder, fillcolor = lightblue]
+
+step4 [label = 'Remove Calibration Levels below Limit of Quantitation (LOQ)']
+
 step6 [label = 'Calculate slope of the cal curve:
 y-axis = Average Peak Area Ratio
 x-axis = Analyte Concentration Ratio']
@@ -348,13 +363,30 @@ step7 [label = 'Is R^2 < 0.99 or R^2 >= 0.99?', shape = diamond]
 
 step8 [label = 'Remove single lower and then upper level until R^2 >= 0.99']
 
-calibration_curve_input -> step6
+step9 [label = 'Calculate Experimental Cocentration Ratio
+Experimental Cocentration Ratio = (Average Peak Area Ratio - Intercept)/Slope
+']
+
+step10 [label = 'Calculate Recovery
+Recovery = Experimental Cocentration Ratio / Analyte Concentration Ratio
+']
+
+step11 [label = 'Recovery >= 0.8 AND Recovery <= 1.2', shape = diamond]
+
+step12 [label = 'Remove Calibration Levels with out of bounds Recovery Value']
+
+calibration_curve_input -> step4 -> step6
 step6 -> step7
 
-step7 -> calibration_curve_output [label = 'R^2 >= 0.99']
+step7 -> step9 [label = 'R^2 >= 0.99']
 step7 -> step8  [label = 'R^2 < 0.99']
+step9 -> step10 -> step11
+step11 -> calibration_curve_output [label = 'Recovery Values in Bounds']
+step11 -> step12 [label = 'Recovery Values out of Bounds']
+step12 -> step6
 step8 -> step6
 step8 -> calibration_curve_troubleshoot
+step12 -> calibration_recovery_troubleshoot
 
 }")
 ```
@@ -378,6 +410,18 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
+  calibration_recovery_troubleshoot [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>calibration_recovery_troubleshoot</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>calibration_level: text</td></tr>
+            <tr><td align='left'>experimental_concentration_ratio: numeric</td></tr>
+            <tr><td align='left'>analyte_concentration_ratio: numeric</td></tr>
+            <tr><td align='left'>recovery: numeric</td></tr>
+        </table>
+    >]
+
 
     calibration_curve_output [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
@@ -389,6 +433,8 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>r_squared: numeric</td></tr>
             <tr><td align='left'>calibration_range: text</td></tr>
             <tr><td align='left'>removed_calibration_levels: text</td></tr>
+            <tr><td align='left'>minimum_average_peak_area_ratio: numeric</td></tr>
+            <tr><td align='left'>maximum_average_peak_area_ratio: numeric</td></tr>
         </table>
     >]
 
@@ -570,7 +616,7 @@ extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder,
 peak_area_ratio [label = 'peak_area_ratio', shape = folder, fillcolor = lightblue]
 calibration_curve_output [label = 'calibration_curve_output', shape = folder, fillcolor = lightblue]
 
-analyte_concentration_calculation [label = 'analyte_concentration_calculation', shape = folder, fillcolor = lightblue]
+analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, fillcolor = lightblue]
 
 
 
@@ -581,12 +627,26 @@ b = y-intercept of cal curve trendline
 m = slope of cal curve trendline
 C_IS = concentration of internal standard']
 
-peak_area_ratio -> analyte_concentration_calculation
-calibration_curve_output -> analyte_concentration_calculation
-extractionBatchSource -> analyte_concentration_calculation
-isMixSource -> analyte_concentration_calculation
+step4 [label = 'Evaluate Calibration_Curve_Range_Category
+Area Ratio < Calibration Curve Minimum Average Peak Area Ratio = <LOQ (set Concentration Value to NaN)
+Area Ratio > Calibration Curve Maximum Average Peak Area Ratio = Above Cal
+Area Ratio within bounds = Within Calibration Range
+']
 
-analyte_concentration_calculation -> step3
+step5 [label = 'Is Average Peak Area Ratio above or below LOQ?', shape = diamond]
+
+step6 [label = 'Set Analyte Concentration to NaN']
+
+peak_area_ratio -> analyte_concentration_calculation_input
+calibration_curve_output -> analyte_concentration_calculation_input
+extractionBatchSource -> analyte_concentration_calculation_input
+isMixSource -> analyte_concentration_calculation_input
+
+analyte_concentration_calculation_input -> step4
+
+step4 -> step5
+step5 -> step6 [label = 'Average Peak Area Ratio below LOQ']
+step5 -> step3 [label = 'Average Peak Area Ratio Abvoe LOQ']
 }")
 ```
 
@@ -594,12 +654,46 @@ analyte_concentration_calculation -> step3
 
 #### Blank Filtering
 
-Produce a variation on the Analyte Concnetration Table except this will include NF values and for QC/Extraction Blank/Field Blanks
-
-Pre1: Produce a data file that includes all of the Extract Blank, even if NF.
-1. Remove the average of Extraction Blanks from the other analyte concentrations.
-
-
 Blank Filtering means to subtract the value in the blank from the sample.
 
 1. Produce an output table that includes all of the blanks noted from the Extraction Batch Sources
+2. Subtract the Extraction Blank from the Analyte Value
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+  node [shape=none, margin=0]
+    
+
+    
+    // sourced tables
+    extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
+    sourceSample [label = 'SetX_XXX_XXX_short.XLS', shape = folder, style = filled, fillcolor = linen]
+    
+    
+    step1 [label = 'Filter to Extraction Blank values from Raw Source data using County column', shape = rectangle, style = filled, fillcolor = white]
+    
+        step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
+    
+
+    analyte_in_blank_sample [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>analyte_in_blank_sample</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>cartridge_number: text</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>county: text</td></tr>
+            <tr><td align='left'>sample_id: text</td></tr>
+            <tr><td align='left'>sample_mass_g: numeric</td></tr>
+            <tr><td align='left'>individual_analyte_native_peak_area: numeric</td></tr>
+        </table>
+    >]
+    
+    extractionBatchSource -> step1
+    sourceSample -> step1
+    step1 -> step2
+    step2 -> analyte_in_blank_sample
+    
+}")
+```

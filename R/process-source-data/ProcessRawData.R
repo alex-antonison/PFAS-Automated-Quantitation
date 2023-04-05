@@ -6,7 +6,11 @@ library(magrittr)
 
 
 reference_file_list <- "data/source/Native_analyte_ISmatch_source.xlsx"
-source_file_list <- c("data/source/Set2_1_138_Short.XLS", "data/source/Set2_139_273_Short.XLS", "data/source/Set2_274_314_Short.XLS")
+source_file_list <- c(
+  "data/source/Set2_1_138_Short.XLS",
+  "data/source/Set2_139_273_Short.XLS",
+  "data/source/Set2_274_314_Short.XLS"
+)
 
 full_file_list <- c(reference_file_list, source_file_list)
 
@@ -236,224 +240,17 @@ for (file_name in source_file_list) {
   )
 }
 
-# save the results out for review
-readr::write_csv(combined_data_df, "data/processed/troubleshoot/raw_data_processing_output.csv")
+# troubleshoot naming
 readr::write_csv(combined_naming_df, "data/processed/troubleshoot/raw_data_processing_naming.csv")
 
-####################################
-# Split Data Into Separate Tables
-####################################
+# write full output to parquet for processing
+arrow::write_parquet(
+  combined_data_df,
+  sink = "data/processed/source/full_raw_data.parquet"
+)
 
-####################################
-# Create Analyte Calibration Table
-####################################
-
-# create_analyte_table <- function(df) {
-temp_analyte_df <- combined_data_df %>%
-  dplyr::filter(source_type == "native_analyte") %>%
-  # filter down to analytes that have a match in the reference file
-  dplyr::filter(analyte_match == "Match Found") %>%
-  # filter down to cal values
-  dplyr::filter(
-    stringr::str_detect(stringr::str_to_lower(filename), "cal")
-  ) %>%
-  dplyr::mutate(
-    # calculate the length of the analyte name to trim the number
-    # off the end
-    analyte_name_length = stringr::str_length(sheet_name),
-    # remove the _# from the end of the analyte name
-    analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
-    # capture the transition number
-    transition_number = stringr::str_sub(sheet_name, -1),
-    underscore_count = stringr::str_count(filename, "_")
-  ) %>%
-  # only interested in the first transition for an analyte
-  dplyr::filter(transition_number == 1) %>%
-  # only filenames with values that are not NF
-  dplyr::filter(area != "NF") %>%
-  # convert area to numeric
-  dplyr::mutate(
-    individual_native_analyte_peak_area = as.numeric(area)
-  )
-
-without_rep_number_df <- temp_analyte_df %>%
-  dplyr::filter(underscore_count == 1) %>%
-  dplyr::mutate(
-    replicate_number = 1,
-    split_filename = stringr::str_split_fixed(filename, "_", 2),
-    calibration_level = as.integer(split_filename[, 2])
-  ) %>%
-  dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
-    individual_native_analyte_name = analyte_name,
-    transition_number,
-    replicate_number,
-    calibration_level,
-    individual_native_analyte_peak_area
-  )
-
-with_rep_number_df <- temp_analyte_df %>%
-  dplyr::filter(underscore_count == 2) %>%
-  dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
-  dplyr::mutate(
-    split_filename = stringr::str_split_fixed(filename, "_", 3),
-    replicate_number = as.integer(split_filename[, 2]),
-    calibration_level = as.integer(split_filename[, 3])
-  ) %>%
-  dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
-    individual_native_analyte_name = analyte_name,
-    transition_number,
-    replicate_number,
-    calibration_level,
-    individual_native_analyte_peak_area
-  )
-
-dplyr::bind_rows(
-  without_rep_number_df,
-  with_rep_number_df
-) %>%
-  readr::write_csv(
-    "data/processed/source/source_data_individual_native_analyte.csv"
-  ) %>%
-  arrow::write_parquet(
-    sink = "data/processed/source/source_data_individual_native_analyte.parquet"
-  )
-
-####################################
-# Create Internal Standard Calibration Table
-####################################
-
-temp_ind_df <- combined_data_df %>%
-  # filter down to internal_standard
-  dplyr::filter(source_type == "internal_standard") %>%
-  # filter down to cal levels
-  dplyr::filter(
-    stringr::str_detect(stringr::str_to_lower(filename), "cal")
-  ) %>%
-  # only filenames with values that are not NF
-  dplyr::filter(area != "NF") %>%
-  dplyr::mutate(
-    internal_standard = sheet_name,
-    underscore_count = stringr::str_count(filename, "_"),
-    internal_standard_peak_area = as.numeric(area)
-  )
-
-
-temp_ind_without_rep_df <- temp_ind_df %>%
-  dplyr::filter(underscore_count == 1) %>%
-  dplyr::mutate(
-    replicate_number = 1,
-    split_filename = stringr::str_split_fixed(filename, "_", 2),
-    calibration_level = as.integer(split_filename[, 2])
-  ) %>%
-  dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
-    internal_standard_name = internal_standard,
-    replicate_number,
-    calibration_level,
-    internal_standard_peak_area
-  )
-
-temp_ind_with_rep_df <- temp_ind_df %>%
-  dplyr::filter(underscore_count == 2) %>%
-  dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
-  dplyr::mutate(
-    split_filename = stringr::str_split_fixed(filename, "_", 3),
-    replicate_number = as.integer(split_filename[, 2]),
-    calibration_level = as.integer(split_filename[, 3])
-  ) %>%
-  dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
-    internal_standard_name = internal_standard,
-    replicate_number,
-    calibration_level,
-    internal_standard_peak_area
-  )
-
-dplyr::bind_rows(
-  temp_ind_without_rep_df,
-  temp_ind_with_rep_df
-) %>%
-  readr::write_csv(
-    "data/processed/source/source_data_internal_standard.csv"
-  ) %>%
-  arrow::write_parquet(
-    sink = "data/processed/source/source_data_internal_standard.parquet"
-  )
-
-####################################
-# Create Analyte Sample Table
-####################################
-
-combined_data_df %>%
-  dplyr::filter(source_type == "native_analyte") %>%
-  # filter down to analytes that have a match in the reference file
-  dplyr::filter(analyte_match == "Match Found") %>%
-  # filter down to only filenames that have a number
-  dplyr::filter(!grepl("\\D", filename)) %>%
-  # only filenames with values that are not NF
-  dplyr::filter(area != "NF") %>%
-  dplyr::mutate(
-    # rename to cartridge_number for joining later
-    cartridge_number = filename,
-    # convert peak area to numeric
-    individual_native_analyte_peak_area = as.numeric(area),
-    # calculate analyte name
-    analyte_name_length = stringr::str_length(sheet_name),
-    individual_native_analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
-    # calculate transition number
-    transition_number = stringr::str_sub(sheet_name, -1)
-  ) %>%
-  # filter to transition 1
-  dplyr::filter(transition_number == 1) %>%
-  dplyr::select(
-    individual_native_analyte_name,
-    cartridge_number,
-    batch_number,
-    individual_native_analyte_peak_area
-  ) %>%
-  arrow::write_parquet(
-    sink = "data/processed/source/sample_individual_native_analyte.parquet"
-  ) %>%
-  readr::write_excel_csv("data/processed/source/sample_individual_native_analyte.csv")
-
-####################################
-# Create Internal Standard Sample Table
-####################################
-
-combined_data_df %>%
-  dplyr::filter(source_type == "internal_standard") %>%
-  # filter down to only filenames that are a number
-  dplyr::filter(!grepl("\\D", filename)) %>%
-  # only filenames with values that are not NF
-  dplyr::filter(area != "NF") %>%
-  dplyr::mutate(
-    internal_standard_name = sheet_name,
-    # rename to cartridge_number for joining later
-    cartridge_number = filename,
-    # convert peak area to numeric
-    internal_standard_peak_area = as.numeric(area)
-  ) %>%
-  dplyr::select(
-    internal_standard_name,
-    cartridge_number,
-    batch_number,
-    internal_standard_peak_area
-  ) %>%
-  arrow::write_parquet(
-    sink = "data/processed/source/sample_internal_standard.parquet"
-  ) %>%
-  readr::write_excel_csv("data/processed/source/sample_internal_standard.csv")
+# write full output to csv
+readr::write_csv(
+  combined_data_df,
+  "data/processed/source/full_raw_data.csv"
+)
