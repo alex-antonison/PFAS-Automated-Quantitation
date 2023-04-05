@@ -1,0 +1,39 @@
+# Date
+
+## Cal Curve Calculation
+
+LOD and LOG
+
+1. Based on the known standards we have run on the instrument, there are values for a given native analyte that we cannot calculate below that.
+
+2. Setting the lowest value will help prevent getting a negative slope.
+
+3. Recovery: In addition to using the R^2 value for QC for which points on the cal curve to use. Looking to get a recovery value between 80% to 120%
+
+4. Cal Curve for every analyte, there is a theoretical concentration ratio that comes from CalibrationCurveSource File.
+
+5. Calculate an Experimental X value based on the one that is produced. There is a min and max level.
+
+(Area Ratio - Intercept)/Slope = Experimental X
+
+Recovery = Experimental X / X
+
+IF this passes, we will keep it as the lower level limit
+
+1. Calculate Regression
+2. Calculate Experimental X
+3. Throw out recovery values 
+
+Capture Min/Max values for a given Analyte
+
+
+## Quantify Samples
+
+New Calculation Steps
+
+Calibration_Curve_Range_Category
+
+1. NF if ND
+2. Area Ratio < Min Cal Curve Range, call "<LOQ" (detected but not quantified, set to NaN)
+3. Area Ratio > Max Cal Curve Range, "Above Cal" - Still Calculate Value (above highest cal - super concentrated)
+3. Area Ratio within bounds, "Within Calibration Range"
