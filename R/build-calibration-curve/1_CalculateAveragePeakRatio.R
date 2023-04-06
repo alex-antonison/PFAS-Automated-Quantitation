@@ -86,12 +86,8 @@ without_rep_number_df <- temp_analyte_df %>%
     calibration_level = as.integer(split_filename[, 2])
   ) %>%
   dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
+    batch_number,
     individual_native_analyte_name = analyte_name,
-    transition_number,
     replicate_number,
     calibration_level,
     individual_native_analyte_peak_area
@@ -106,12 +102,8 @@ with_rep_number_df <- temp_analyte_df %>%
     calibration_level = as.integer(split_filename[, 3])
   ) %>%
   dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
+    batch_number,
     individual_native_analyte_name = analyte_name,
-    transition_number,
     replicate_number,
     calibration_level,
     individual_native_analyte_peak_area
@@ -156,10 +148,7 @@ temp_ind_without_rep_df <- temp_ind_df %>%
     calibration_level = as.integer(split_filename[, 2])
   ) %>%
   dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
+    batch_number,
     internal_standard_name = internal_standard,
     replicate_number,
     calibration_level,
@@ -175,10 +164,7 @@ temp_ind_with_rep_df <- temp_ind_df %>%
     calibration_level = as.integer(split_filename[, 3])
   ) %>%
   dplyr::select(
-    source_file_name,
-    source_type,
-    sheet_name,
-    filename,
+    batch_number,
     internal_standard_name = internal_standard,
     replicate_number,
     calibration_level,
@@ -201,9 +187,8 @@ native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/process
 
 individual_native_analyte_df <- arrow::read_parquet("data/processed/source/source_data_individual_native_analyte.parquet") %>%
   dplyr::select(
+    batch_number,
     individual_native_analyte_name,
-    source_file_name,
-    filename,
     replicate_number,
     calibration_level,
     individual_native_analyte_peak_area
@@ -212,6 +197,7 @@ individual_native_analyte_df <- arrow::read_parquet("data/processed/source/sourc
   dplyr::distinct_all() %>%
   # ranking to find the highest value of peak area
   dplyr::group_by(
+    batch_number,
     individual_native_analyte_name,
     replicate_number,
     calibration_level
@@ -224,9 +210,8 @@ individual_native_analyte_df <- arrow::read_parquet("data/processed/source/sourc
   # filter down to the row that has the highest peak area
   dplyr::filter(peak_area_rank == 1) %>%
   dplyr::select(
+    batch_number,
     individual_native_analyte_name,
-    source_file_name,
-    filename,
     replicate_number,
     calibration_level,
     individual_native_analyte_peak_area
@@ -235,16 +220,19 @@ individual_native_analyte_df <- arrow::read_parquet("data/processed/source/sourc
 
 internal_standard_df <- arrow::read_parquet("data/processed/source/source_data_internal_standard.parquet") %>%
   dplyr::select(
+    batch_number,
     internal_standard_name,
-    source_file_name,
-    filename,
+    replicate_number,
+    calibration_level,
     internal_standard_peak_area
   ) %>%
   # remove exact duplicates
   dplyr::distinct_all() %>%
   dplyr::group_by(
+    batch_number,
     internal_standard_name,
-    filename
+    replicate_number,
+    calibration_level
   ) %>%
   # rank internal standard + source file name + filename to identify the row with
   # the greatest peak area
@@ -255,9 +243,10 @@ internal_standard_df <- arrow::read_parquet("data/processed/source/source_data_i
   # filter down to the highest peak area for a given internal standard + filename
   dplyr::filter(peak_area_rank == 1) %>%
   dplyr::select(
+    batch_number,
     internal_standard_name,
-    source_file_name,
-    filename,
+    replicate_number,
+    calibration_level,
     internal_standard_peak_area
   )
 
@@ -265,12 +254,21 @@ individual_native_analyte_df %>%
   # join the native analyte table to the internal standard to native analyte mapping table
   dplyr::left_join(native_analyte_internal_standard_mapping_df, by = "individual_native_analyte_name") %>%
   # with the internal standards mapped, join to the internal standard source data
-  dplyr::left_join(internal_standard_df, by = c("internal_standard_name", "source_file_name", "filename")) %>%
+  dplyr::left_join(
+    internal_standard_df,
+    by = c(
+      "batch_number",
+      "internal_standard_name",
+      "replicate_number",
+      "calibration_level"
+    )
+  ) %>%
   # calculate the analyte peak ratio
   dplyr::mutate(
     analyte_peak_area_ratio = individual_native_analyte_peak_area / internal_standard_peak_area
   ) %>%
   dplyr::group_by(
+    batch_number,
     individual_native_analyte_name,
     internal_standard_name,
     calibration_level
@@ -284,8 +282,6 @@ individual_native_analyte_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/average_peak_area_ratio.parquet"
   ) %>%
-  as.data.frame() %>%
-  xlsx::write.xlsx(
-    "data/processed/calibration-curve/average_peak_area_ratio.xlsx",
-    row.names = FALSE
+  readr::write_csv(
+    "data/processed/calibration-curve/average_peak_area_ratio.csv"
   )
