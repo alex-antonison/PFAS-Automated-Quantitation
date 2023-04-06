@@ -4,20 +4,15 @@ library(magrittr)
 # Get Source Data if Missing
 ####################################
 
+# clear out environment
+rm(list = ls())
 
-reference_file_list <- "data/source/Native_analyte_ISmatch_source.xlsx"
-source_file_list <- c(
-  "data/source/Set2_1_138_Short.XLS",
-  "data/source/Set2_139_273_Short.XLS",
-  "data/source/Set2_274_314_Short.XLS"
-)
-
-full_file_list <- c(reference_file_list, source_file_list)
+reference_file_list <- "data/source/mapping/Native_analyte_ISmatch_source.xlsx"
 
 # setting this to false
 missing_file <- FALSE
 
-for (file_path in full_file_list) {
+for (file_path in reference_file_list) {
   if (!fs::file_exists(file_path)) {
     # if a source file is missing, this will trigger
     # downloading source data from S3
@@ -68,7 +63,7 @@ read_in_raw_data <- function(source_file_name, sheet_name, source_type) {
 #' @param match_list A list of native analytes to check against
 check_analyte_name <- function(analyte_name, match_list) {
   analyte_name <- stringr::str_to_lower(analyte_name)
-  match_ist <- stringr::str_to_lower(match_list$processing_method_name)
+  match_ist <- stringr::str_to_lower(match_list$individual_native_analyte_name)
 
   if (analyte_name %in% match_ist) {
     analyte_match <- "Match Found"
@@ -81,6 +76,22 @@ check_analyte_name <- function(analyte_name, match_list) {
   return(analyte_match)
 }
 
+#' Function to pull out the batch number from a source file. It is expecting
+#' the source file to be in the raw_data directory and to have the batch number
+#' after Set like "data/source/raw_data/Set2_139_273_Short.XLS" which this
+#' would be Batch Number 2
+#' @param filename The name of the file being processed
+get_batch_number <- function(filename) {
+  # pull batch number from source file name
+  str_start <- stringr::str_locate(filename, "Set")[[1, "end"]]
+  str_end <- stringr::str_locate_all(filename, "_")[[1]][2,"end"][[1]]
+  batch_number <- stringr::str_sub(filename, str_start + 1, str_end - 1)
+  # convert to integer
+  batch_number <- as.integer(batch_number)
+  
+  return(batch_number)
+}
+
 
 #' A that takes care of processing all sheets in a source data file
 #' @param file_name A path to where the file is located
@@ -91,20 +102,13 @@ process_raw_file <- function(file_name) {
 
   # read in matching file for internal standards and
   # native analyte
-  n_analyte_is_match <- readxl::read_excel(
-    "data/source/Native_analyte_ISmatch_source.xlsx",
-    sheet = "Sheet1"
-  ) %>%
-    janitor::clean_names()
+  n_analyte_is_match <- arrow::read_parquet(
+    "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
+  )
 
   # loop through each sheet in the source excel file
   for (sheet in readxl::excel_sheets(file_name)) {
-    # pull batch number from source file name
-    str_start <- stringr::str_locate(file_name, "Set")[[1, "end"]]
-    str_end <- stringr::str_locate(file_name, "_")[[1, "end"]]
-    batch_number <- stringr::str_sub(file_name, str_start + 1, str_end - 1)
-    # convert to integer
-    batch_number <- as.integer(batch_number)
+    batch_number <- get_batch_number(file_name)
 
     # setting null for non-native analytes
     analyte_match <- NA
@@ -131,7 +135,7 @@ process_raw_file <- function(file_name) {
       temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "3M")
 
       # check if there is an internal standard match
-    } else if (sheet %in% n_analyte_is_match$internal_standard) {
+    } else if (sheet %in% n_analyte_is_match$internal_standard_name) {
       source_type <- "internal_standard"
       temp_data_df <- read_in_raw_data(file_name, sheet, source_type = "internal_standard")
       # check to see if there is a _1 or _2 in the name as
@@ -219,6 +223,8 @@ process_raw_file <- function(file_name) {
 
 combined_data_df <- dplyr::tibble()
 combined_naming_df <- dplyr::tibble()
+
+source_file_list <- fs::dir_ls("data/source/raw_data/")
 
 # This loops over each of the source files in the
 # previously configured source_file_list
