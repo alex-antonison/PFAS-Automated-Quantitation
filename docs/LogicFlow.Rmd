@@ -56,6 +56,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>individual_native_analyte</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
             <tr><td align='left'>replicate_number: text</td></tr>
@@ -68,8 +69,8 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
-            <tr><td align='left'>source_file_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
             <tr><td align='left'>replicate_number: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
@@ -90,6 +91,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>source_file_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
@@ -153,6 +155,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
@@ -168,6 +171,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
@@ -298,6 +302,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
@@ -320,6 +325,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_input</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: numeric</td></tr>
