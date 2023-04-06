@@ -56,6 +56,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>individual_native_analyte</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
             <tr><td align='left'>replicate_number: text</td></tr>
@@ -68,8 +69,8 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
-            <tr><td align='left'>source_file_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
             <tr><td align='left'>replicate_number: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
@@ -90,6 +91,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>source_file_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
@@ -153,6 +155,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
@@ -168,6 +171,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
@@ -284,7 +288,7 @@ DiagrammeR::grViz("digraph {
 
     // Box for entities
     node [shape=none, margin=0]
-    
+
     analyte_reference_table [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>analyte_reference_table</td></tr>
@@ -298,6 +302,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
@@ -320,19 +325,22 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_input</td></tr>
             // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: numeric</td></tr>
             <tr><td align='left'>average_peak_area_ratio: numeric</td></tr>
             <tr><td align='left'>analyte_concentration_ratio: numeric</td></tr>
-            <tr><td align='left'>minimum_limit_of_quantitation: text</td></tr>
         </table>
     >]
 
+step4 [label = 'Remove Calibration Levels below Limit of Quantitation (LOQ) for each Native Analyte', shape = rectangle, style = filled, fillcolor = white]
 
-average_peak_area_ratio -> calibration_curve_input
-concentration_ratio -> calibration_curve_input
-analyte_reference_table -> calibration_curve_input
+average_peak_area_ratio -> step4
+concentration_ratio -> step4
+analyte_reference_table -> step4
+
+step4 -> calibration_curve_input
 }")
 ```
 
@@ -353,8 +361,6 @@ calibration_curve_troubleshoot [label = 'calibration_curve_troubleshoot', shape 
 
 calibration_recovery_troubleshoot [label = 'calibration_recovery_troubleshoot', shape = folder, fillcolor = lightblue]
 
-step4 [label = 'Remove Calibration Levels below Limit of Quantitation (LOQ)']
-
 step6 [label = 'Calculate slope of the cal curve:
 y-axis = Average Peak Area Ratio
 x-axis = Analyte Concentration Ratio']
@@ -371,18 +377,18 @@ step10 [label = 'Calculate Recovery
 Recovery = Experimental Cocentration Ratio / Analyte Concentration Ratio
 ']
 
-step11 [label = 'Recovery >= 0.8 AND Recovery <= 1.2', shape = diamond]
+step11 [label = '0.8 <= Recovery <= 1.2', shape = diamond]
 
 step12 [label = 'Remove Calibration Levels with out of bounds Recovery Value']
 
-calibration_curve_input -> step4 -> step6
+calibration_curve_input -> step6
 step6 -> step7
 
 step7 -> step9 [label = 'R^2 >= 0.99']
 step7 -> step8  [label = 'R^2 < 0.99']
 step9 -> step10 -> step11
-step11 -> calibration_curve_output [label = 'Recovery Values in Bounds']
-step11 -> step12 [label = 'Recovery Values out of Bounds']
+step11 -> calibration_curve_output [label = 'All Recovery Values in Bounds']
+step11 -> step12 [label = 'Recovery Value(s) out of Bounds']
 step12 -> step6
 step8 -> step6
 step8 -> calibration_curve_troubleshoot
@@ -663,18 +669,18 @@ Blank Filtering means to subtract the value in the blank from the sample.
 DiagrammeR::grViz("digraph {
 
   node [shape=none, margin=0]
-    
 
-    
+
+
     // sourced tables
     extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
     sourceSample [label = 'SetX_XXX_XXX_short.XLS', shape = folder, style = filled, fillcolor = linen]
-    
-    
+
+
     step1 [label = 'Filter to Extraction Blank values from Raw Source data using County column', shape = rectangle, style = filled, fillcolor = white]
-    
+
         step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
-    
+
 
     analyte_in_blank_sample [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
@@ -689,11 +695,11 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>individual_analyte_native_peak_area: numeric</td></tr>
         </table>
     >]
-    
+
     extractionBatchSource -> step1
     sourceSample -> step1
     step1 -> step2
     step2 -> analyte_in_blank_sample
-    
+
 }")
 ```
