@@ -5,9 +5,9 @@
 #'
 #'
 
-# source("R/process-source-data/ProcessExtractionBatchSource.R")
-# source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
-# source("R/quantify-sample/1_BuildSamplePeakAreaRatio.R")
+source("R/process-source-data/ProcessExtractionBatchSource.R")
+source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
+source("R/quantify-sample/1_BuildSamplePeakAreaRatio.R")
 
 library(magrittr)
 
@@ -100,16 +100,16 @@ temp_df <- peak_area_ratio %>%
       peak_area_ratio < minimum_average_peak_area_ratio ~ "Below Calibration Range",
       minimum_average_peak_area_ratio < peak_area_ratio & peak_area_ratio < maximum_average_peak_area_ratio ~ "Within Calibration Range",
       peak_area_ratio > maximum_average_peak_area_ratio ~ "Above Calibration Range"
-    ) 
+    )
   ) %>%
-  dplyr::ungroup() %>% 
+  dplyr::ungroup() %>%
   dplyr::mutate(
     analyte_concentration = dplyr::if_else(
       calibration_curve_range_category == "Below Calibration Range",
       NaN,
       analyte_concentration
     )
-  ) %>% 
+  ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
