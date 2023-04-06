@@ -46,15 +46,17 @@ combined_data_df %>%
   # filter to transition 1
   dplyr::filter(transition_number == 1) %>%
   dplyr::select(
+    batch_number,
     individual_native_analyte_name,
     cartridge_number,
-    batch_number,
     individual_native_analyte_peak_area
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/source/sample_individual_native_analyte.parquet"
   ) %>%
-  readr::write_excel_csv("data/processed/source/sample_individual_native_analyte.csv")
+  readr::write_excel_csv(
+    "data/processed/source/sample_individual_native_analyte.csv"
+    )
 
 ####################################
 # Create Internal Standard Sample Table
@@ -74,15 +76,17 @@ combined_data_df %>%
     internal_standard_peak_area = as.numeric(area)
   ) %>%
   dplyr::select(
+    batch_number,
     internal_standard_name,
     cartridge_number,
-    batch_number,
     internal_standard_peak_area
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/source/sample_internal_standard.parquet"
   ) %>%
-  readr::write_excel_csv("data/processed/source/sample_internal_standard.csv")
+  readr::write_excel_csv(
+    "data/processed/source/sample_internal_standard.csv"
+    )
 
 ################### Start Calculation for Sample Peak Area Ratio
 
@@ -106,7 +110,7 @@ sample_native_analyte_df %>%
   ) %>%
   dplyr::left_join(
     sample_internal_standard_df,
-    by = c("internal_standard_name", "cartridge_number", "batch_number")
+    by = c("batch_number", "internal_standard_name", "cartridge_number")
   ) %>%
   dplyr::mutate(
     # calculate the peak area ratio
@@ -115,8 +119,6 @@ sample_native_analyte_df %>%
   arrow::write_parquet(
     sink = "data/processed/quantify-sample/peak_area_ratio.parquet"
   ) %>%
-  as.data.frame() %>%
-  xlsx::write.xlsx(
-    "data/processed/quantify-sample/peak_area_ratio.xlsx",
-    row.names = FALSE
+  readr::write_excel_csv(
+    "data/processed/quantify-sample/peak_area_ratio.csv"
   )
