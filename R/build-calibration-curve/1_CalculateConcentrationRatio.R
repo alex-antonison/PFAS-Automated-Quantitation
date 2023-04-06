@@ -85,8 +85,6 @@ analyte_concentration_df %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/concentration_ratio.parquet"
   ) %>%
-  as.data.frame() %>%
-  xlsx::write.xlsx(
-    "data/processed/calibration-curve/concentration_ratio.xlsx",
-    row.names = FALSE
+  readr::write_csv(
+    "data/processed/calibration-curve/concentration_ratio.csv"
   )
