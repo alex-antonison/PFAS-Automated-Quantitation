@@ -1,6 +1,6 @@
 library(magrittr)
 
-if (fs::file_exists("data/source/Sep2021Calibration_Curve_source.xlsx")) {
+if (fs::file_exists("data/source/reference/Sep2021Calibration_Curve_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   # pull source data from S3
@@ -156,4 +156,4 @@ process_cal_source <- function(file_name) {
 }
 
 # Process Sep2021Calibration_Curve_source.xlsx
-process_cal_source("data/source/Sep2021Calibration_Curve_source.xlsx")
+process_cal_source("data/source/reference/Sep2021Calibration_Curve_source.xlsx")

@@ -7,7 +7,7 @@ library(magrittr)
 # Process Batch File Info
 ####################################
 
-if (fs::file_exists("data/source/Extraction_Batches_source.xlsx")) {
+if (fs::file_exists("data/source/reference/Extraction_Batches_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   # pull source data from S3
@@ -96,5 +96,5 @@ process_batch_file <- function(data) {
 }
 
 # process Extraction_Batches_source.xlsx
-df <- read_batch_file("data/source/Extraction_Batches_source.xlsx")
+df <- read_batch_file("data/source/reference/Extraction_Batches_source.xlsx")
 process_batch_file(df)

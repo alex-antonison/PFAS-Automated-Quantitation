@@ -7,7 +7,7 @@ library(magrittr)
 # Process IS_Mix_source File
 ####################################
 
-if (fs::file_exists("data/source/IS_Mix_source.xlsx")) {
+if (fs::file_exists("data/source/reference/IS_Mix_source.xlsx")) {
   print("Source Data Downloaded")
 } else {
   # pull source data from S3
@@ -137,4 +137,4 @@ process_is_excel <- function(file_name) {
 }
 
 # Process IS_mix_source.xlsx file
-process_is_excel("data/source/IS_Mix_source.xlsx")
+process_is_excel("data/source/reference/IS_Mix_source.xlsx")
