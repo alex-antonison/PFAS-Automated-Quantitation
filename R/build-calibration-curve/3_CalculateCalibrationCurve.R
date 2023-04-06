@@ -12,15 +12,11 @@ rm(list = ls())
 
 library(magrittr)
 
-
-
 source("R/build-calibration-curve/2_BuildCalibrationCurveInput.R")
 
 calibration_curve_input_df <- arrow::read_parquet(
   "data/processed/calibration-curve/calibration_curve_input.parquet"
 )
-
-unique(calibration_curve_input_df$batch_number)
 
 # clear out calibration curve troubleshoot from previous run
 debug_file_list <- c(
@@ -90,12 +86,19 @@ calculate_calibration_curve <- function(df,
                                         analyte_name,
                                         run_count,
                                         removed_calibration_flag) {
+  # intialize min flag to true so it starts off with removing the lowest
+  # claibration first
   min_flag <- TRUE
+  # initialize the removed calibration levels so it can be appended to
   removed_calibration <- ""
+  # set iteration count to 1 and it will increment as there are multiple
+  # iterations
   iteration <- 1
-  calibration_curve_troublehsoot_df <- dplyr::tibble()
+  # capture the current batch number so it can be added to the
+  # troubleshoot output file
   batch_number <- unique(calibration_curve_input_df$batch_number)
 
+  # filter down to just the current analyte of interest
   base_df <- df %>%
     dplyr::filter(individual_native_analyte_name == analyte_name)
 
@@ -146,6 +149,7 @@ calculate_calibration_curve <- function(df,
 
       analyte_calibration_curve <- base_df %>%
         dplyr::mutate(
+          batch_number,
           individual_native_analyte_name = analyte_name,
           slope = cf[["analyte_concentration_ratio"]],
           y_intercept = cf[["(Intercept)"]],
@@ -154,15 +158,10 @@ calculate_calibration_curve <- function(df,
           min_calibration_range = min(base_df$calibration_level),
           max_calibration_range = max(base_df$calibration_level),
           calibration_range = paste0(min(base_df$calibration_level), ":", max(base_df$calibration_level)),
-          removed_calibrations = stringr::str_sub(removed_calibration, start = 2)
+          removed_calibrations = stringr::str_sub(removed_calibration, start = 2),
+          minimum_average_peak_area_ratio = min(base_df$average_peak_area_ratio),
+          maximum_average_peak_area_ratio = max(base_df$average_peak_area_ratio),
         )
-
-      # debug_df <- analyte_calibration_curve
-      # debug_df$run_count <- run_count
-      # build_trouble_shoot_file(
-      #   debug_df,
-      #   "data/processed/calibration-curve/temp_successful_calibration_curve.csv"
-      # )
 
       return(list(analyte_calibration_curve, removed_calibration_flag))
     }
