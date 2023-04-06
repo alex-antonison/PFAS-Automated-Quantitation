@@ -56,7 +56,7 @@ combined_data_df %>%
   ) %>%
   readr::write_excel_csv(
     "data/processed/source/sample_individual_native_analyte.csv"
-    )
+  )
 
 ####################################
 # Create Internal Standard Sample Table
@@ -86,7 +86,7 @@ combined_data_df %>%
   ) %>%
   readr::write_excel_csv(
     "data/processed/source/sample_internal_standard.csv"
-    )
+  )
 
 ################### Start Calculation for Sample Peak Area Ratio
 
