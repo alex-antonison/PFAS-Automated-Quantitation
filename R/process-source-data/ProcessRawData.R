@@ -84,7 +84,13 @@ check_analyte_name <- function(analyte_name, match_list) {
 get_batch_number <- function(filename) {
   # pull batch number from source file name
   str_start <- stringr::str_locate(filename, "Set")[[1, "end"]]
-  str_end <- stringr::str_locate_all(filename, "_")[[1]][2, "end"][[1]]
+  # find the next underscore after it sees Set
+  underscore_return <- stringr::str_locate_all(filename, "_")
+  str_end_df <- as.data.frame(underscore_return) %>% 
+    dplyr::filter(
+      end > str_start
+    )
+  str_end <- str_end_df[1,"end"]
   batch_number <- stringr::str_sub(filename, str_start + 1, str_end - 1)
   # convert to integer
   batch_number <- as.integer(batch_number)
