@@ -173,13 +173,12 @@ run_calibration_curve <- function(df, run_count) {
   calc_cal_curve_df <- dplyr::tibble()
 
   for (analyte in analyte_name_df$individual_native_analyte_name) {
-    
     # filter dataframe down to only a single analyte for calculation
-    input_df <- df %>% 
+    input_df <- df %>%
       dplyr::filter(
         individual_native_analyte_name == analyte
       )
-    
+
     print(analyte)
     calc_cal_curve_temp <- calculate_calibration_curve(
       input_df,
