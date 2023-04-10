@@ -79,7 +79,6 @@ remove_cal_level <- function(df, min_flag) {
 #' @param analyte_name The name of the analyte being processed
 #' @param run_count A variable used for debugging purposes
 calculate_calibration_curve <- function(df,
-                                        analyte_name,
                                         run_count) {
   # initialize min flag to true so it starts off with removing the lowest
   # calibration first
@@ -91,16 +90,13 @@ calculate_calibration_curve <- function(df,
   iteration <- 1
   # capture the current batch number so it can be added to the
   # troubleshoot output file
-  batch_number <- unique(calibration_curve_input_df$batch_number)
+  batch_number <- unique(df$batch_number)
+  analyte_name <- unique(df$individual_native_analyte_name)
 
-  # filter down to just the current analyte of interest
-  base_df <- df %>%
-    dplyr::filter(individual_native_analyte_name == analyte_name)
-
-  for (calibration_level in base_df$calibration_level) {
+  for (calibration_level in df$calibration_level) {
     # use R's built in linear model function
     cur_model <- lm(average_peak_area_ratio ~ analyte_concentration_ratio,
-      data = base_df
+      data = df
     )
 
     # pull r.squared from R summary of model
@@ -111,8 +107,8 @@ calculate_calibration_curve <- function(df,
       # has had a calibration removed from it
       removed_calibration_flag <- TRUE
       print(r_squared)
-      return_val <- remove_cal_level(base_df, min_flag)
-      base_df <- return_val[[1]]
+      return_val <- remove_cal_level(df, min_flag)
+      df <- return_val[[1]]
       min_flag <- return_val[[2]]
       remove_val <- return_val[[3]]
       removed_calibration <- paste(removed_calibration, remove_val, sep = ":")
@@ -122,9 +118,9 @@ calculate_calibration_curve <- function(df,
         individual_native_analyte_name = analyte_name,
         iteration_count = iteration,
         removed_calibration_level = remove_val,
-        min_calibration_range = min(base_df$calibration_level),
-        max_calibration_range = max(base_df$calibration_level),
-        calibration_range = paste0(min(base_df$calibration_level), ":", max(base_df$calibration_level)),
+        min_calibration_range = min(df$calibration_level),
+        max_calibration_range = max(df$calibration_level),
+        calibration_range = paste0(min(df$calibration_level), ":", max(df$calibration_level)),
         r_squared = r_squared,
         current_removed_calibration = stringr::str_sub(removed_calibration, start = 2),
         run_count = run_count
@@ -142,20 +138,20 @@ calculate_calibration_curve <- function(df,
     } else {
       cf <- coef(cur_model)
 
-      analyte_calibration_curve <- base_df %>%
+      analyte_calibration_curve <- df %>%
         dplyr::mutate(
           batch_number,
           individual_native_analyte_name = analyte_name,
           slope = cf[["analyte_concentration_ratio"]],
           y_intercept = cf[["(Intercept)"]],
           r_squared = r_squared,
-          calibration_point = nrow(base_df),
-          min_calibration_range = min(base_df$calibration_level),
-          max_calibration_range = max(base_df$calibration_level),
-          calibration_range = paste0(min(base_df$calibration_level), ":", max(base_df$calibration_level)),
+          calibration_point = nrow(df),
+          min_calibration_range = min(df$calibration_level),
+          max_calibration_range = max(df$calibration_level),
+          calibration_range = paste0(min(df$calibration_level), ":", max(df$calibration_level)),
           removed_calibrations = stringr::str_sub(removed_calibration, start = 2),
-          minimum_average_peak_area_ratio = min(base_df$average_peak_area_ratio),
-          maximum_average_peak_area_ratio = max(base_df$average_peak_area_ratio),
+          minimum_average_peak_area_ratio = min(df$average_peak_area_ratio),
+          maximum_average_peak_area_ratio = max(df$average_peak_area_ratio),
           run_count = run_count
         )
 
@@ -177,10 +173,16 @@ run_calibration_curve <- function(df, run_count) {
   calc_cal_curve_df <- dplyr::tibble()
 
   for (analyte in analyte_name_df$individual_native_analyte_name) {
+    
+    # filter dataframe down to only a single analyte for calculation
+    input_df <- df %>% 
+      dplyr::filter(
+        individual_native_analyte_name == analyte
+      )
+    
     print(analyte)
     calc_cal_curve_temp <- calculate_calibration_curve(
       input_df,
-      analyte,
       run_count
     )
 
@@ -198,7 +200,7 @@ run_calibration_curve <- function(df, run_count) {
 #' has a 0.8 <= recovery value <= 1.2 it is successful, if not it fails and is removed
 #' from the dataframe. This will require re-calculating the calibration curve and then doing
 #' a new check for recovery values
-#' @param input_df The calibration curve input dataframe
+#' @param df The calibration curve input dataframe
 #' @param run_count Used for debugging purposes to understand how many iterations
 #' the process has taken
 #' @param removed_calibration_flag This is used in the main loop to determine if any calibration ranges
@@ -232,7 +234,6 @@ calculate_recovery_value <- function(df) {
   # need to set removed calibration_flag to true
   if (nrow(recovery_cal_curve_troubleshoot) > 0) {
     print("**************** Removed Recovery Values ********************")
-    removed_calibration_flag <- TRUE
 
     build_trouble_shoot_file(
       recovery_cal_curve_troubleshoot,
