@@ -42,9 +42,13 @@ readxl::read_excel(
   sheet = "Sheet1"
 ) %>%
   janitor::clean_names() %>%
+  dplyr::mutate(
+    cal_level_loq = readr::parse_number(cal_level_loq)
+  ) %>% 
   dplyr::select(
     individual_native_analyte_name = processing_method_name,
-    internal_standard_name = internal_standard
+    internal_standard_name = internal_standard,
+    cal_level_loq
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
