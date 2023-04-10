@@ -76,7 +76,6 @@ remove_cal_level <- function(df, min_flag) {
 #' does not have an R^2 > 0.99, it will remove the upper or lower calibration
 #' range and then re-fit the remaining calibration ranges.
 #' @param df The calibration curve input dataframe
-#' @param analyte_name The name of the analyte being processed
 #' @param run_count A variable used for debugging purposes
 calculate_calibration_curve <- function(df,
                                         run_count) {
@@ -132,7 +131,6 @@ calculate_calibration_curve <- function(df,
         cur_eval_df,
         "data/processed/calibration-curve/calibration_curve_troublehsoot.csv"
       )
-
 
       iteration <- iteration + 1
     } else {
@@ -197,14 +195,9 @@ run_calibration_curve <- function(df, run_count) {
 #' This function takes care of running the calibration curve function and takes the output
 #' and calculates the recovery values for each calibration level. If a calibration level
 #' has a 0.8 <= recovery value <= 1.2 it is successful, if not it fails and is removed
-#' from the dataframe. This will require re-calculating the calibration curve and then doing
-#' a new check for recovery values
+#' from the dataframe. This will require re-calculating the calibration curve if values
+#' are removed
 #' @param df The calibration curve input dataframe
-#' @param run_count Used for debugging purposes to understand how many iterations
-#' the process has taken
-#' @param removed_calibration_flag This is used in the main loop to determine if any calibration ranges
-#' have been removed in the previous iteration and if so, it will need to continue until
-#' no calibration ranges are removed.
 calculate_recovery_value <- function(df) {
   # calculate the recovery values and store in a temp dataframe to then
   # filter passing and failing values into different dataframes
@@ -232,8 +225,6 @@ calculate_recovery_value <- function(df) {
   # if any values get removed because of out of bounds recovery values
   # need to set removed calibration_flag to true
   if (nrow(recovery_cal_curve_troubleshoot) > 0) {
-    print("**************** Removed Recovery Values ********************")
-
     build_trouble_shoot_file(
       recovery_cal_curve_troubleshoot,
       "data/processed/calibration-curve/calibration_recovery_troubleshoot.csv"
@@ -243,6 +234,9 @@ calculate_recovery_value <- function(df) {
   return(recovery_cal_curve_eval)
 }
 
+################################################################
+# Control Loop for running functions across different batches
+################################################################
 
 # build a list of batches
 batch_df <- calibration_curve_input_df %>%
@@ -250,6 +244,7 @@ batch_df <- calibration_curve_input_df %>%
     batch_number
   )
 
+# initialize final output dataframe
 complete_cal_curve_output <- dplyr::tibble()
 
 for (batch in batch_df$batch_number) {
@@ -276,7 +271,6 @@ for (batch in batch_df$batch_number) {
     final_slope_intercept_calc_df
   )
 }
-
 
 
 complete_cal_curve_output %>%
