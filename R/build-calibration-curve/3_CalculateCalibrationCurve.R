@@ -72,16 +72,17 @@ remove_cal_level <- function(df, min_flag) {
 }
 
 #' This function will iterate through the different calibration levels
-#' when caluclating the calibration curve. If a calibration range
+#' when calculating the calibration curve. If a calibration range
 #' does not have an R^2 > 0.99, it will remove the upper or lower calibration
 #' range and then re-fit the remaining calibration ranges.
 #' @param df The calibration curve input dataframe
 #' @param analyte_name The name of the analyte being processed
+#' @param run_count A variable used for debugging purposes
 calculate_calibration_curve <- function(df,
                                         analyte_name,
                                         run_count) {
-  # intialize min flag to true so it starts off with removing the lowest
-  # claibration first
+  # initialize min flag to true so it starts off with removing the lowest
+  # calibration first
   min_flag <- TRUE
   # initialize the removed calibration levels so it can be appended to
   removed_calibration <- ""
@@ -163,27 +164,32 @@ calculate_calibration_curve <- function(df,
   }
 }
 
-run_calibration_curve <- function(input_df, run_count) {
+#' Function for iterating over all analytes and calculating calibration curves
+#' @param df A dataframe that should include 1 batch of analytes
+#' @param run_count A variable used for debugging purposes
+run_calibration_curve <- function(df, run_count) {
   # build a list of analyte names
-  analyte_name_df <- input_df %>%
+  analyte_name_df <- df %>%
     dplyr::distinct(
       individual_native_analyte_name
     )
-  
+
   calc_cal_curve_df <- dplyr::tibble()
-  
+
   for (analyte in analyte_name_df$individual_native_analyte_name) {
     print(analyte)
-    calc_cal_curve_temp <- calculate_calibration_curve(input_df,
-                                                       analyte,
-                                                       run_count)
-    
+    calc_cal_curve_temp <- calculate_calibration_curve(
+      input_df,
+      analyte,
+      run_count
+    )
+
     calc_cal_curve_df <- dplyr::bind_rows(
       calc_cal_curve_temp,
       calc_cal_curve_df
     )
   }
-  
+
   return(calc_cal_curve_df)
 }
 
@@ -198,11 +204,10 @@ run_calibration_curve <- function(input_df, run_count) {
 #' @param removed_calibration_flag This is used in the main loop to determine if any calibration ranges
 #' have been removed in the previous iteration and if so, it will need to continue until
 #' no calibration ranges are removed.
-calculate_recovery_value <- function(input_df) {
-
+calculate_recovery_value <- function(df) {
   # calculate the recovery values and store in a temp dataframe to then
   # filter passing and failing values into different dataframes
-  recovery_cal_curve_temp <- input_df %>%
+  recovery_cal_curve_temp <- df %>%
     dplyr::mutate(
       experimental_concentration_ratio = (average_peak_area_ratio - y_intercept) / slope,
       recovery = experimental_concentration_ratio / analyte_concentration_ratio
@@ -250,30 +255,28 @@ complete_cal_curve_output <- dplyr::tibble()
 for (batch in batch_df$batch_number) {
   print(paste0("Running batch number ", batch))
   # initialize run values values
-  batch_number_df <- calibration_curve_input_df %>%
+  single_batch_analyte_df <- calibration_curve_input_df %>%
     # process one batch at a time
     dplyr::filter(
       batch_number == batch
     )
 
-  
-  calc_cal_curve_df <- run_calibration_curve(batch_number_df, run_count = 1)
+  calc_cal_curve_df <- run_calibration_curve(single_batch_analyte_df, run_count = 1)
 
   calc_recovery_value_df <- calculate_recovery_value(calc_cal_curve_df)
-  
+
   print("*************** Should not remove any calibration values **************")
-  
+
   final_slope_intercept_calc_df <- run_calibration_curve(calc_recovery_value_df, run_count = 2)
 
   print(paste0("Batch ", batch, " complete."))
-  
+
   complete_cal_curve_output <- dplyr::bind_rows(
     complete_cal_curve_output,
     final_slope_intercept_calc_df
   )
+}
 
-  }
-  
 
 
 complete_cal_curve_output %>%
