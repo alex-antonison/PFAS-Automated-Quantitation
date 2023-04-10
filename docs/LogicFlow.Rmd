@@ -365,6 +365,10 @@ step6 [label = 'Calculate slope of the cal curve:
 y-axis = Average Peak Area Ratio
 x-axis = Analyte Concentration Ratio']
 
+step62 [label = 'Calculate slope of the cal curve:
+y-axis = Average Peak Area Ratio
+x-axis = Analyte Concentration Ratio']
+
 step7 [label = 'Is R^2 < 0.99 or R^2 >= 0.99?', shape = diamond]
 
 step8 [label = 'Remove single lower and then upper level until R^2 >= 0.99']
@@ -389,10 +393,11 @@ step7 -> step8  [label = 'R^2 < 0.99']
 step9 -> step10 -> step11
 step11 -> calibration_curve_output [label = 'All Recovery Values in Bounds']
 step11 -> step12 [label = 'Recovery Value(s) out of Bounds']
-step12 -> step6
 step8 -> step6
+step12 -> step62
 step8 -> calibration_curve_troubleshoot
 step12 -> calibration_recovery_troubleshoot
+step62 -> calibration_curve_output
 
 }")
 ```

@@ -17,12 +17,11 @@ upload_file_to_s3 <- function(file_path, file_name) {
 exclude_files <- c(".DS_Store", ".gitignore", "README.md")
 
 for (file_path in fs::dir_ls("data/source/", recurse = TRUE, type = "file")) {
-  
   # pull out the file name from the file path
   file_name <- fs::path_file(file_path)
-  
+
   # create the directory path by just removing the file name
-  file_dir_path = stringr::str_replace(file_path, file_name, "")
+  file_dir_path <- stringr::str_replace(file_path, file_name, "")
 
   if (file_name %in% exclude_files) {
     print(paste0("Exclude: ", file_name))
