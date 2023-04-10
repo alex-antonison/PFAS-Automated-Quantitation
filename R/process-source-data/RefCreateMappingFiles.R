@@ -44,7 +44,7 @@ readxl::read_excel(
   janitor::clean_names() %>%
   dplyr::mutate(
     cal_level_loq = readr::parse_number(cal_level_loq)
-  ) %>% 
+  ) %>%
   dplyr::select(
     individual_native_analyte_name = processing_method_name,
     internal_standard_name = internal_standard,

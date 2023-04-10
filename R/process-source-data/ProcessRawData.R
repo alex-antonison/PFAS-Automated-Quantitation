@@ -84,11 +84,11 @@ check_analyte_name <- function(analyte_name, match_list) {
 get_batch_number <- function(filename) {
   # pull batch number from source file name
   str_start <- stringr::str_locate(filename, "Set")[[1, "end"]]
-  str_end <- stringr::str_locate_all(filename, "_")[[1]][2,"end"][[1]]
+  str_end <- stringr::str_locate_all(filename, "_")[[1]][2, "end"][[1]]
   batch_number <- stringr::str_sub(filename, str_start + 1, str_end - 1)
   # convert to integer
   batch_number <- as.integer(batch_number)
-  
+
   return(batch_number)
 }
 
