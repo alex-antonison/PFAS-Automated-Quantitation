@@ -31,7 +31,7 @@ combined_data_df %>%
   # filter down to only filenames that have a number
   dplyr::filter(!grepl("\\D", filename)) %>%
   # only filenames with values that are not NF
-  dplyr::filter(area != "NF") %>%
+  # dplyr::filter(area != "NF") %>%
   dplyr::mutate(
     # rename to cartridge_number for joining later
     cartridge_number = filename,
@@ -67,6 +67,9 @@ combined_data_df %>%
   # filter down to only filenames that are a number
   dplyr::filter(!grepl("\\D", filename)) %>%
   # only filenames with values that are not NF
+  # dplyr::mutate(
+  #   detection_flag = if NF == Not Detected, if not NF Detected
+  # )
   dplyr::filter(area != "NF") %>%
   dplyr::mutate(
     internal_standard_name = sheet_name,
