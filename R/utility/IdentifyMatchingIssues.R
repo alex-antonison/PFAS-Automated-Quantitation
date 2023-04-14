@@ -85,7 +85,7 @@ analyte_concentration_df <- arrow::read_parquet(
 # native analyte name mapping between source
 # and Sep2021Calibration_Curve_source.xlsx
 cal_name_native_analyte_mapping_df <- arrow::read_parquet(
-  "data/processed/reference/calibration_concentration_name_mapping.parquet"
+  "data/processed/mapping/analyte_concentration_name_mapping.parquet"
 ) %>%
   dplyr::rename(mapped_analyte_name = individual_native_analyte_name)
 

@@ -65,7 +65,7 @@ readxl::read_excel("data/source/mapping/analyte_concentration_name_mapping.xlsx"
     individual_native_analyte_name = corresponding_name_in_native_analyte_ismatch_source
   ) %>%
   arrow::write_parquet(
-    sink = "data/processed/mapping/calibration_concentration_name_mapping.parquet"
+    sink = "data/processed/mapping/analyte_concentration_name_mapping.parquet"
   )
 
 ############################

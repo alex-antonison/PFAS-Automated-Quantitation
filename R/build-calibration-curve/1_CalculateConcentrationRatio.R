@@ -23,18 +23,18 @@ internal_standard_concen_df <- arrow::read_parquet(
 
 # native analyte to internal standard mapping
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet(
-  "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
+  "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
 )
 
 # native analyte name mapping between source
 # and Sep2021Calibration_Curve_source.xlsx
 cal_name_native_analyte_mapping_df <- arrow::read_parquet(
-  "data/processed/reference/calibration_concentration_name_mapping.parquet"
+  "data/processed/mapping/analyte_concentration_name_mapping.parquet"
 ) %>%
   dplyr::rename(mapped_analyte_name = individual_native_analyte_name)
 
 concen_internal_stanard_mapping <- arrow::read_parquet(
-  "data/processed/reference/concentration_internal_standard_mapping.parquet"
+  "data/processed/mapping/concentration_internal_standard_mapping.parquet"
 )
 
 analyte_concentration_df %>%
