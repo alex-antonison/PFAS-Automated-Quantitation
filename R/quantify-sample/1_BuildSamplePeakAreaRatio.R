@@ -100,7 +100,7 @@ sample_internal_standard_df <- arrow::read_parquet(
 )
 
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet(
-  "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
+  "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
 )
 
 sample_native_analyte_df %>%

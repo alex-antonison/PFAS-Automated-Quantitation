@@ -83,7 +83,7 @@ process_batch_file <- function(data) {
     ) %>%
     # write dataframe out to csv file
     arrow::write_parquet(
-      sink = "data/processed/extraction_batch_source.parquet"
+      sink = "data/processed/reference/extraction_batch_source.parquet"
     ) %>%
     # replace NA values with blanks to clean
     # up output file

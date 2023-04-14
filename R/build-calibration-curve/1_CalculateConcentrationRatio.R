@@ -13,12 +13,12 @@ source("R/process-source-data/RefCreateMappingFiles.R")
 
 # processed from Sep2021Calibration_Curve_source.xlsx
 analyte_concentration_df <- arrow::read_parquet(
-  "data/processed/native_analyte_concentration.parquet"
+  "data/processed/reference/native_analyte_concentration.parquet"
 )
 
 # processed from Sep2021Calibration_Curve_source.xlsx
 internal_standard_concen_df <- arrow::read_parquet(
-  "data/processed/internal_standard_concentration.parquet"
+  "data/processed/reference/internal_standard_concentration.parquet"
 )
 
 # native analyte to internal standard mapping

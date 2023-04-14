@@ -33,7 +33,7 @@ calibration_curve_output <- arrow::read_parquet(
   )
 
 extraction_batch_source <- arrow::read_parquet(
-  "data/processed/extraction_batch_source.parquet"
+  "data/processed/reference/extraction_batch_source.parquet"
 ) %>%
   dplyr::select(
     batch_number,
@@ -42,7 +42,7 @@ extraction_batch_source <- arrow::read_parquet(
   )
 
 internal_standard_mix <- arrow::read_parquet(
-  "data/processed/internal_standard_mix.parquet"
+  "data/processed/reference/internal_standard_mix.parquet"
 ) %>%
   dplyr::select(
     internal_standard_used = internal_standard_mix,
@@ -52,7 +52,7 @@ internal_standard_mix <- arrow::read_parquet(
   )
 
 concen_internal_stanard_mapping <- arrow::read_parquet(
-  "data/processed/reference/concentration_internal_standard_mapping.parquet"
+  "data/processed/mapping/concentration_internal_standard_mapping.parquet"
 )
 
 
