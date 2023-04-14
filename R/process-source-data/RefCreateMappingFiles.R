@@ -51,7 +51,7 @@ readxl::read_excel(
     cal_level_loq
   ) %>%
   arrow::write_parquet(
-    sink = "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
+    sink = "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
   )
 
 ############################
@@ -65,7 +65,7 @@ readxl::read_excel("data/source/mapping/analyte_concentration_name_mapping.xlsx"
     individual_native_analyte_name = corresponding_name_in_native_analyte_ismatch_source
   ) %>%
   arrow::write_parquet(
-    sink = "data/processed/reference/calibration_concentration_name_mapping.parquet"
+    sink = "data/processed/mapping/calibration_concentration_name_mapping.parquet"
   )
 
 ############################
@@ -76,5 +76,5 @@ readxl::read_excel(
   "data/source/mapping/internal_standard_concentration_name_mapping.xlsx"
 ) %>%
   arrow::write_parquet(
-    sink = "data/processed/reference/concentration_internal_standard_mapping.parquet"
+    sink = "data/processed/mapping/concentration_internal_standard_mapping.parquet"
   )
