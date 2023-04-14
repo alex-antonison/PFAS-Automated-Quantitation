@@ -121,13 +121,31 @@ process_cal_source <- function(file_name) {
   }
 
   # select columns of interest
-  analyte_source_df <- analyte_source_df %>%
+  export_analyte_source_df <- analyte_source_df %>%
     dplyr::select(
       calibration_level,
       calibration_mix,
       individual_native_analyte_name,
       native_analyte_concentration_ppt
-    )
+    ) %>%
+    # logic to combine Linear and Branched PFOS into "∑ PFOS"
+    dplyr::mutate(
+      individual_native_analyte_name = dplyr::if_else(
+        (individual_native_analyte_name == "Linear PFOS" | individual_native_analyte_name == "Branched PFOS"),
+        "∑ PFOS",
+        individual_native_analyte_name
+      )
+    ) %>%
+    dplyr::group_by(
+      calibration_level,
+      calibration_mix,
+      individual_native_analyte_name
+    ) %>%
+    dplyr::summarise(
+      native_analyte_concentration_ppt = sum(native_analyte_concentration_ppt),
+      .groups = "keep"
+    ) %>%
+    dplyr::ungroup() 
 
   is_label_df <- is_label_df %>%
     dplyr::select(
@@ -139,19 +157,20 @@ process_cal_source <- function(file_name) {
 
   # write files out to parquet and excel
   arrow::write_parquet(
-    analyte_source_df,
-    sink = "data/processed/native_analyte_concentration.parquet"
+    export_analyte_source_df,
+    sink = "data/processed/reference/native_analyte_concentration.parquet"
   )
   readr::write_excel_csv(
-    analyte_source_df, "data/processed/native_analyte_concentration.csv"
+    export_analyte_source_df,
+    "data/processed/reference/native_analyte_concentration.csv"
   )
 
   arrow::write_parquet(
     is_label_df,
-    sink = "data/processed/internal_standard_concentration.parquet"
+    sink = "data/processed/reference/internal_standard_concentration.parquet"
   )
   readr::write_excel_csv(
-    is_label_df, "data/processed/internal_standard_concentration.csv"
+    is_label_df, "data/processed/reference/internal_standard_concentration.csv"
   )
 }
 

@@ -92,7 +92,7 @@ process_batch_file <- function(data) {
         notes = ""
       )
     ) %>%
-    readr::write_excel_csv("data/processed/extraction_batch_source.csv")
+    readr::write_excel_csv("data/processed/reference/extraction_batch_source.csv")
 }
 
 # process Extraction_Batches_source.xlsx
