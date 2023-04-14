@@ -7,26 +7,7 @@ library(magrittr)
 # clear out environment
 rm(list = ls())
 
-reference_file_list <- "data/source/mapping/Native_analyte_ISmatch_source.xlsx"
-
-# setting this to false
-missing_file <- FALSE
-
-for (file_path in reference_file_list) {
-  if (!fs::file_exists(file_path)) {
-    # if a source file is missing, this will trigger
-    # downloading source data from S3
-    missing_file <- TRUE
-  }
-}
-
-# if a file is missing pull source data from S3
-if (missing_file) {
-  source("R/utility/GetSourceData.R")
-} else {
-  # if all files are downloaded, skip downloading data
-  print("Source Data Downloaded")
-}
+source("R/process-source-data/RefCreateMappingFiles.R")
 
 ####################################
 # Process Measured Data
@@ -109,7 +90,7 @@ process_raw_file <- function(file_name) {
   # read in matching file for internal standards and
   # native analyte
   n_analyte_is_match <- arrow::read_parquet(
-    "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
+    "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
   )
 
   # loop through each sheet in the source excel file
@@ -253,7 +234,10 @@ for (file_name in source_file_list) {
 }
 
 # troubleshoot naming
-readr::write_csv(combined_naming_df, "data/processed/troubleshoot/raw_data_processing_naming.csv")
+readr::write_csv(
+  combined_naming_df,
+  "data/processed/troubleshoot/raw_data_processing_naming.csv"
+  )
 
 # write full output to parquet for processing
 arrow::write_parquet(
