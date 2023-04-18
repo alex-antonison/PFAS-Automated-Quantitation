@@ -29,7 +29,8 @@ for (file in debug_file_list) {
   if (fs::file_exists(file)) fs::file_delete(file)
 }
 
-#' This function takes care of initializing a debugging table with a header column
+#' This function takes care of initializing a debugging table
+#' with a header column
 #' and once created, it will then continue to append rows to the file.
 #' @param df The troubleshoot df to be stored to a csv
 #' @param filename The path and name of the file to be saved out
@@ -48,10 +49,12 @@ build_trouble_shoot_file <- function(df, filename) {
   }
 }
 
-#' This function removes either the lowest or highest calibration level based on what
+#' This function removes either the lowest or highest
+#' calibration level based on what
 #' was was previously removed. It will start off with removing the lowest range.
 #' @param df The dataframe included the calibration levels for a single analyte
-#' @param min_flag This is used to indicate whether or not the lowest or highest calibration
+#' @param min_flag This is used to indicate whether or not the lowest
+#' or highest calibration
 #' level should be removed.
 remove_cal_level <- function(df, min_flag) {
   if (min_flag) {
@@ -64,7 +67,7 @@ remove_cal_level <- function(df, min_flag) {
   print(paste("Removing Calibration Range", remove_val))
 
   df <- df %>%
-    dplyr::filter(calibration_level != remove_val)
+    dplyr::filter(calibration_level != remove_val) # nolint
 
   print("Removed cal range")
 
