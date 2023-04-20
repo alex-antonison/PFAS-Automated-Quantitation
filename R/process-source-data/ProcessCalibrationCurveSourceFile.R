@@ -145,7 +145,7 @@ process_cal_source <- function(file_name) {
       native_analyte_concentration_ppt = sum(native_analyte_concentration_ppt),
       .groups = "keep"
     ) %>%
-    dplyr::ungroup() 
+    dplyr::ungroup()
 
   is_label_df <- is_label_df %>%
     dplyr::select(
