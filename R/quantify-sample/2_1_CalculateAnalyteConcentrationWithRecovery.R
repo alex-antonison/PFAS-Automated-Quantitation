@@ -96,7 +96,7 @@ peak_area_ratio %>%
   ) %>%
   dplyr::mutate(
     calibration_curve_range_category = dplyr::case_when(
-      peak_area_ratio < minimum_average_peak_area_ratio ~ "Below Calibration Range",
+      peak_area_ratio < minimum_average_peak_area_ratio ~ "<LOQ",
       minimum_average_peak_area_ratio < peak_area_ratio & peak_area_ratio < maximum_average_peak_area_ratio ~ "Within Calibration Range",
       peak_area_ratio > maximum_average_peak_area_ratio ~ "Above Calibration Range"
     )
@@ -104,7 +104,7 @@ peak_area_ratio %>%
   dplyr::ungroup() %>%
   dplyr::mutate(
     analyte_concentration = dplyr::if_else(
-      calibration_curve_range_category == "Below Calibration Range",
+      calibration_curve_range_category == "<LOQ",
       NaN,
       analyte_concentration_ng
     )
