@@ -104,7 +104,7 @@ calculate_calibration_curve <- function(df,
 
     # pull r.squared from R summary of model
     r_squared <- summary(cur_model)$r.squared
-    
+
     # when calculating the calibration curve after the recovery values,
     # we do not want to remove any calibration levels. If there is an instance
     # where an r-squared changes to below 0.99 after recovery values are removed
@@ -270,7 +270,7 @@ for (batch in batch_df$batch_number) {
     single_batch_analyte_df,
     run_count = 1,
     remove_cal_level = TRUE
-    )
+  )
 
   cal_curve_non_recovery_output <- dplyr::bind_rows(
     cal_curve_non_recovery_output,
@@ -288,7 +288,7 @@ for (batch in batch_df$batch_number) {
     calc_recovery_value_df,
     run_count = 2,
     remove_cal_level = FALSE
-    )
+  )
 
   print(paste0("Batch ", batch, " complete."))
 

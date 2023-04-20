@@ -237,7 +237,7 @@ for (file_name in source_file_list) {
 readr::write_csv(
   combined_naming_df,
   "data/processed/troubleshoot/raw_data_processing_naming.csv"
-  )
+)
 
 # write full output to parquet for processing
 arrow::write_parquet(
