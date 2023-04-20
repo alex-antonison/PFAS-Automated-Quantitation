@@ -89,7 +89,7 @@ temp_df <- peak_area_ratio %>%
   ) %>%
   # calculate Analyte Concentration
   dplyr::mutate(
-    analyte_concentration = ((peak_area_ratio - y_intercept) / slope) * internal_standard_concentration_ng
+    analyte_concentration_ng = ((peak_area_ratio - y_intercept) / slope) * internal_standard_concentration_ng
   ) %>%
   dplyr::group_by(
     batch_number,
@@ -107,7 +107,7 @@ temp_df <- peak_area_ratio %>%
     analyte_concentration = dplyr::if_else(
       calibration_curve_range_category == "Below Calibration Range",
       NaN,
-      analyte_concentration
+      analyte_concentration_ng
     )
   ) %>%
   dplyr::select(
@@ -130,7 +130,7 @@ temp_df <- peak_area_ratio %>%
     stock_mix,
     internal_standard_concentration_ppb,
     internal_standard_concentration_ng,
-    analyte_concentration
+    analyte_concentration_ng
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/quantify-sample/analyte_concentration.parquet"
