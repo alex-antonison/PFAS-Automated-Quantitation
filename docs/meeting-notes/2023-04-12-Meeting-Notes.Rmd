@@ -19,6 +19,6 @@ The mapping file has been updated to look at ∑ PFOS for PFOS in raw data.
 
 5. For blank filtering, use the analyte_concentration:analyte_concentration_ng column for creating the blank filtering.
 
-5a. Need to include NF in analyte concentration calcualtions and add a "detection_flag" column that when NF, set to "Not Detected" and when not NF, set to "Detected" (Done)
+5a. Need to include NF in analyte concentration calculations and add a "detection_flag" column that when NF, set to "Not Detected" and when not NF, set to "Detected" (Done)
 
 6. Once the extraction blank filtering has been done, seperate out the QC samples to a separate file.
