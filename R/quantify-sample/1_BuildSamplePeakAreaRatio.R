@@ -15,6 +15,7 @@
 library(magrittr)
 
 source("R/process-source-data/RefCreateMappingFiles.R")
+source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
 
 ####################################
 # Create Analyte Sample Table
@@ -30,13 +31,15 @@ combined_data_df %>%
   dplyr::filter(analyte_match == "Match Found") %>%
   # filter down to only filenames that have a number
   dplyr::filter(!grepl("\\D", filename)) %>%
-  # only filenames with values that are not NF
-  dplyr::filter(area != "NF") %>%
   dplyr::mutate(
+    # flag for if a analyte is not NF
+    analyte_detection_flag = dplyr::if_else((area == "NF"), FALSE, TRUE),
+    # if area is not found, then set to NA
+    area_prep = dplyr::if_else(analyte_detection_flag, area, NA),
     # rename to cartridge_number for joining later
     cartridge_number = filename,
     # convert peak area to numeric
-    individual_native_analyte_peak_area = as.numeric(area),
+    individual_native_analyte_peak_area = as.numeric(area_prep),
     # calculate analyte name
     analyte_name_length = stringr::str_length(sheet_name),
     individual_native_analyte_name = stringr::str_sub(sheet_name, 0, analyte_name_length - 2),
@@ -49,6 +52,7 @@ combined_data_df %>%
     batch_number,
     individual_native_analyte_name,
     cartridge_number,
+    analyte_detection_flag,
     individual_native_analyte_peak_area
   ) %>%
   arrow::write_parquet(
@@ -70,15 +74,24 @@ combined_data_df %>%
   dplyr::filter(area != "NF") %>%
   dplyr::mutate(
     internal_standard_name = sheet_name,
+    # flag for if a analyte is not NF
+    internal_standard_detection_flag = dplyr::if_else(
+      (area == "NF"),
+      FALSE,
+      TRUE
+    ),
+    # if area is not found, then set to NA
+    area_prep = dplyr::if_else(internal_standard_detection_flag, area, NA),
     # rename to cartridge_number for joining later
     cartridge_number = filename,
     # convert peak area to numeric
-    internal_standard_peak_area = as.numeric(area)
+    internal_standard_peak_area = as.numeric(area_prep),
   ) %>%
   dplyr::select(
     batch_number,
     internal_standard_name,
     cartridge_number,
+    internal_standard_detection_flag,
     internal_standard_peak_area
   ) %>%
   arrow::write_parquet(
@@ -94,13 +107,12 @@ sample_native_analyte_df <- arrow::read_parquet(
   "data/processed/source/sample_individual_native_analyte.parquet"
 )
 
-
 sample_internal_standard_df <- arrow::read_parquet(
   "data/processed/source/sample_internal_standard.parquet"
 )
 
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet(
-  "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
+  "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
 )
 
 sample_native_analyte_df %>%

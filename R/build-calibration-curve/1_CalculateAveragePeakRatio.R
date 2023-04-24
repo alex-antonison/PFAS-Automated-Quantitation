@@ -183,7 +183,9 @@ dplyr::bind_rows(
   )
 ############################### Start Calculating Average Peak Ratio #####################
 
-native_analyte_internal_standard_mapping_df <- arrow::read_parquet("data/processed/reference/native_analyte_internal_standard_mapping.parquet")
+native_analyte_internal_standard_mapping_df <- arrow::read_parquet(
+  "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
+)
 
 individual_native_analyte_df <- arrow::read_parquet("data/processed/source/source_data_individual_native_analyte.parquet") %>%
   dplyr::select(

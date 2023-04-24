@@ -29,7 +29,8 @@ for (file in debug_file_list) {
   if (fs::file_exists(file)) fs::file_delete(file)
 }
 
-#' This function takes care of initializing a debugging table with a header column
+#' This function takes care of initializing a debugging table
+#' with a header column
 #' and once created, it will then continue to append rows to the file.
 #' @param df The troubleshoot df to be stored to a csv
 #' @param filename The path and name of the file to be saved out
@@ -48,10 +49,12 @@ build_trouble_shoot_file <- function(df, filename) {
   }
 }
 
-#' This function removes either the lowest or highest calibration level based on what
+#' This function removes either the lowest or highest
+#' calibration level based on what
 #' was was previously removed. It will start off with removing the lowest range.
 #' @param df The dataframe included the calibration levels for a single analyte
-#' @param min_flag This is used to indicate whether or not the lowest or highest calibration
+#' @param min_flag This is used to indicate whether or not the lowest
+#' or highest calibration
 #' level should be removed.
 remove_cal_level <- function(df, min_flag) {
   if (min_flag) {
@@ -64,7 +67,7 @@ remove_cal_level <- function(df, min_flag) {
   print(paste("Removing Calibration Range", remove_val))
 
   df <- df %>%
-    dplyr::filter(calibration_level != remove_val)
+    dplyr::filter(calibration_level != remove_val) # nolint
 
   print("Removed cal range")
 
@@ -78,7 +81,8 @@ remove_cal_level <- function(df, min_flag) {
 #' @param df The calibration curve input dataframe
 #' @param run_count A variable used for debugging purposes
 calculate_calibration_curve <- function(df,
-                                        run_count) {
+                                        run_count,
+                                        remove_cal_level) {
   # initialize min flag to true so it starts off with removing the lowest
   # calibration first
   min_flag <- TRUE
@@ -101,7 +105,11 @@ calculate_calibration_curve <- function(df,
     # pull r.squared from R summary of model
     r_squared <- summary(cur_model)$r.squared
 
-    if (r_squared < 0.99) {
+    # when calculating the calibration curve after the recovery values,
+    # we do not want to remove any calibration levels. If there is an instance
+    # where an r-squared changes to below 0.99 after recovery values are removed
+    # this is considered an error case that needs to be investigated.
+    if (r_squared < 0.99 & remove_cal_level) {
       # set remove calibration flag to true to indicate an analyte
       # has had a calibration removed from it
       removed_calibration_flag <- TRUE
@@ -161,7 +169,7 @@ calculate_calibration_curve <- function(df,
 #' Function for iterating over all analytes and calculating calibration curves
 #' @param df A dataframe that should include 1 batch of analytes
 #' @param run_count A variable used for debugging purposes
-run_calibration_curve <- function(df, run_count) {
+run_calibration_curve <- function(df, run_count, remove_cal_level) {
   # build a list of analyte names
   analyte_name_df <- df %>%
     dplyr::distinct(
@@ -180,7 +188,8 @@ run_calibration_curve <- function(df, run_count) {
     print(analyte)
     calc_cal_curve_temp <- calculate_calibration_curve(
       input_df,
-      run_count
+      run_count,
+      remove_cal_level
     )
 
     calc_cal_curve_df <- dplyr::bind_rows(
@@ -246,6 +255,7 @@ batch_df <- calibration_curve_input_df %>%
 
 # initialize final output dataframe
 complete_cal_curve_output <- dplyr::tibble()
+cal_curve_non_recovery_output <- dplyr::tibble()
 
 for (batch in batch_df$batch_number) {
   print(paste0("Running batch number ", batch))
@@ -256,13 +266,29 @@ for (batch in batch_df$batch_number) {
       batch_number == batch
     )
 
-  calc_cal_curve_df <- run_calibration_curve(single_batch_analyte_df, run_count = 1)
+  calc_cal_curve_df <- run_calibration_curve(
+    single_batch_analyte_df,
+    run_count = 1,
+    remove_cal_level = TRUE
+  )
+
+  cal_curve_non_recovery_output <- dplyr::bind_rows(
+    cal_curve_non_recovery_output,
+    calc_cal_curve_df
+  )
 
   calc_recovery_value_df <- calculate_recovery_value(calc_cal_curve_df)
 
-  print("*************** Should not remove any calibration values **************")
 
-  final_slope_intercept_calc_df <- run_calibration_curve(calc_recovery_value_df, run_count = 2)
+  # do not want to remove calibration levels, just want to re-calcualte
+  # the R Squared, Y Intercept, and Slope
+  # If it has an R Squared less than 0.99, this is an error that requires
+  # investigation
+  final_slope_intercept_calc_df <- run_calibration_curve(
+    calc_recovery_value_df,
+    run_count = 2,
+    remove_cal_level = FALSE
+  )
 
   print(paste0("Batch ", batch, " complete."))
 
@@ -272,6 +298,13 @@ for (batch in batch_df$batch_number) {
   )
 }
 
+cal_curve_non_recovery_output %>%
+  arrow::write_parquet(
+    sink = "data/processed/calibration-curve/calibration_curve_output_no_recov_filter.parquet"
+  ) %>%
+  readr::write_csv(
+    "data/processed/calibration-curve/calibration_curve_output_no_recov_filter.csv"
+  )
 
 complete_cal_curve_output %>%
   arrow::write_parquet(

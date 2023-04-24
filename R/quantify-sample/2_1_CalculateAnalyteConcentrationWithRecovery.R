@@ -6,7 +6,6 @@
 #'
 
 source("R/process-source-data/ProcessExtractionBatchSource.R")
-source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
 source("R/quantify-sample/1_BuildSamplePeakAreaRatio.R")
 
 library(magrittr)
@@ -33,7 +32,7 @@ calibration_curve_output <- arrow::read_parquet(
   )
 
 extraction_batch_source <- arrow::read_parquet(
-  "data/processed/extraction_batch_source.parquet"
+  "data/processed/reference/extraction_batch_source.parquet"
 ) %>%
   dplyr::select(
     batch_number,
@@ -42,7 +41,7 @@ extraction_batch_source <- arrow::read_parquet(
   )
 
 internal_standard_mix <- arrow::read_parquet(
-  "data/processed/internal_standard_mix.parquet"
+  "data/processed/reference/internal_standard_mix.parquet"
 ) %>%
   dplyr::select(
     internal_standard_used = internal_standard_mix,
@@ -52,11 +51,11 @@ internal_standard_mix <- arrow::read_parquet(
   )
 
 concen_internal_stanard_mapping <- arrow::read_parquet(
-  "data/processed/reference/concentration_internal_standard_mapping.parquet"
+  "data/processed/mapping/concentration_internal_standard_mapping.parquet"
 )
 
 
-temp_df <- peak_area_ratio %>%
+peak_area_ratio %>%
   dplyr::left_join(
     calibration_curve_output,
     by = c("batch_number", "individual_native_analyte_name")
@@ -89,7 +88,7 @@ temp_df <- peak_area_ratio %>%
   ) %>%
   # calculate Analyte Concentration
   dplyr::mutate(
-    analyte_concentration = ((peak_area_ratio - y_intercept) / slope) * internal_standard_concentration_ng
+    analyte_concentration_ng = ((peak_area_ratio - y_intercept) / slope) * internal_standard_concentration_ng
   ) %>%
   dplyr::group_by(
     batch_number,
@@ -107,15 +106,17 @@ temp_df <- peak_area_ratio %>%
     analyte_concentration = dplyr::if_else(
       calibration_curve_range_category == "Below Calibration Range",
       NaN,
-      analyte_concentration
+      analyte_concentration_ng
     )
   ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
     individual_native_analyte_name,
+    analyte_detection_flag,
     individual_native_analyte_peak_area,
     internal_standard_name,
+    internal_standard_detection_flag,
     internal_standard_peak_area,
     peak_area_ratio,
     minimum_average_peak_area_ratio,
@@ -130,11 +131,11 @@ temp_df <- peak_area_ratio %>%
     stock_mix,
     internal_standard_concentration_ppb,
     internal_standard_concentration_ng,
-    analyte_concentration
+    analyte_concentration_ng
   ) %>%
   arrow::write_parquet(
-    sink = "data/processed/quantify-sample/analyte_concentration.parquet"
+    sink = "data/processed/quantify-sample/analyte_concentration_with_recovery.parquet"
   ) %>%
   readr::write_excel_csv(
-    "data/processed/quantify-sample/analyte_concentration.csv"
+    "data/processed/quantify-sample/analyte_concentration_with_recovery.csv"
   )

@@ -30,7 +30,7 @@ concentration_ratio_df <- arrow::read_parquet("data/processed/calibration-curve/
   )
 
 analyte_to_internal_standard_mapping <- arrow::read_parquet(
-  "data/processed/reference/native_analyte_internal_standard_mapping.parquet"
+  "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
 ) %>%
   dplyr::select(
     individual_native_analyte_name,

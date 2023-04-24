@@ -129,10 +129,11 @@ process_is_excel <- function(file_name) {
 
   arrow::write_parquet(
     combined_is_df,
-    sink = "data/processed/internal_standard_mix.parquet"
+    sink = "data/processed/reference/internal_standard_mix.parquet"
   )
   readr::write_excel_csv(
-    combined_is_df, "data/processed/internal_standard_mix.csv"
+    combined_is_df,
+    "data/processed/reference/internal_standard_mix.csv"
   )
 }
 
