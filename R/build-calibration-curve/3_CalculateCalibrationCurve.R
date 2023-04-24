@@ -308,8 +308,8 @@ cal_curve_non_recovery_output %>%
 
 complete_cal_curve_output %>%
   arrow::write_parquet(
-    sink = "data/processed/calibration-curve/calibration_curve_output.parquet"
+    sink = "data/processed/calibration-curve/calibration_curve_output_with_recov.parquet"
   ) %>%
   readr::write_csv(
-    "data/processed/calibration-curve/calibration_curve_output.csv"
+    "data/processed/calibration-curve/calibration_curve_output_with_recov.csv"
   )
