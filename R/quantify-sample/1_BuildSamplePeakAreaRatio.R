@@ -70,8 +70,6 @@ combined_data_df %>%
   dplyr::filter(source_type == "internal_standard") %>%
   # filter down to only filenames that are a number
   dplyr::filter(!grepl("\\D", filename)) %>%
-  # only filenames with values that are not NF
-  dplyr::filter(area != "NF") %>%
   dplyr::mutate(
     internal_standard_name = sheet_name,
     # flag for if a analyte is not NF
