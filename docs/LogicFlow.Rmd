@@ -355,7 +355,9 @@ node [shape = rectangle, style = filled, fillcolor = white]
 
 calibration_curve_input [label = 'calibration_curve_input', shape = folder, fillcolor = lightblue]
 
-calibration_curve_output [label = 'calibration_curve_output', shape = folder, fillcolor = lightblue]
+calibration_curve_recovery_output [label = 'calibration_curve_recovery_output', shape = folder, fillcolor = lightblue]
+
+calibration_curve_r_squared_output [label = 'calibration_curve_r_squared_output', shape = folder, fillcolor = lightblue]
 
 calibration_curve_troubleshoot [label = 'calibration_curve_troubleshoot', shape = folder, fillcolor = lightblue]
 
@@ -388,7 +390,8 @@ step12 [label = 'Remove Calibration Levels with out of bounds Recovery Value']
 calibration_curve_input -> step6
 step6 -> step7
 
-step7 -> step9 [label = 'R^2 >= 0.99']
+step7 -> calibration_curve_r_squared_output [label = 'R^2 >= 0.99']
+calibration_curve_r_squared_output -> step9
 step7 -> step8  [label = 'R^2 < 0.99']
 step9 -> step10 -> step11
 step11 -> calibration_curve_output [label = 'All Recovery Values in Bounds']
@@ -397,7 +400,7 @@ step8 -> step6
 step12 -> step62
 step8 -> calibration_curve_troubleshoot
 step12 -> calibration_recovery_troubleshoot
-step62 -> calibration_curve_output
+step62 -> calibration_curve_recovery_output
 
 }")
 ```

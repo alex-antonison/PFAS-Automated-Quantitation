@@ -1,0 +1,24 @@
+# Meeting Notes
+
+1. Some PFOS
+2. In the source file Sep2021CalCurve - the values that are in there are only for the Linear PFOS
+
+TODO:
+
+1. In the R/process-source-data/ProcessCalibrationCurveSource.R file, sum together Linear PFOS and Branch PFOS = ∑ PFOS
+
+The mapping file has been updated to look at ∑ PFOS for PFOS in raw data.
+
+2. Cal Curve Generate 2 outputs
+2a. More simple -> does the R^2 and does the R^2 and Recovery
+
+
+3. Add a QC step in the Blank Filtering - check to make sure all EB are represented in the Extraction Blank for all compounds
+
+4. In analyte_concentration file - rename column to analyte_concentration_ng (Done)
+
+5. For blank filtering, use the analyte_concentration:analyte_concentration_ng column for creating the blank filtering.
+
+5a. Need to include NF in analyte concentration calcualtions and add a "detection_flag" column that when NF, set to "Not Detected" and when not NF, set to "Detected" (Done)
+
+6. Once the extraction blank filtering has been done, seperate out the QC samples to a separate file.
