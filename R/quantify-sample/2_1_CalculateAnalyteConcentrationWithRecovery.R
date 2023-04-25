@@ -102,13 +102,6 @@ peak_area_ratio %>%
     )
   ) %>%
   dplyr::ungroup() %>%
-  dplyr::mutate(
-    analyte_concentration = dplyr::if_else(
-      calibration_curve_range_category == "<LOQ",
-      NaN,
-      analyte_concentration_ng
-    )
-  ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
