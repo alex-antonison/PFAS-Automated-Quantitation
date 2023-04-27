@@ -1,0 +1,39 @@
+# 2023-04-24 Notes
+
+## Define
+
+1. Extraction Blank - This is a ultra-pure water prepared in the lab that has gone through the extraction process to check for contamination. Used for internal lab process checking.
+2. Salt/Fresh Water QC - 
+3. Field Blank -
+
+## Questions
+
+1. How to handle Extraction Blank values that are negative values.
+
+## Blank Filtering
+
+1. For a given analyte, will calcualte the average analyte_concentration_ng across the 5 extraction blanks. 
+
+1a. Instances where analyte_concentration_ng == NA, set it to 0.0 before averaging.
+
+Output:
+
+batch
+individual_native_analyte_name
+average_extraction_blank_analyte_concentration_ng
+
+2.  Subtract average_extraction_blank_analyte_concentration_ng from all corresponding individual_native_analyte_names in the corresponding batch.
+
+Output:
+
+batch
+individual_native_analyte_name
+extraction_blank_filtered_analyte_concentration_ng
+
+## QC Samples
+
+1. Pull these out 
+
+Output:
+
+sample_mass

@@ -15,7 +15,7 @@ peak_area_ratio <- arrow::read_parquet(
 )
 
 calibration_curve_output <- arrow::read_parquet(
-  "data/processed/calibration-curve/calibration_curve_output.parquet"
+  "data/processed/calibration-curve/calibration_curve_output_with_recov.parquet"
 ) %>%
   # doing a distinct since the calibration curve output file includes values
   # not relevant to the calculation of the analyte concentration
@@ -102,13 +102,6 @@ peak_area_ratio %>%
     )
   ) %>%
   dplyr::ungroup() %>%
-  dplyr::mutate(
-    analyte_concentration = dplyr::if_else(
-      calibration_curve_range_category == "<LOQ",
-      NaN,
-      analyte_concentration_ng
-    )
-  ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,

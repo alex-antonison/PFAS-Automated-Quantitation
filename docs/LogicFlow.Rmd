@@ -363,11 +363,11 @@ calibration_curve_troubleshoot [label = 'calibration_curve_troubleshoot', shape 
 
 calibration_recovery_troubleshoot [label = 'calibration_recovery_troubleshoot', shape = folder, fillcolor = lightblue]
 
-step6 [label = 'Calculate slope of the cal curve:
+step6 [label = 'Calculate slope and intercept of the cal curve:
 y-axis = Average Peak Area Ratio
 x-axis = Analyte Concentration Ratio']
 
-step62 [label = 'Calculate slope of the cal curve:
+step62 [label = 'Recalculate slope and intercept of the cal curve after recovery:
 y-axis = Average Peak Area Ratio
 x-axis = Analyte Concentration Ratio']
 
@@ -394,7 +394,7 @@ step7 -> calibration_curve_r_squared_output [label = 'R^2 >= 0.99']
 calibration_curve_r_squared_output -> step9
 step7 -> step8  [label = 'R^2 < 0.99']
 step9 -> step10 -> step11
-step11 -> calibration_curve_output [label = 'All Recovery Values in Bounds']
+step11 -> calibration_curve_recovery_output [label = 'All Recovery Values in Bounds']
 step11 -> step12 [label = 'Recovery Value(s) out of Bounds']
 step8 -> step6
 step12 -> step62
@@ -437,9 +437,9 @@ DiagrammeR::grViz("digraph {
     >]
 
 
-    calibration_curve_output [label=<
+    calibration_curve_output_with_recovery [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>calibration_curve_output</td></tr>
+            <tr><td bgcolor='lightblue'>calibration_curve_output_with_recovery</td></tr>
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>slope: numeric</td></tr>
@@ -452,6 +452,18 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
+    calibration_curve_output_no_recovery [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>calibration_curve_output_with_recovery</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>slope: numeric</td></tr>
+            <tr><td align='left'>y_intercept: numeric</td></tr>
+            <tr><td align='left'>r_squared: numeric</td></tr>
+            <tr><td align='left'>calibration_range: text</td></tr>
+            <tr><td align='left'>removed_calibration_levels: text</td></tr>
+        </table>
+    >]
 
 }")
 ```
@@ -613,7 +625,7 @@ step2 [label = 'Calculate the Amount of Internal Standard in each Sample
 ```
 
 
-#### Calculate Analyte Concentration
+#### Calculate Analyte Concentration without Recovery
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
@@ -628,7 +640,45 @@ extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder,
 
 // calcualted tables
 peak_area_ratio [label = 'peak_area_ratio', shape = folder, fillcolor = lightblue]
-calibration_curve_output [label = 'calibration_curve_output', shape = folder, fillcolor = lightblue]
+calibration_curve_output [label = 'calibration_curve_output_no_recovery', shape = folder, fillcolor = lightblue]
+
+analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, fillcolor = lightblue]
+
+
+
+step3 [label = 'C_a = ((A_R - b) / m) * C_IS
+C_a = concentration of analyte
+A_R = peak area ratio
+b = y-intercept of cal curve trendline
+m = slope of cal curve trendline
+C_IS = concentration of internal standard']
+
+
+peak_area_ratio -> analyte_concentration_calculation_input
+calibration_curve_output -> analyte_concentration_calculation_input
+extractionBatchSource -> analyte_concentration_calculation_input
+isMixSource -> analyte_concentration_calculation_input
+
+analyte_concentration_calculation_input -> step3
+}")
+```
+
+#### Calculate Analyte Concentration with Recovery
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+graph [layout = dot]
+
+node [shape = rectangle, style = filled, fillcolor = white]
+
+// sourced tables
+isMixSource [label = 'IS_Mix_source.xlsx', shape = folder, fillcolor = linen]
+extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, fillcolor = linen]
+
+// calcualted tables
+peak_area_ratio [label = 'peak_area_ratio', shape = folder, fillcolor = lightblue]
+calibration_curve_output [label = 'calibration_curve_output_with_recovery', shape = folder, fillcolor = lightblue]
 
 analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, fillcolor = lightblue]
 
@@ -642,14 +692,11 @@ m = slope of cal curve trendline
 C_IS = concentration of internal standard']
 
 step4 [label = 'Evaluate Calibration_Curve_Range_Category
-Area Ratio < Calibration Curve Minimum Average Peak Area Ratio = <LOQ (set Concentration Value to NaN)
+Area Ratio < Calibration Curve Minimum Average Peak Area Ratio = <LOQ
 Area Ratio > Calibration Curve Maximum Average Peak Area Ratio = Above Cal
 Area Ratio within bounds = Within Calibration Range
 ']
 
-step5 [label = 'Is Average Peak Area Ratio above or below LOQ?', shape = diamond]
-
-step6 [label = 'Set Analyte Concentration to NaN']
 
 peak_area_ratio -> analyte_concentration_calculation_input
 calibration_curve_output -> analyte_concentration_calculation_input
@@ -658,20 +705,21 @@ isMixSource -> analyte_concentration_calculation_input
 
 analyte_concentration_calculation_input -> step4
 
-step4 -> step5
-step5 -> step6 [label = 'Average Peak Area Ratio below LOQ']
-step5 -> step3 [label = 'Average Peak Area Ratio Abvoe LOQ']
+step4 -> step3
 }")
 ```
 
 ### Produce Data Outputs
 
-#### Blank Filtering
+#### Build Blank Filtering Table
 
-Blank Filtering means to subtract the value in the blank from the sample.
+Build a blank filtering table.
 
-1. Produce an output table that includes all of the blanks noted from the Extraction Batch Sources
-2. Subtract the Extraction Blank from the Analyte Value
+Questions:
+
+1. How to handle negative analyte_concentration_ng?
+
+2. How to handle instances where an analyte_concentration_ng is below set limits?
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
@@ -682,32 +730,76 @@ DiagrammeR::grViz("digraph {
 
     // sourced tables
     extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
-    sourceSample [label = 'SetX_XXX_XXX_short.XLS', shape = folder, style = filled, fillcolor = linen]
+    analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = lightblue]
 
 
-    step1 [label = 'Filter to Extraction Blank values from Raw Source data using County column', shape = rectangle, style = filled, fillcolor = white]
+    step1 [label = 'Filter to Extraction Blank values from Raw Source data using County == Extraction Blank', shape = rectangle, style = filled, fillcolor = white]
 
-        step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
+    step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
+    
+    step3 [label = 'Calculate average_extraction_blank_analyte_concentration_ng by:
+    1. batch_number
+    2. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
 
 
-    analyte_in_blank_sample [label=<
+    blank_sample_average_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_in_blank_sample</td></tr>
+            <tr><td bgcolor='lightblue'>blank_sample_average_analyte_concentration</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>cartridge_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
-            <tr><td align='left'>county: text</td></tr>
-            <tr><td align='left'>sample_id: text</td></tr>
-            <tr><td align='left'>sample_mass_g: numeric</td></tr>
-            <tr><td align='left'>individual_analyte_native_peak_area: numeric</td></tr>
+            <tr><td align='left'>average_extraction_blank_analyte_concentration_ng: numeric</td></tr>
         </table>
     >]
 
     extractionBatchSource -> step1
-    sourceSample -> step1
+    analyte_concentration_calculation_input -> step1
     step1 -> step2
-    step2 -> analyte_in_blank_sample
+    step2 -> step3
+    step3 -> blank_sample_average_analyte_concentration
+
+}")
+```
+
+
+#### Subtract Blank Filtered Values from
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+  node [shape=none, margin=0]
+
+
+
+    // sourced tables
+    analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = linen]
+    blank_sample_average_analyte_concentration [label = 'blank_sample_average_analyte_concentration', shape = folder, style = filled, fillcolor = linen]
+    
+    step1 [label = 'Join blank_sample_average_analyte_concentration to analyte_concentration_calculation_input on
+    1. batch_number
+    2. cartridge_number
+    3. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
+    
+    step2 [label = 'Calculate blank_filtered_analyte_concnetration_ng with:
+    blank_filtered_analyte_concnetration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
+    
+    blank_filtered_analyte_concentration [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>blank_filtered_analyte_concentration</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>cartridge_number: text</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>blank_filtered_analyte_concnetration_ng: numeric</td></tr>
+        </table>
+    >]
+
+
+    analyte_concentration_calculation_input -> step1
+    blank_sample_average_analyte_concentration -> step1
+    step1 -> step2
+    step2 -> blank_filtered_analyte_concentration
 
 }")
 ```
