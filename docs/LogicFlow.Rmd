@@ -711,12 +711,15 @@ step4 -> step3
 
 ### Produce Data Outputs
 
-#### Blank Filtering
+#### Build Blank Filtering Table
 
-Blank Filtering means to subtract the value in the blank from the sample.
+Build a blank filtering table.
 
-1. Produce an output table that includes all of the blanks noted from the Extraction Batch Sources
-2. Subtract the Extraction Blank from the Analyte Value
+Questions:
+
+1. How to handle negative analyte_concentration_ng?
+
+2. How to handle instances where an analyte_concentration_ng is below set limits?
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
@@ -727,32 +730,76 @@ DiagrammeR::grViz("digraph {
 
     // sourced tables
     extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
-    sourceSample [label = 'SetX_XXX_XXX_short.XLS', shape = folder, style = filled, fillcolor = linen]
+    analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = lightblue]
 
 
-    step1 [label = 'Filter to Extraction Blank values from Raw Source data using County column', shape = rectangle, style = filled, fillcolor = white]
+    step1 [label = 'Filter to Extraction Blank values from Raw Source data using County == Extraction Blank', shape = rectangle, style = filled, fillcolor = white]
 
-        step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
+    step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
+    
+    step3 [label = 'Calculate average_extraction_blank_analyte_concentration_ng by:
+    1. batch_number
+    2. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
 
 
-    analyte_in_blank_sample [label=<
+    blank_sample_average_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_in_blank_sample</td></tr>
+            <tr><td bgcolor='lightblue'>blank_sample_average_analyte_concentration</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>cartridge_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
-            <tr><td align='left'>county: text</td></tr>
-            <tr><td align='left'>sample_id: text</td></tr>
-            <tr><td align='left'>sample_mass_g: numeric</td></tr>
-            <tr><td align='left'>individual_analyte_native_peak_area: numeric</td></tr>
+            <tr><td align='left'>average_extraction_blank_analyte_concentration_ng: numeric</td></tr>
         </table>
     >]
 
     extractionBatchSource -> step1
-    sourceSample -> step1
+    analyte_concentration_calculation_input -> step1
     step1 -> step2
-    step2 -> analyte_in_blank_sample
+    step2 -> step3
+    step3 -> blank_sample_average_analyte_concentration
+
+}")
+```
+
+
+#### Subtract Blank Filtered Values from
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+  node [shape=none, margin=0]
+
+
+
+    // sourced tables
+    analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = linen]
+    blank_sample_average_analyte_concentration [label = 'blank_sample_average_analyte_concentration', shape = folder, style = filled, fillcolor = linen]
+    
+    step1 [label = 'Join blank_sample_average_analyte_concentration to analyte_concentration_calculation_input on
+    1. batch_number
+    2. cartridge_number
+    3. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
+    
+    step2 [label = 'Calculate blank_filtered_analyte_concnetration_ng with:
+    blank_filtered_analyte_concnetration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
+    
+    blank_filtered_analyte_concentration [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>blank_filtered_analyte_concentration</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>cartridge_number: text</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>blank_filtered_analyte_concnetration_ng: numeric</td></tr>
+        </table>
+    >]
+
+
+    analyte_concentration_calculation_input -> step1
+    blank_sample_average_analyte_concentration -> step1
+    step1 -> step2
+    step2 -> blank_filtered_analyte_concentration
 
 }")
 ```
