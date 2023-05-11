@@ -43,8 +43,11 @@ extraction_blank <- analyte_peak_area %>%
     calibration_curve_range_category,
     analyte_concentration_ng,
     new_analyte_concentration_ng
-  ) # %>% 
-  # dplyr::filter(batch_number == 2)
+  ) %>% 
+  dplyr::filter(batch_number == 2) %>% 
+  dplyr::filter(
+    calibration_curve_range_category == "<LOQ" | calibration_curve_range_category == "Within Calibration Range"
+  )
 
 # Extraction Blank Check
 extraction_blank %>% 
