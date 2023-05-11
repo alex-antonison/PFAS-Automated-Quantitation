@@ -9,7 +9,7 @@
 5. (TODO) (Logic Flow Done) Rename without calibration recovery table and add min and max average_peak_area_ratio for calibration_curve_output_with_recovery = calibration_curve_output_no_recovery
 6. (TODO) (Logic Flow Done) Add a step in Quantifying Sample for removing bad filenames from source file
 7. (TODO) (Logic Flow Done) IN step "Build Analyte Concentration Calculation Table" Need to update the calibration curve output to include necessary output columns
-8. (TOD) ((Logic Flow Done) For final step in generating the analyte concentration, turn it into a single process and highlight that there will be two analyte concentration outputs, one where the non-recovery calibration curve input was used and the other where recovery calibration output was used.
+8. (TOD) (Done) For final step in generating the analyte concentration, turn it into a single process and highlight that there will be two analyte concentration outputs, one where the non-recovery calibration curve input was used and the other where recovery calibration output was used.
 
 ## Blank Filtering Updates
 

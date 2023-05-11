@@ -42,10 +42,6 @@ library(magrittr)
 # Build raw data tables
 ####################################
 
-####################################
-# Create Analyte Calibration Table
-####################################
-
 batch_filename_error <- arrow::read_parquet(
   "data/processed/reference/batch_filename_error.parquet"
 ) %>%
@@ -65,11 +61,16 @@ combined_data_df <- arrow::read_parquet(
   # else, keep the current flag
   dplyr::mutate(
     remove_filename_flag = dplyr::if_else(is.na(remove_filename_flag),
-      FALSE,
-      remove_filename_flag
+                                          FALSE,
+                                          remove_filename_flag
     )
   ) %>%
   dplyr::filter(!remove_filename_flag)
+
+
+####################################
+# Create Analyte Calibration Table
+####################################
 
 # create_analyte_table <- function(df) {
 temp_analyte_df <- combined_data_df %>%
@@ -202,6 +203,7 @@ dplyr::bind_rows(
   arrow::write_parquet(
     sink = "data/processed/source/source_data_internal_standard.parquet"
   )
+
 ############################### Start Calculating Average Peak Ratio #####################
 
 native_analyte_internal_standard_mapping_df <- arrow::read_parquet(
