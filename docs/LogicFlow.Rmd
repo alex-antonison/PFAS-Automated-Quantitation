@@ -77,7 +77,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_peak_area: numeric</td></tr>
         </table>
     >]
-    
+
     extraction_batch_source [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>extraction_batch_source</td></tr>
@@ -110,7 +110,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_peak_area: numeric</td></tr>
         </table>
     >]
-    
+
     internal_standard_max_calibration_level [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard_max_calibration_level</td></tr>
@@ -120,7 +120,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>max_calibration_level: numeric</td></tr>
         </table>
     >]
-    
+
     batch_error_filename [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>batch_error_filename</td></tr>
@@ -129,12 +129,12 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>filename: text</td></tr>
         </table>
     >]
-    
-    
+
+
     step2 [label = 'Filter out Configurable Data from Source for a Given Batch
     1. Internal Standard: Remove calibrations above a set max calibration level
     2. Remove a known bad filename', shape = rectangle, style = filled, fillcolor = white]
-    
+
 
 
     //
@@ -147,7 +147,7 @@ DiagrammeR::grViz("digraph {
     extraction_batch_source -> step2
     batch_error_filename -> step2
     internal_standard_max_calibration_level-> step2
-    
+
     step2 -> native_analyte_internal_standard_mapping
     native_analyte_internal_standard_mapping -> average_peak_area_ratio_calculation_input
 }")
@@ -565,7 +565,7 @@ DiagrammeR::grViz("digraph {
 
   // Box for entities
   node [shape=none, margin=0]
-  
+
   batch_error_filename [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>batch_error_filename</td></tr>
@@ -652,7 +652,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
     batch_error_filename [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>batch_error_filename</td></tr>
@@ -794,20 +794,20 @@ DiagrammeR::grViz("digraph {
     extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
     analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = lightblue]
     average_peak_area_ratio [label = 'average_peak_area_ratio (for reference)', shape = folder, style = filled, fillcolor = lightblue]
-    
+
 
 
     step1 [label = 'Filter to Extraction Blank values from Raw Source data using County == Extraction Blank', shape = rectangle, style = filled, fillcolor = white]
 
     step2 [label = 'Set NF and <LOD values to 0.0', shape = rectangle, style = filled, fillcolor = white]
-    
+
     calc_lod [label = 'Calculate limit_of_detection_concentration_ng:
     1. Using the configured Limit of Detection calibration value, the LOD average peak area ratio = average_peak_area_ratio for that calibration level
     2. limit_of_detection_concentration_ng = (LOD average peak area ratio - intercept)/slope', shape = rectangle, style = filled, fillcolor = white]
-    
+
     replace_loq [label = 'Replace <LOQ values with limit_of_detection_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
-    
-    
+
+
     step3 [label = 'Calculate average_extraction_blank_analyte_concentration_ng by:
     1. batch_number
     2. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
@@ -826,7 +826,7 @@ DiagrammeR::grViz("digraph {
 
     extractionBatchSource -> step1
     analyte_concentration_calculation_input -> step1
-    
+
     average_peak_area_ratio -> calc_lod -> replace_loq
     step1 -> calc_lod
     step1 -> step2
@@ -850,15 +850,15 @@ DiagrammeR::grViz("digraph {
     // sourced tables
     analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = linen]
     blank_sample_average_analyte_concentration [label = 'blank_sample_average_analyte_concentration', shape = folder, style = filled, fillcolor = linen]
-    
+
     step1 [label = 'Join blank_sample_average_analyte_concentration to analyte_concentration_calculation_input on
     1. batch_number
     2. cartridge_number
     3. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
-    
+
     step2 [label = 'Calculate blank_filtered_analyte_concnetration_ng with:
     blank_filtered_analyte_concnetration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
-    
+
     blank_filtered_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>blank_filtered_analyte_concentration</td></tr>
