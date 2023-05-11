@@ -27,14 +27,14 @@ extraction_blank <- analyte_peak_area %>%
     by = c("batch_number", "cartridge_number")
   ) %>%
   # filter down to Extraction Blanks
-  dplyr::filter(stringr::str_detect(county, "Extraction Blank")) %>% 
+  dplyr::filter(stringr::str_detect(county, "Extraction Blank")) %>%
   dplyr::mutate(
     new_analyte_concentration_ng = dplyr::if_else(
       (analyte_detection_flag),
       analyte_concentration_ng,
       0.0
     )
-  ) %>% 
+  ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
@@ -43,18 +43,18 @@ extraction_blank <- analyte_peak_area %>%
     calibration_curve_range_category,
     analyte_concentration_ng,
     new_analyte_concentration_ng
-  ) %>% 
-  dplyr::filter(batch_number == 2) %>% 
+  ) %>%
+  dplyr::filter(batch_number == 2) %>%
   dplyr::filter(
     calibration_curve_range_category == "<LOQ" | calibration_curve_range_category == "Within Calibration Range"
   )
 
 # Extraction Blank Check
-extraction_blank %>% 
+extraction_blank %>%
   dplyr::group_by(
     batch_number,
     individual_native_analyte_name
-  ) %>% 
+  ) %>%
   dplyr::summarise(
     blank_count = dplyr::n()
   )
