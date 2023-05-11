@@ -52,6 +52,9 @@ readxl::read_excel(
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
+  ) %>% 
+  readr::write_excel_csv(
+    "data/processed/mapping/native_analyte_internal_standard_mapping.csv"
   )
 
 ############################
@@ -66,6 +69,9 @@ readxl::read_excel("data/source/mapping/analyte_concentration_name_mapping.xlsx"
   ) %>%
   arrow::write_parquet(
     sink = "data/processed/mapping/analyte_concentration_name_mapping.parquet"
+  ) %>% 
+  readr::write_excel_csv(
+    "data/processed/mapping/analyte_concentration_name_mapping.csv"
   )
 
 ############################
@@ -77,4 +83,7 @@ readxl::read_excel(
 ) %>%
   arrow::write_parquet(
     sink = "data/processed/mapping/concentration_internal_standard_mapping.parquet"
+  ) %>% 
+  readr::write_excel_csv(
+    "data/processed/mapping/concentration_internal_standard_mapping.csv"
   )

@@ -21,9 +21,30 @@ source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
 # Create Analyte Sample Table
 ####################################
 
+batch_filename_error <- arrow::read_parquet(
+  "data/processed/reference/batch_filename_error.parquet"
+) %>%
+  dplyr::mutate(
+    remove_filename_flag = TRUE
+  )
+
 combined_data_df <- arrow::read_parquet(
   "data/processed/source/full_raw_data.parquet"
-)
+) %>%
+  # join dataframe that includes error filename
+  dplyr::left_join(
+    batch_filename_error,
+    by = c("batch_number", "filename")
+  ) %>%
+  # for instances where filename is null, set it to false
+  # else, keep the current flag
+  dplyr::mutate(
+    remove_filename_flag = dplyr::if_else(is.na(remove_filename_flag),
+      FALSE,
+      remove_filename_flag
+    )
+  ) %>%
+  dplyr::filter(!remove_filename_flag)
 
 combined_data_df %>%
   dplyr::filter(source_type == "native_analyte") %>%

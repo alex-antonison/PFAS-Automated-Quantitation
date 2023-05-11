@@ -78,6 +78,15 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
+    internal_standard_mix [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>internal_standard_mix</td></tr>
+            // columns
+            <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>internal_standard_mix: text</td></tr>
+        </table>
+    >]
+
     native_analyte_internal_standard_mapping [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>native_analyte_internal_standard_mapping</td></tr>
@@ -87,13 +96,12 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
-    average_peak_area_ratio_calculation [label=<
+    average_peak_area_ratio_calculation_input [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation</td></tr>
+            <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation_input</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
-            <tr><td align='left'>source_file_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
             <tr><td align='left'>replicate_number: text</td></tr>
@@ -103,14 +111,45 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
+    internal_standard_max_calibration_level [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>internal_standard_max_calibration_level</td></tr>
+            // columns
+            <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>internal_standard_mix: text</td></tr>
+            <tr><td align='left'>max_calibration_level: numeric</td></tr>
+        </table>
+    >]
+
+    batch_error_filename [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>batch_error_filename</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: text</td></tr>
+            <tr><td align='left'>filename: text</td></tr>
+        </table>
+    >]
+
+
+    step2 [label = 'Filter out Configurable Data from Source for a Given Batch
+    1. Internal Standard: Remove calibrations above a set max calibration level
+    2. Remove a known bad filename', shape = rectangle, style = filled, fillcolor = white]
+
+
 
     //
     // Relationships
     //
 
-    individual_native_analyte -> native_analyte_internal_standard_mapping
-    internal_standard -> native_analyte_internal_standard_mapping
-    native_analyte_internal_standard_mapping -> average_peak_area_ratio_calculation
+    individual_native_analyte -> batch_error_filename
+    internal_standard -> internal_standard_max_calibration_level
+    internal_standard -> internal_standard_mix
+    internal_standard_mix -> step2
+    batch_error_filename -> step2
+    internal_standard_max_calibration_level-> step2
+
+    step2 -> native_analyte_internal_standard_mapping
+    native_analyte_internal_standard_mapping -> average_peak_area_ratio_calculation_input
 }")
 ```
 
@@ -128,6 +167,10 @@ sourceReference [label = 'Native_analyte_ISmatch_source.xlsx', shape = folder, f
 
 average_analyte_peak_area_ratio [label = 'average_analyte_peak_area_ratio', shape = folder, fillcolor = lightblue]
 
+stepFilter [label = 'Filter out Configurable Data from Source for a Given Batch
+    1. Internal Standard: Remove calibrations above a set max calibration level
+    2. Remove a known bad filename', shape = rectangle, style = filled, fillcolor = white]
+
 step1 [label = 'Join Analyte Peak Area with corresponding Internal Standard Peak Area
 Using Reference Native_analyte_ISmatch_source.xlsx to get the associated Internal Standard
 Joining on Corresponding Internal Standard + Filename']
@@ -138,7 +181,7 @@ Analyte Peak Area Ratio = Analyte Peak Area / Internal Standard Peak Area']
 step3 [label = 'For a given Analyte + Calibration Level, calculate Average Analyte Peak Area Ratio']
 
 sourceReference -> step1
-sourceSample -> step1 -> step2 -> step3 -> average_analyte_peak_area_ratio
+sourceSample -> stepFilter -> step1 -> step2 -> step3 -> average_analyte_peak_area_ratio
 }")
 ```
 
@@ -151,9 +194,9 @@ DiagrammeR::grViz("digraph {
     // Box for entities
     node [shape=none, margin=0]
 
-    average_peak_area_ratio_calculation [label=<
+    average_peak_area_ratio_calculation_input [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation</td></tr>
+            <tr><td bgcolor='lightblue'>average_peak_area_ratio_calculation_input</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
@@ -179,7 +222,7 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
-   average_peak_area_ratio_calculation -> average_peak_area_ratio
+   average_peak_area_ratio_calculation_input -> average_peak_area_ratio
 }")
 ```
 
@@ -227,21 +270,20 @@ DiagrammeR::grViz("digraph {
 
 
 
-    concentration_ratio_calculation [label=<
+    concentration_ratio_calculation_input [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>concentration_ratio_calculation</td></tr>
+            <tr><td bgcolor='lightblue'>concentration_ratio_calculation_input</td></tr>
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>calibration_level: text</td></tr>
-            <tr><td align='left'>average_analyte_peak_area_ratio: numeric</td></tr>
             <tr><td align='left'>native_analyte_concentration_ppt: numeric</td></tr>
             <tr><td align='left'>internal_standard_concentration_ppt: numeric</td></tr>
         </table>
     >]
 
 
-native_analyte_internal_standard_mapping -> concentration_ratio_calculation
+native_analyte_internal_standard_mapping -> concentration_ratio_calculation_input
 native_analyte_concentration -> native_analyte_internal_standard_mapping
 internal_standard_concentration -> native_analyte_internal_standard_mapping
 }")
@@ -259,9 +301,9 @@ node [shape = rectangle, style = filled, fillcolor = white]
 
 sourceCalCurve [label = 'Sep2021Calibration_Curve_source.xlsx', shape = folder, fillcolor = linen]
 
-average_analyte_peak_area_ratio [label = 'average_analyte_peak_area_ratio', shape = folder, fillcolor = lightblue]
+average_analyte_peak_area_ratio_output [label = 'average_analyte_peak_area_ratio_output', shape = folder, fillcolor = lightblue]
 
-calibration_curve_input [label = 'calibration_curve_input', shape = folder, fillcolor = lightblue]
+concentration_ratio [label = 'concentration_ratio', shape = folder, fillcolor = lightblue]
 
 
 step4 [label = 'Join the Average Analyte Peak Area Ratio to
@@ -274,13 +316,50 @@ Analyte Concentration Ratio = Native Analyte Concentration / Internal Standard C
 
 
 sourceCalCurve -> step4
-average_analyte_peak_area_ratio -> step4
-step4 -> step5 -> calibration_curve_input
+average_analyte_peak_area_ratio_output -> step4
+step4 -> step5 -> concentration_ratio
 
 }")
 ```
 
-##### Concentration Ratio Calculation Output
+
+##### Concentration Ratio Output
+
+```{r, echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+
+    // Box for entities
+    node [shape=none, margin=0]
+
+    concentration_ratio_calculation_input [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>concentration_ratio_calculation_input</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>calibration_level: text</td></tr>
+            <tr><td align='left'>native_analyte_concentration_ppt: numeric</td></tr>
+            <tr><td align='left'>internal_standard_concentration_ppt: numeric</td></tr>
+        </table>
+    >]
+
+    concentration_ratio [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>concentration_ratio</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>calibration_level: numeric</td></tr>
+            <tr><td align='left'>concentration_ratio: numeric</td></tr>
+        </table>
+    >]
+
+   concentration_ratio_calculation_input -> concentration_ratio
+}")
+```
+
+##### Calibration Curve Input
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
@@ -355,9 +434,9 @@ node [shape = rectangle, style = filled, fillcolor = white]
 
 calibration_curve_input [label = 'calibration_curve_input', shape = folder, fillcolor = lightblue]
 
-calibration_curve_recovery_output [label = 'calibration_curve_recovery_output', shape = folder, fillcolor = lightblue]
+calibration_curve_with_recovery_output [label = 'calibration_curve_with_recovery_output', shape = folder, fillcolor = lightblue]
 
-calibration_curve_r_squared_output [label = 'calibration_curve_r_squared_output', shape = folder, fillcolor = lightblue]
+calibration_curve_no_recovery_output [label = 'calibration_curve_no_recovery_output', shape = folder, fillcolor = lightblue]
 
 calibration_curve_troubleshoot [label = 'calibration_curve_troubleshoot', shape = folder, fillcolor = lightblue]
 
@@ -390,17 +469,17 @@ step12 [label = 'Remove Calibration Levels with out of bounds Recovery Value']
 calibration_curve_input -> step6
 step6 -> step7
 
-step7 -> calibration_curve_r_squared_output [label = 'R^2 >= 0.99']
-calibration_curve_r_squared_output -> step9
+step7 -> calibration_curve_no_recovery_output [label = 'R^2 >= 0.99']
+calibration_curve_no_recovery_output -> step9
 step7 -> step8  [label = 'R^2 < 0.99']
 step9 -> step10 -> step11
-step11 -> calibration_curve_recovery_output [label = 'All Recovery Values in Bounds']
+step11 -> calibration_curve_with_recovery_output [label = 'All Recovery Values in Bounds']
 step11 -> step12 [label = 'Recovery Value(s) out of Bounds']
 step8 -> step6
 step12 -> step62
 step8 -> calibration_curve_troubleshoot
 step12 -> calibration_recovery_troubleshoot
-step62 -> calibration_curve_recovery_output
+step62 -> calibration_curve_with_recovery_output
 
 }")
 ```
@@ -437,9 +516,9 @@ DiagrammeR::grViz("digraph {
     >]
 
 
-    calibration_curve_output_with_recovery [label=<
+    calibration_curve_with_recovery_output [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>calibration_curve_output_with_recovery</td></tr>
+            <tr><td bgcolor='lightblue'>calibration_curve_with_recovery_output</td></tr>
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>slope: numeric</td></tr>
@@ -452,9 +531,9 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
-    calibration_curve_output_no_recovery [label=<
+    calibration_curve_no_recovery_output [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>calibration_curve_output_with_recovery</td></tr>
+            <tr><td bgcolor='lightblue'>calibration_curve_no_recovery_output</td></tr>
             // columns
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>slope: numeric</td></tr>
@@ -462,6 +541,8 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>r_squared: numeric</td></tr>
             <tr><td align='left'>calibration_range: text</td></tr>
             <tr><td align='left'>removed_calibration_levels: text</td></tr>
+            <tr><td align='left'>minimum_average_peak_area_ratio: numeric</td></tr>
+            <tr><td align='left'>maximum_average_peak_area_ratio: numeric</td></tr>
         </table>
     >]
 
@@ -485,13 +566,22 @@ DiagrammeR::grViz("digraph {
   // Box for entities
   node [shape=none, margin=0]
 
+  batch_error_filename [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>batch_error_filename</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: text</td></tr>
+            <tr><td align='left'>filename: text</td></tr>
+        </table>
+    >]
+
   individual_native_analyte [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>individual_native_analyte</td></tr>
             // columns
+            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
-            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_area: numeric</td></tr>
         </table>
     >]
@@ -500,9 +590,9 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>internal_standard</td></tr>
             // columns
+            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>filename: text</td></tr>
-            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>internal_standard_area: numeric</td></tr>
         </table>
     >]
@@ -521,10 +611,10 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>peak_area_ratio</td></tr>
             // columns
+            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>catridge_number: integer</td></tr>
-            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_area: numeric</td></tr>
             <tr><td align='left'>internal_standard_area: numeric</td></tr>
             <tr><td align='left'>peak_area_ratio: numeric</td></tr>
@@ -533,7 +623,8 @@ DiagrammeR::grViz("digraph {
 
     individual_native_analyte -> native_analyte_internal_standard_mapping
     internal_standard -> native_analyte_internal_standard_mapping
-    native_analyte_internal_standard_mapping -> peak_area_ratio
+    native_analyte_internal_standard_mapping -> batch_error_filename
+    batch_error_filename -> peak_area_ratio
 
 }")
 ```
@@ -552,13 +643,31 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>peak_area_ratio</td></tr>
             // columns
+            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>catridge_number: integer</td></tr>
-            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_area: numeric</td></tr>
             <tr><td align='left'>internal_standard_area: numeric</td></tr>
             <tr><td align='left'>peak_area_ratio: numeric</td></tr>
+        </table>
+    >]
+
+    batch_error_filename [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>batch_error_filename</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: text</td></tr>
+            <tr><td align='left'>filename: text</td></tr>
+        </table>
+    >]
+    
+    analyte_limit_of_detection [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>analyte_limit_of_detection</td></tr>
+            // columns
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>limit_of_detection: text</td></tr>
         </table>
     >]
 
@@ -567,10 +676,13 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_output</td></tr>
             // columns
+            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>slope: numeric</td></tr>
             <tr><td align='left'>y_intercept: numeric</td></tr>
             <tr><td align='left'>r_squared: numeric</td></tr>
+            <tr><td align='left'>minimum_average_peak_area_ratio: numeric</td></tr>
+            <tr><td align='left'>maximum_average_peak_area_ratio: numeric</td></tr>
         </table>
     >]
 
@@ -599,6 +711,7 @@ DiagrammeR::grViz("digraph {
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>analyte_concentration_calculation</td></tr>
             // columns
+            <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>internal_standard_name: text</td></tr>
             <tr><td align='left'>internal_standard_used: text</td></tr>
@@ -606,6 +719,9 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>slope (m): numeric</td></tr>
             <tr><td align='left'>y_intercept (b): numeric</td></tr>
             <tr><td align='left'>peak_area_ratio (A_R): numeric</td></tr>
+            <tr><td align='left'>limit_of_detection: numeric</td></tr>
+            <tr><td align='left'>minimum_average_peak_area_ratio: numeric</td></tr>
+            <tr><td align='left'>maximum_average_peak_area_ratio: numeric</td></tr>
         </table>
     >]
 
@@ -617,15 +733,16 @@ step2 [label = 'Calculate the Amount of Internal Standard in each Sample
 
     peak_area_ratio -> calibration_curve_output [label = 'Join Calculated Calibration Curve Table \n on Native Analyte Name']
     peak_area_ratio -> extraction_batch_source [label = 'Join Extraction Batch Source \non batch_number and cartridge_number']
+    peak_area_ratio -> batch_error_filename [label = 'Remove error filenames']
     extraction_batch_source -> internal_standard_mix [label = 'Join Internal Standard Mix on\nInternal Standard Used and Internal Standard Name']
     peak_area_ratio -> internal_standard_mix
     internal_standard_mix -> step2 -> analyte_concentration_calculation
+    analyte_limit_of_detection -> analyte_concentration_calculation [label = 'Add Limit of Detection for use when calculating Calibration_Curve_Range_Category']
 
 }")
 ```
 
-
-#### Calculate Analyte Concentration without Recovery
+#### Calculate Analyte Concentration (Same calculations for with Recovery and without Recovery Filtering)
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
@@ -637,48 +754,11 @@ node [shape = rectangle, style = filled, fillcolor = white]
 // sourced tables
 isMixSource [label = 'IS_Mix_source.xlsx', shape = folder, fillcolor = linen]
 extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, fillcolor = linen]
+analyte_limit_of_detection [label = 'Native_analyte_ISmatch_source.xlsx', shape = folder, fillcolor = linen]
 
 // calcualted tables
 peak_area_ratio [label = 'peak_area_ratio', shape = folder, fillcolor = lightblue]
-calibration_curve_output [label = 'calibration_curve_output_no_recovery', shape = folder, fillcolor = lightblue]
-
-analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, fillcolor = lightblue]
-
-
-
-step3 [label = 'C_a = ((A_R - b) / m) * C_IS
-C_a = concentration of analyte
-A_R = peak area ratio
-b = y-intercept of cal curve trendline
-m = slope of cal curve trendline
-C_IS = concentration of internal standard']
-
-
-peak_area_ratio -> analyte_concentration_calculation_input
-calibration_curve_output -> analyte_concentration_calculation_input
-extractionBatchSource -> analyte_concentration_calculation_input
-isMixSource -> analyte_concentration_calculation_input
-
-analyte_concentration_calculation_input -> step3
-}")
-```
-
-#### Calculate Analyte Concentration with Recovery
-
-```{r echo=FALSE}
-DiagrammeR::grViz("digraph {
-
-graph [layout = dot]
-
-node [shape = rectangle, style = filled, fillcolor = white]
-
-// sourced tables
-isMixSource [label = 'IS_Mix_source.xlsx', shape = folder, fillcolor = linen]
-extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, fillcolor = linen]
-
-// calcualted tables
-peak_area_ratio [label = 'peak_area_ratio', shape = folder, fillcolor = lightblue]
-calibration_curve_output [label = 'calibration_curve_output_with_recovery', shape = folder, fillcolor = lightblue]
+calibration_curve_output [label = 'calibration_curve_output', shape = folder, fillcolor = lightblue]
 
 analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, fillcolor = lightblue]
 
@@ -692,12 +772,13 @@ m = slope of cal curve trendline
 C_IS = concentration of internal standard']
 
 step4 [label = 'Evaluate Calibration_Curve_Range_Category
+Area Ratio < Instrument Limit of Detection = <LOD
 Area Ratio < Calibration Curve Minimum Average Peak Area Ratio = <LOQ
 Area Ratio > Calibration Curve Maximum Average Peak Area Ratio = Above Cal
 Area Ratio within bounds = Within Calibration Range
 ']
 
-
+analyte_limit_of_detection -> analyte_concentration_calculation_input
 peak_area_ratio -> analyte_concentration_calculation_input
 calibration_curve_output -> analyte_concentration_calculation_input
 extractionBatchSource -> analyte_concentration_calculation_input
@@ -709,17 +790,41 @@ step4 -> step3
 }")
 ```
 
+
+##### Quantify Sample Table Outputs
+
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+
+    // Box for entities
+    node [shape=none, margin=0]
+
+    analyte_concentration_with_and_without_recovery [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>analyte_concentration_with_and_without_recovery</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: text</td></tr>
+            <tr><td align='left'>cartridge_number: text</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>analyte_detection_flag: text</td></tr>
+            <tr><td align='left'>internal_standard_name: text</td></tr>
+            <tr><td align='left'>internal_standard_detection_flag: text</td></tr>
+            <tr><td align='left'>calibration_curve_range_category: text</td></tr>
+            <tr><td align='left'>analyte_concentration_ng: text</td></tr>
+        </table>
+    >]
+
+}")
+```
+
 ### Produce Data Outputs
 
 #### Build Blank Filtering Table
 
 Build a blank filtering table.
 
-Questions:
-
-1. How to handle negative analyte_concentration_ng?
-
-2. How to handle instances where an analyte_concentration_ng is below set limits?
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
@@ -730,13 +835,22 @@ DiagrammeR::grViz("digraph {
 
     // sourced tables
     extractionBatchSource [label = 'Extraction_Batches_source.xlsx', shape = folder, style = filled, fillcolor = linen]
-    analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = lightblue]
+    analyte_concentration_calculation_output [label = 'analyte_concentration_calculation_output', shape = folder, style = filled, fillcolor = lightblue]
+    average_peak_area_ratio [label = 'average_peak_area_ratio (for reference)', shape = folder, style = filled, fillcolor = lightblue]
+
 
 
     step1 [label = 'Filter to Extraction Blank values from Raw Source data using County == Extraction Blank', shape = rectangle, style = filled, fillcolor = white]
 
-    step2 [label = 'Set NF values to 0.0', shape = rectangle, style = filled, fillcolor = white]
-    
+    step2 [label = 'Set NF and <LOD values to 0.0', shape = rectangle, style = filled, fillcolor = white]
+
+    calc_lod [label = 'Calculate limit_of_detection_concentration_ng:
+    1. Using the configured Limit of Detection calibration value, the LOD average peak area ratio = average_peak_area_ratio for that calibration level
+    2. limit_of_detection_concentration_ng = (LOD average peak area ratio - intercept)/slope', shape = rectangle, style = filled, fillcolor = white]
+
+    replace_loq [label = 'Replace <LOQ values with limit_of_detection_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
+
+
     step3 [label = 'Calculate average_extraction_blank_analyte_concentration_ng by:
     1. batch_number
     2. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
@@ -754,9 +868,13 @@ DiagrammeR::grViz("digraph {
     >]
 
     extractionBatchSource -> step1
-    analyte_concentration_calculation_input -> step1
+    analyte_concentration_calculation_output -> step1
+
+    average_peak_area_ratio -> calc_lod -> replace_loq
+    step1 -> calc_lod
     step1 -> step2
     step2 -> step3
+    replace_loq -> step3
     step3 -> blank_sample_average_analyte_concentration
 
 }")
@@ -773,17 +891,17 @@ DiagrammeR::grViz("digraph {
 
 
     // sourced tables
-    analyte_concentration_calculation_input [label = 'analyte_concentration_calculation_input', shape = folder, style = filled, fillcolor = linen]
-    blank_sample_average_analyte_concentration [label = 'blank_sample_average_analyte_concentration', shape = folder, style = filled, fillcolor = linen]
-    
+    analyte_concentration_calculation_output [label = 'analyte_concentration_calculation_output', shape = folder, style = filled, fillcolor = lightblue]
+    blank_sample_average_analyte_concentration [label = 'blank_sample_average_analyte_concentration', shape = folder, style = filled, fillcolor = lightblue]
+
     step1 [label = 'Join blank_sample_average_analyte_concentration to analyte_concentration_calculation_input on
     1. batch_number
     2. cartridge_number
     3. individual_native_analyte_name', shape = rectangle, style = filled, fillcolor = white]
-    
+
     step2 [label = 'Calculate blank_filtered_analyte_concnetration_ng with:
     blank_filtered_analyte_concnetration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
-    
+
     blank_filtered_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>blank_filtered_analyte_concentration</td></tr>
@@ -796,7 +914,7 @@ DiagrammeR::grViz("digraph {
     >]
 
 
-    analyte_concentration_calculation_input -> step1
+    analyte_concentration_calculation_output -> step1
     blank_sample_average_analyte_concentration -> step1
     step1 -> step2
     step2 -> blank_filtered_analyte_concentration

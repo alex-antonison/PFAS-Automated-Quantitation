@@ -14,7 +14,24 @@ peak_area_ratio <- arrow::read_parquet(
   "data/processed/quantify-sample/peak_area_ratio.parquet"
 )
 
-calibration_curve_output <- arrow::read_parquet(
+calibration_curve_output_no_recovery <- arrow::read_parquet(
+  "data/processed/calibration-curve/calibration_curve_output_no_recov_filter.parquet"
+) %>%
+  # doing a distinct since the calibration curve output file includes values
+  # not relevant to the calculation of the analyte concentration
+  dplyr::distinct(
+    batch_number,
+    individual_native_analyte_name,
+    slope,
+    y_intercept,
+    r_squared,
+    calibration_point,
+    calibration_range,
+    minimum_average_peak_area_ratio,
+    maximum_average_peak_area_ratio
+  )
+
+calibration_curve_output_with_recovery <- arrow::read_parquet(
   "data/processed/calibration-curve/calibration_curve_output_with_recov.parquet"
 ) %>%
   # doing a distinct since the calibration curve output file includes values
@@ -54,6 +71,13 @@ concen_internal_stanard_mapping <- arrow::read_parquet(
   "data/processed/mapping/concentration_internal_standard_mapping.parquet"
 )
 
+
+calculate_analyte_concentration <- function(peak_area_ratio,
+                                            calibration_curve_output,
+                                            extraction_batch_source,
+                                            internal_standard_mix,
+                                            concen_internal_stanard_mapping,
+                                            output_base_name) {
 
 peak_area_ratio %>%
   dplyr::left_join(
@@ -127,8 +151,23 @@ peak_area_ratio %>%
     analyte_concentration_ng
   ) %>%
   arrow::write_parquet(
-    sink = "data/processed/quantify-sample/analyte_concentration_with_recovery.parquet"
+    sink = paste0("data/processed/quantify-sample/",output_base_name,".parquet")
   ) %>%
   readr::write_excel_csv(
-    "data/processed/quantify-sample/analyte_concentration_with_recovery.csv"
+    paste0("data/processed/quantify-sample/",output_base_name,".csv")
   )
+}
+
+calculate_analyte_concentration(peak_area_ratio,
+                                calibration_curve_output_with_recovery,
+                                extraction_batch_source,
+                                internal_standard_mix,
+                                concen_internal_stanard_mapping,
+                                output_base_name = "analyte_concentration_with_recovery")
+
+calculate_analyte_concentration(peak_area_ratio,
+                                calibration_curve_output_no_recovery,
+                                extraction_batch_source,
+                                internal_standard_mix,
+                                concen_internal_stanard_mapping,
+                                output_base_name = "analyte_concentration_no_recovery")
