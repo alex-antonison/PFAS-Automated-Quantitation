@@ -45,6 +45,7 @@ combined_data_df <- arrow::read_parquet(
     )
   ) %>%
   dplyr::filter(!remove_filename_flag)
+
 combined_data_df %>%
   dplyr::filter(source_type == "native_analyte") %>%
   # filter down to analytes that have a match in the reference file
