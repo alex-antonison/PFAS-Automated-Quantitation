@@ -59,7 +59,7 @@ If a value is below the level at which an instrument can detect, we are confiden
 limit_of_detection_concentration_ng = (average peak area ratio cal level - intercept)/slope
 
 3. Logic for Handling Not within Calibration Range
-   1. For instances where <LOQ, replace value with limit_of_detection_concentration_ng 
+   1. For instances where <LOQ, replace value with limit_of_detection_concentration_ng/2^0.5
    2. For instnaces of not detected or <LOD, set to 0.0
 
 
