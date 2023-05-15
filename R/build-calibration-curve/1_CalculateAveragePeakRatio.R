@@ -61,8 +61,8 @@ combined_data_df <- arrow::read_parquet(
   # else, keep the current flag
   dplyr::mutate(
     remove_filename_flag = dplyr::if_else(is.na(remove_filename_flag),
-                                          FALSE,
-                                          remove_filename_flag
+      FALSE,
+      remove_filename_flag
     )
   ) %>%
   dplyr::filter(!remove_filename_flag)
@@ -312,17 +312,17 @@ individual_native_analyte_df %>%
   dplyr::left_join(
     internal_standard_max_calibration_level,
     by = "internal_standard_name"
-  ) %>% 
+  ) %>%
   dplyr::mutate(
     max_calibration_level_filter = dplyr::if_else(
       is.na(max_calibration_level),
       20,
       max_calibration_level
-    ) 
-  ) %>% 
+    )
+  ) %>%
   dplyr::filter(
     calibration_level <= max_calibration_level_filter
-  ) %>% 
+  ) %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/average_peak_area_ratio.parquet"
   ) %>%
