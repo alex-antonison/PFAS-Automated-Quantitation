@@ -925,7 +925,6 @@ DiagrammeR::grViz("digraph {
             <tr><td bgcolor='lightblue'>blank_sample_average_analyte_concentration</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
-            <tr><td align='left'>cartridge_number: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>average_extraction_blank_analyte_concentration_ng: numeric</td></tr>
         </table>
