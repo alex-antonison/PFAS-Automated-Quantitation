@@ -5,8 +5,7 @@
 #'
 #'
 
-source("R/process-source-data/ProcessExtractionBatchSource.R")
-source("R/quantify-sample/1_BuildSamplePeakAreaRatio.R")
+source("R/quantify-sample/2_BuildLimitOfDetectionReference.R")
 
 library(magrittr)
 
