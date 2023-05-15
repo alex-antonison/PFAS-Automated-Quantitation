@@ -5,7 +5,7 @@
 #'
 #'
 
-source("R/quantify-sample/2_BuildLimitOfDetectionReference.R")
+# source("R/quantify-sample/2_BuildLimitOfDetectionReference.R")
 
 library(magrittr)
 
@@ -70,12 +70,21 @@ concen_internal_stanard_mapping <- arrow::read_parquet(
   "data/processed/mapping/concentration_internal_standard_mapping.parquet"
 )
 
+lod_with_recovery <- arrow::read_parquet(
+  "data/processed/quantify-sample/analyte_limit_of_detection_reference_with_recovery.parquet"
+)
+
+lod_no_recovery <- arrow::read_parquet(
+  "data/processed/quantify-sample/analyte_limit_of_detection_reference_no_recovery.parquet"
+)
+
 
 calculate_analyte_concentration <- function(peak_area_ratio,
                                             calibration_curve_output,
                                             extraction_batch_source,
                                             internal_standard_mix,
                                             concen_internal_stanard_mapping,
+                                            lod_reference,
                                             output_base_name) {
   peak_area_ratio %>%
     dplyr::left_join(
@@ -103,6 +112,17 @@ calculate_analyte_concentration <- function(peak_area_ratio,
       internal_standard_mix,
       by = c("internal_standard_name", "internal_standard_used")
     ) %>%
+    dplyr::left_join(
+      lod_reference,
+      by = c("batch_number", "individual_native_analyte_name")
+    ) %>% 
+    dplyr::mutate(
+      lod_exist_flag = dplyr::if_else(
+        is.na(limit_of_detection_concentration_ng),
+        FALSE,
+        TRUE
+      )
+    ) %>% 
     # calculate amount of internal standard in each sample
     dplyr::mutate(
       # TODO make the value 25 a configurable number
@@ -118,6 +138,7 @@ calculate_analyte_concentration <- function(peak_area_ratio,
     ) %>%
     dplyr::mutate(
       calibration_curve_range_category = dplyr::case_when(
+        peak_area_ratio < limit_of_detection_concentration_ng ~ "<LOD",
         peak_area_ratio < minimum_average_peak_area_ratio ~ "<LOQ",
         minimum_average_peak_area_ratio < peak_area_ratio & peak_area_ratio < maximum_average_peak_area_ratio ~ "Within Calibration Range",
         peak_area_ratio > maximum_average_peak_area_ratio ~ "Above Calibration Range"
@@ -129,6 +150,7 @@ calculate_analyte_concentration <- function(peak_area_ratio,
       cartridge_number,
       individual_native_analyte_name,
       analyte_detection_flag,
+      lod_exist_flag,
       individual_native_analyte_peak_area,
       internal_standard_name,
       internal_standard_detection_flag,
@@ -161,6 +183,7 @@ calculate_analyte_concentration(peak_area_ratio,
   extraction_batch_source,
   internal_standard_mix,
   concen_internal_stanard_mapping,
+  lod_with_recovery,
   output_base_name = "analyte_concentration_with_recovery"
 )
 
@@ -169,5 +192,6 @@ calculate_analyte_concentration(peak_area_ratio,
   extraction_batch_source,
   internal_standard_mix,
   concen_internal_stanard_mapping,
+  lod_no_recovery,
   output_base_name = "analyte_concentration_no_recovery"
 )
