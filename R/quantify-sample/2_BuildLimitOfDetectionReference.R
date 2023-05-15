@@ -63,6 +63,12 @@ process_limit_of_detection_file <- function(average_peak_area_ratio,
     dplyr::mutate(
       limit_of_detection_concentration_ng = (limit_of_detection_area_ratio - y_intercept) / slope
     ) %>%
+    dplyr::select(
+      batch_number,
+      individual_native_analyte_name,
+      limit_of_detection_area_ratio,
+      limit_of_detection_concentration_ng
+    ) %>% 
     arrow::write_parquet(
       sink = paste0(
         "data/processed/quantify-sample/analyte_limit_of_detection_reference",
