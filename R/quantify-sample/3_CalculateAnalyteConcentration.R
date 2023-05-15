@@ -168,6 +168,7 @@ calculate_analyte_concentration <- function(peak_area_ratio,
       stock_mix,
       internal_standard_concentration_ppb,
       internal_standard_concentration_ng,
+      limit_of_detection_concentration_ng,
       analyte_concentration_ng
     ) %>%
     arrow::write_parquet(
