@@ -569,7 +569,19 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>limit_of_detection_cal_level: text</td></tr>
         </table>
     >]
-    
+
+  average_peak_area_ratio [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>average_peak_area_ratio</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>calibration_level: text</td></tr>
+            <tr><td align='left'>average_analyte_peak_area_ratio: numeric</td></tr>
+        </table>
+    >]
+
+
   calibration_curve_output [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>calibration_curve_output</td></tr>
@@ -578,11 +590,9 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
             <tr><td align='left'>slope: numeric</td></tr>
             <tr><td align='left'>y_intercept: numeric</td></tr>
-            <tr><td align='left'>calibration_level: text</td></tr>
-            <tr><td align='left'>average_analyte_peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
   analyte_limit_of_detection [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>analyte_limit_of_detection_reference</td></tr>
@@ -601,8 +611,9 @@ build_table [label = 'Use the configured Cal Level for a given Analyte to determ
 calc_limit_of_detection [label = 'limit_of_detection_concentration_ng = (limit_of_detection_area_ratio - intercept)/slope', shape = rectangle, style = filled, fillcolor = white]
 
 lod_area_ratio [label = 'limit_of_detection_area_ratio = The average_analyte_peak_area_ratio for Configured Cal Level', shape = rectangle, style = filled, fillcolor = white]
-    
+
 analyte_limit_of_detection_reference -> build_table
+average_peak_area_ratio -> build_table
 calibration_curve_output -> build_table
 build_table -> lod_area_ratio
 lod_area_ratio -> calc_limit_of_detection
@@ -662,7 +673,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>internal_standard_name: text</td></tr>
         </table>
     >]
-    
+
     calc_peak_area_ratio [label = 'peak_area_ratio = individual_native_analyte_area / internal_standard_area', shape = rectangle, style = filled, fillcolor = white]
 
 
@@ -711,7 +722,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>peak_area_ratio: numeric</td></tr>
         </table>
     >]
-    
+
   analyte_limit_of_detection_reference [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>analyte_limit_of_detection_reference</td></tr>
@@ -898,7 +909,7 @@ DiagrammeR::grViz("digraph {
     If <LOD = Set analyte_concentration_ng to 0.0
     If <LOQ = Set analyte_concentration_ng to limit_of_detection_concentration_ng/2^0.5
     ', shape = rectangle, style = filled, fillcolor = white]
-    
+
     analyte_concen_nf [label = 'If the extraction blank analyte_concentration_ng is NF, set to 0.0', shape = rectangle, style = filled, fillcolor = white]
 
 
@@ -991,7 +1002,7 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>analyte_concentration_ng: numeric</td></tr>
         </table>
     >]
-    
+
   extraction_batch_sources [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>extraction_batch_sources</td></tr>
@@ -1002,15 +1013,15 @@ DiagrammeR::grViz("digraph {
             <tr><td align='left'>sample_id: text</td></tr>
         </table>
     >]
-    
+
 
 build_table [label = 'Join analyte_concentration with extraction_batch_sources on
 batch_number and cartridge_number', shape = rectangle, style = filled, fillcolor = white]
 
     step1 [label = 'Filter to Quality Control values from Raw Source data using County == Fresh Water QC or Salt Water QC', shape = rectangle, style = filled, fillcolor = white]
-    
+
     set_sample_type [label = 'Set sample_type to Fresh Water QC or Salt Water QC depending on County Value', shape = rectangle, style = filled, fillcolor = white]
-    
+
     parse_out_level_and_rep [label = 'Pull out Quality Levels (Low, Medium, and High) and Replicate Number (1, 2, and 3) from sample_id', shape = rectangle, style = filled, fillcolor = white]
 
 
@@ -1028,7 +1039,7 @@ batch_number and cartridge_number', shape = rectangle, style = filled, fillcolor
         </table>
     >]
 
-    
+
 analyte_concentration -> build_table
 extraction_batch_sources -> build_table
 build_table -> step1 -> set_sample_type -> parse_out_level_and_rep -> quality_control_calculation_input
@@ -1052,18 +1063,18 @@ DiagrammeR::grViz("digraph {
 
 
 
-    
+
   evaluate_qc_level [label = 'If within a level a QC Level (Low Medium High) there is a Not Found for analyte_peak, set all values in that level to Not Found
   Set the corresponding missing_analyte_level_flag to false
   ', shape = rectangle, style = filled, fillcolor = white]
-  
+
   calc_average_and_stddev [label = 'For each Analyte QC Level, calculate
   1. Average
   2. Standard Deviation
   3. Percent Relative Standard Deviation (RSD) = (Standard Deviation / Average) * 100
   ', shape = rectangle, style = filled, fillcolor = white]
-  
-  
+
+
       qc_analyte [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>analyte_concentration_quality_control</td></tr>
@@ -1081,7 +1092,7 @@ DiagrammeR::grViz("digraph {
 
 
     quality_control_calculation_input -> evaluate_qc_level -> calc_average_and_stddev -> qc_analyte
-    
+
 
 
 }")
