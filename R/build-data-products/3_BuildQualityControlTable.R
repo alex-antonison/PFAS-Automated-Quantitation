@@ -103,13 +103,13 @@ build_qc_table <- function(extraction_batch_source,
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      quality_control_missing_flag = FALSE
+      quality_control_exists_flag = TRUE
     ) %>%
     dplyr::select(
       batch_number,
       individual_native_analyte_name,
       qc_level,
-      quality_control_missing_flag,
+      quality_control_exists_flag,
       average_qc_analyte_concentration_ng,
       std_dev_qc_analyte_concnetration_ng,
       percent_rsd_qc_analyte_concnetration_ng
@@ -117,7 +117,7 @@ build_qc_table <- function(extraction_batch_source,
 
   qc_missing_replicate_levels <- qc_missing_replicate_levels %>%
     dplyr::mutate(
-      quality_control_missing_flag = TRUE,
+      quality_control_exists_flag = FALSE,
       average_qc_analyte_concentration_ng = NA,
       std_dev_qc_analyte_concnetration_ng = NA,
       percent_rsd_qc_analyte_concnetration_ng = NA
@@ -126,7 +126,7 @@ build_qc_table <- function(extraction_batch_source,
       batch_number,
       individual_native_analyte_name,
       qc_level,
-      quality_control_missing_flag,
+      quality_control_exists_flag,
       average_qc_analyte_concentration_ng,
       std_dev_qc_analyte_concnetration_ng,
       percent_rsd_qc_analyte_concnetration_ng
