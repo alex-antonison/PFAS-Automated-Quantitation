@@ -4,23 +4,32 @@ extraction_batch_source <- arrow::read_parquet(
   "data/processed/reference/extraction_batch_source.parquet"
 )
 
-analyte_concentration_df <- arrow::read_parquet(
+analyte_concentration_with_recovery <- arrow::read_parquet(
   "data/processed/quantify-sample/analyte_concentration_with_recovery.parquet"
 )
 
-analyte_peak_area <- analyte_concentration_df %>%
-  dplyr::select(
-    batch_number,
-    cartridge_number,
-    individual_native_analyte_name,
-    analyte_detection_flag,
-    internal_standard_name,
-    internal_standard_detection_flag,
-    calibration_curve_range_category,
-    analyte_concentration_ng,
-    limit_of_detection_concentration_ng
-  )
+analyte_concentration_no_recovery <- arrow::read_parquet(
+  "data/processed/quantify-sample/analyte_concentration_no_recovery.parquet"
+)
 
+
+build_extraction_blank_table <- function(extraction_batch_source,
+                                         analyte_concentration_df,
+                                         file_name) {
+
+  
+  analyte_peak_area <- analyte_concentration_df %>%
+    dplyr::select(
+      batch_number,
+      cartridge_number,
+      individual_native_analyte_name,
+      analyte_detection_flag,
+      internal_standard_name,
+      internal_standard_detection_flag,
+      calibration_curve_range_category,
+      analyte_concentration_ng,
+      limit_of_detection_concentration_ng
+    )  
 
 analyte_peak_area %>%
   dplyr::left_join(
@@ -56,8 +65,17 @@ analyte_peak_area %>%
     average_extraction_blank_analyte_concentration_ng
   )  %>%
   arrow::write_parquet(
-    sink = "data/processed/build-data-products/blank_filtered_with_recovery.parquet"
+    sink = paste0("data/processed/build-data-products/blank_filtered_",file_name,".parquet")
   ) %>%
   readr::write_excel_csv(
-    paste0("data/processed/build-data-products/blank_filtered_with_recovery.csv")
+    paste0("data/processed/build-data-products/blank_filtered_",file_name,".csv")
   )
+}
+
+build_extraction_blank_table(extraction_batch_source,
+                             analyte_concentration_with_recovery,
+                             "with_recovery")
+
+build_extraction_blank_table(extraction_batch_source,
+                             analyte_concentration_no_recovery,
+                             "no_recovery")
