@@ -605,7 +605,8 @@ DiagrammeR::grViz("digraph {
         </table>
     >]
 
-build_table [label = 'Use the configured Cal Level for a given Analyte to determine the Limit of Detection
+build_table [label = 'Use the configured Cal Level for a given Analyte to determine the Limit of Detection (LoD).
+If there does not exist an average_analyte_peak_area_ratio for the configured LoD level, will find the lowest cal level above the configured LoD value.
 ', shape = rectangle, style = filled, fillcolor = white]
 
 calc_limit_of_detection [label = 'limit_of_detection_concentration_ng = (limit_of_detection_area_ratio - intercept)/slope', shape = rectangle, style = filled, fillcolor = white]
