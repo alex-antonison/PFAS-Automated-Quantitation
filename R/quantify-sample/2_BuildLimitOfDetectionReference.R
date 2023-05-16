@@ -45,39 +45,37 @@ process_limit_of_detection_file <- function(average_peak_area_ratio,
                                             analyte_limit_of_detection_reference,
                                             calibration_curve_output,
                                             file_name_base) {
-    
-  
   # find the lowest available cal level
-  min_lod_cal_level <- average_peak_area_ratio %>% 
+  min_lod_cal_level <- average_peak_area_ratio %>%
     dplyr::left_join(
       analyte_limit_of_detection_reference,
       by = "individual_native_analyte_name"
     ) %>%
     dplyr::filter(
       calibration_level >= cal_level_lod
-    ) %>% 
+    ) %>%
     dplyr::group_by(
       batch_number,
       individual_native_analyte_name
-    ) %>% 
+    ) %>%
     dplyr::summarise(
       min_cal_level_above_lod = min(calibration_level)
     )
-  
-  ## TODO Calculate 
+
+  ## TODO Calculate
   average_peak_area_ratio %>%
     dplyr::left_join(
       min_lod_cal_level,
       by = c("batch_number", "individual_native_analyte_name")
-    ) %>% 
-    dplyr::filter(calibration_level == min_cal_level_above_lod) %>% 
+    ) %>%
+    dplyr::filter(calibration_level == min_cal_level_above_lod) %>%
     dplyr::mutate(
       limit_of_detection_area_ratio = average_peak_area_ratio
     ) %>%
     dplyr::left_join(
       calibration_curve_output,
       by = c("batch_number", "individual_native_analyte_name")
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       limit_of_detection_concentration_ng = (limit_of_detection_area_ratio - y_intercept) / slope
     ) %>%
@@ -86,7 +84,7 @@ process_limit_of_detection_file <- function(average_peak_area_ratio,
       individual_native_analyte_name,
       limit_of_detection_area_ratio,
       limit_of_detection_concentration_ng
-    ) %>% 
+    ) %>%
     arrow::write_parquet(
       sink = paste0(
         "data/processed/quantify-sample/analyte_limit_of_detection_reference",
@@ -103,12 +101,16 @@ process_limit_of_detection_file <- function(average_peak_area_ratio,
     )
 }
 
-process_limit_of_detection_file(average_peak_area_ratio,
-                                analyte_limit_of_detection_reference,
-                                calibration_curve_output_with_recovery,
-                                "_with_recovery")
+process_limit_of_detection_file(
+  average_peak_area_ratio,
+  analyte_limit_of_detection_reference,
+  calibration_curve_output_with_recovery,
+  "_with_recovery"
+)
 
-process_limit_of_detection_file(average_peak_area_ratio,
-                                analyte_limit_of_detection_reference,
-                                calibration_curve_output_with_recovery,
-                                "_no_recovery")
+process_limit_of_detection_file(
+  average_peak_area_ratio,
+  analyte_limit_of_detection_reference,
+  calibration_curve_output_with_recovery,
+  "_no_recovery"
+)
