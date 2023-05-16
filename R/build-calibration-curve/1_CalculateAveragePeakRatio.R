@@ -24,7 +24,7 @@
 #'    Ref:
 #'     - Mapping file to tie native analytes to internal standards
 #'
-#' Ouput: Average Peak Area Ratio
+#' Output: Average Peak Area Ratio
 #'
 #'
 #' Note:
@@ -61,8 +61,8 @@ combined_data_df <- arrow::read_parquet(
   # else, keep the current flag
   dplyr::mutate(
     remove_filename_flag = dplyr::if_else(is.na(remove_filename_flag),
-                                          FALSE,
-                                          remove_filename_flag
+      FALSE,
+      remove_filename_flag
     )
   ) %>%
   dplyr::filter(!remove_filename_flag)
@@ -210,6 +210,10 @@ native_analyte_internal_standard_mapping_df <- arrow::read_parquet(
   "data/processed/mapping/native_analyte_internal_standard_mapping.parquet"
 )
 
+internal_standard_max_calibration_level <- arrow::read_parquet(
+  "data/processed/reference/internal_standard_max_calibration_level.parquet"
+)
+
 individual_native_analyte_df <- arrow::read_parquet("data/processed/source/source_data_individual_native_analyte.parquet") %>%
   dplyr::select(
     batch_number,
@@ -304,6 +308,22 @@ individual_native_analyte_df %>%
     .groups = "keep"
   ) %>%
   dplyr::ungroup() %>%
+  ## remove calibration levels above for configured internal standards
+  dplyr::left_join(
+    internal_standard_max_calibration_level,
+    by = "internal_standard_name"
+  ) %>%
+  dplyr::mutate(
+    max_calibration_level_filter = dplyr::if_else(
+      is.na(max_calibration_level),
+      # setting value to expected max calibration level
+      14,
+      max_calibration_level
+    )
+  ) %>%
+  dplyr::filter(
+    calibration_level <= max_calibration_level_filter
+  ) %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/average_peak_area_ratio.parquet"
   ) %>%
