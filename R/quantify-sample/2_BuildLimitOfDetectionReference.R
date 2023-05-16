@@ -62,7 +62,6 @@ process_limit_of_detection_file <- function(average_peak_area_ratio,
       min_cal_level_above_lod = min(calibration_level)
     )
 
-  ## TODO Calculate
   average_peak_area_ratio %>%
     dplyr::left_join(
       min_lod_cal_level,
