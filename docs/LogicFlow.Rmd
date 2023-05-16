@@ -1026,7 +1026,7 @@ batch_number and cartridge_number', shape = rectangle, style = filled, fillcolor
 
   quality_control_calculation_input [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_limit_of_detection_reference</td></tr>
+            <tr><td bgcolor='lightblue'>quality_control_calculation_input</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
