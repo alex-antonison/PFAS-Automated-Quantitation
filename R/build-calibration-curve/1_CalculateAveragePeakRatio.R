@@ -316,7 +316,8 @@ individual_native_analyte_df %>%
   dplyr::mutate(
     max_calibration_level_filter = dplyr::if_else(
       is.na(max_calibration_level),
-      20,
+      # setting value to expected max calibration level
+      14,
       max_calibration_level
     )
   ) %>%

@@ -1,5 +1,7 @@
 library(magrittr)
 
+source("R/quantify-sample/3_CalculateAnalyteConcentration.R")
+
 extraction_batch_source <- arrow::read_parquet(
   "data/processed/reference/extraction_batch_source.parquet"
 )

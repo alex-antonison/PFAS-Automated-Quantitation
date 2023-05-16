@@ -1,5 +1,7 @@
 library(magrittr)
 
+source("R/build-data-products/1_BuildExtractionBlank.R")
+
 extraction_blank_with_recovery <- arrow::read_parquet(
   "data/processed/build-data-products/blank_filtered_with_recovery.parquet"
 ) %>%
