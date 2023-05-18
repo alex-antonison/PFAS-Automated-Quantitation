@@ -45,8 +45,10 @@ library(magrittr)
 batch_filename_error <- arrow::read_parquet(
   "data/processed/reference/batch_filename_error.parquet"
 ) %>%
+  # setting this to false since for filenames in this table,
+  # we want to remove from the dataframe
   dplyr::mutate(
-    remove_filename_flag = TRUE
+    keep_filename_flag = FALSE
   )
 
 combined_data_df <- arrow::read_parquet(
@@ -57,22 +59,22 @@ combined_data_df <- arrow::read_parquet(
     batch_filename_error,
     by = c("batch_number", "filename")
   ) %>%
-  # for instances where filename is null, set it to false
-  # else, keep the current flag
+  # for instances where filename is null, set it to True
+  # since we want to keep those filenames
   dplyr::mutate(
-    remove_filename_flag = dplyr::if_else(is.na(remove_filename_flag),
-      FALSE,
-      remove_filename_flag
+    keep_filename_flag = dplyr::if_else(is.na(keep_filename_flag),
+      TRUE,
+      keep_filename_flag
     )
   ) %>%
-  dplyr::filter(!remove_filename_flag)
+  dplyr::filter(keep_filename_flag)
 
 
 ####################################
 # Create Analyte Calibration Table
 ####################################
 
-# create_analyte_table <- function(df) {
+
 temp_analyte_df <- combined_data_df %>%
   dplyr::filter(source_type == "native_analyte") %>%
   # filter down to analytes that have a match in the reference file
