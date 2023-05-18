@@ -6,18 +6,17 @@ temp_df <- readr::read_csv(
   "../../data/processed/build-data-products/blank_filtered_evaluated_qc_no_recovery.csv"
 )
 
-temp_df %>% 
+temp_df %>%
   dplyr::filter(batch_number == 2) %>%
   # dplyr::filter(individual_native_analyte_name == "PFOA+P3MHpA" |
   #                 individual_native_analyte_name == "PFOS" |
   #                 individual_native_analyte_name == "PFBS" |
   #                 individual_native_analyte_name == "PFUdA") %>%
   # # dplyr::filter(individual_native_analyte_name == "PFOA+P3MHpA")
-  # dplyr::filter(qc_level == "L" | qc_level == "M" ) %>% 
-  dplyr::arrange(qc_level) %>% 
-  dplyr::arrange(individual_native_analyte_name)  %>% 
+  # dplyr::filter(qc_level == "L" | qc_level == "M" ) %>%
+  dplyr::arrange(qc_level) %>%
+  dplyr::arrange(individual_native_analyte_name) %>%
   readr::write_excel_csv(
     "../../data/processed/troubleshoot/2023-05-17-blank-filtered-no-recovery-qc-with-qc-recovery-ratio.csv"
   )
-  
 ```

@@ -5,9 +5,9 @@ temp_df <- readr::read_csv(
 ```
 
 ```{r}
-temp_df %>% 
-  dplyr::filter(batch_number == 2) %>% 
-  dplyr::filter(individual_native_analyte_name == "PFOS") %>% 
+temp_df %>%
+  dplyr::filter(batch_number == 2) %>%
+  dplyr::filter(individual_native_analyte_name == "PFOS") %>%
   dplyr::distinct(
     individual_native_analyte_name,
     y_intercept,
