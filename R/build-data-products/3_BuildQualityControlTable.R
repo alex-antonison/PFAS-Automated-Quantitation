@@ -2,18 +2,6 @@ library(magrittr)
 
 source("R/build-data-products/2_RemoveExtractionBlankFromAnalyteConcentration.R")
 
-extraction_batch_source <- arrow::read_parquet(
-  "data/processed/reference/extraction_batch_source.parquet"
-)
-
-blank_filtered_analyte_concentration_with_recovery <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_analyte_concentration_with_recovery.parquet"
-)
-
-blank_filtered_analyte_concentration_no_recovery <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet"
-)
-
 build_qc_table <- function(extraction_batch_source,
                            blank_filtered_analyte_concentration_df,
                            file_name) {
@@ -155,6 +143,18 @@ build_qc_table <- function(extraction_batch_source,
       )
     )
 }
+
+extraction_batch_source <- arrow::read_parquet(
+  "data/processed/reference/extraction_batch_source.parquet"
+)
+
+blank_filtered_analyte_concentration_with_recovery <- arrow::read_parquet(
+  "data/processed/build-data-products/blank_filtered_analyte_concentration_with_recovery.parquet"
+)
+
+blank_filtered_analyte_concentration_no_recovery <- arrow::read_parquet(
+  "data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet"
+)
 
 build_qc_table(
   extraction_batch_source,

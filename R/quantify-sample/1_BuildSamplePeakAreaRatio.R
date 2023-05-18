@@ -25,7 +25,9 @@ batch_filename_error <- arrow::read_parquet(
   "data/processed/reference/batch_filename_error.parquet"
 ) %>%
   dplyr::mutate(
-    remove_filename_flag = TRUE
+    # set flag to false since files filenames in the error config
+    # need to be removed
+    keep_filename_flag = FALSE
   )
 
 combined_data_df <- arrow::read_parquet(
@@ -36,15 +38,16 @@ combined_data_df <- arrow::read_parquet(
     batch_filename_error,
     by = c("batch_number", "filename")
   ) %>%
-  # for instances where filename is null, set it to false
+  # for instances where filename is null since it wasn't in the error
+  # config file, set it to TRUE
   # else, keep the current flag
   dplyr::mutate(
-    remove_filename_flag = dplyr::if_else(is.na(remove_filename_flag),
-      FALSE,
-      remove_filename_flag
+    keep_filename_flag = dplyr::if_else(is.na(keep_filename_flag),
+      TRUE,
+      keep_filename_flag
     )
   ) %>%
-  dplyr::filter(!remove_filename_flag)
+  dplyr::filter(keep_filename_flag)
 
 combined_data_df %>%
   dplyr::filter(source_type == "native_analyte") %>%
