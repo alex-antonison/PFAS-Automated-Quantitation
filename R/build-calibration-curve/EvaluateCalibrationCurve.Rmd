@@ -1,0 +1,16 @@
+```{r}
+temp_df <- readr::read_csv(
+  "../../data/processed/calibration-curve/calibration_curve_output_no_recov_filter.csv"
+)
+```
+
+```{r}
+temp_df %>%
+  dplyr::filter(batch_number == 2) %>%
+  dplyr::filter(individual_native_analyte_name == "PFOS") %>%
+  dplyr::distinct(
+    individual_native_analyte_name,
+    y_intercept,
+    slope
+  )
+```

@@ -838,7 +838,7 @@ m = slope of cal curve trendline
 C_IS = concentration of internal standard']
 
 step4 [label = 'Evaluate Calibration_Curve_Range_Category
-Area Ratio < Instrument Limit of Detection = <LOD
+Area Ratio < Instrument Limit of Detection Area Ratio = <LOD
 Area Ratio < Calibration Curve Minimum Average Peak Area Ratio = <LOQ
 Area Ratio within bounds = Within Calibration Range
 Area Ratio > Calibration Curve Maximum Average Peak Area Ratio = Above Cal
@@ -992,9 +992,9 @@ DiagrammeR::grViz("digraph {
     // Box for entities
     node [shape=none, margin=0]
 
-  analyte_concentration [label=<
+  blank_filtered_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_concentration</td></tr>
+            <tr><td bgcolor='lightblue'>blank_filtered_analyte_concentration</td></tr>
             // columns
             <tr><td align='left'>batch_number: text</td></tr>
             <tr><td align='left'>cartridge_number: text</td></tr>
@@ -1015,7 +1015,7 @@ DiagrammeR::grViz("digraph {
     >]
 
 
-build_table [label = 'Join analyte_concentration with extraction_batch_sources on
+build_table [label = 'Join blank_filtered_analyte_concentration with extraction_batch_sources on
 batch_number and cartridge_number', shape = rectangle, style = filled, fillcolor = white]
 
     step1 [label = 'Filter to Quality Control values from Raw Source data using County == Fresh Water QC or Salt Water QC', shape = rectangle, style = filled, fillcolor = white]
@@ -1040,7 +1040,7 @@ batch_number and cartridge_number', shape = rectangle, style = filled, fillcolor
     >]
 
 
-analyte_concentration -> build_table
+blank_filtered_analyte_concentration -> build_table
 extraction_batch_sources -> build_table
 build_table -> step1 -> set_sample_type -> parse_out_level_and_rep -> quality_control_calculation_input
 
@@ -1062,8 +1062,6 @@ DiagrammeR::grViz("digraph {
 
 
 
-
-
   evaluate_qc_level [label = 'If within a level a QC Level (Low Medium High) there is a Not Found for analyte_peak, set all values in that level to Not Found
   Set the corresponding missing_analyte_level_flag to false
   ', shape = rectangle, style = filled, fillcolor = white]
@@ -1077,7 +1075,7 @@ DiagrammeR::grViz("digraph {
 
       qc_analyte [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
-            <tr><td bgcolor='lightblue'>analyte_concentration_quality_control</td></tr>
+            <tr><td bgcolor='lightblue'>blank_filtered_analyte_concentration_quality_control</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
             <tr><td align='left'>quality_control_sample_type: text</td></tr>
@@ -1092,6 +1090,70 @@ DiagrammeR::grViz("digraph {
 
 
     quality_control_calculation_input -> evaluate_qc_level -> calc_average_and_stddev -> qc_analyte
+
+
+
+}")
+```
+
+#### Evaluate Quality Control Levels
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+  node [shape=none, margin=0]
+
+
+
+    // sourced tables
+    blank_filtered_analyte_concentration_quality_control [label = 'blank_filtered_analyte_concentration_quality_control', shape = folder, style = filled, fillcolor = lightblue]
+
+    native_analyte_quality_control_levels [label = 'native_analyte_quality_control_levels', shape = folder, style = filled, fillcolor = linen]
+
+    analyte_concentration_name_mapping [label = 'analyte_concentration_name_mapping', shape = folder, style = filled, fillcolor = linen]
+
+
+
+joinTables [label = 'Join blank_filtered_analyte_concentration_quality_control to analyte_concentration_quality_control
+using analyte_concentration_name_mapping to map analyte names
+
+1. individual_native_analyte_name
+2. quality_control_mix_level
+', shape = rectangle, style = filled, fillcolor = white]
+
+evalRatio [label = 'Evaluate quality control recovery
+
+1. Theoretical = native_analyte_spkied_in_qc_samples_ng
+2. Experimental = average_qc_analyte_concnetration_ng
+
+QC Recovery Ratio = (Experimental / Theoretical) * 100
+QC Recovery Ratio = (average_qc_analyte_concnetration_ng / native_analyte_spkied_in_qc_samples_ng) * 100
+', shape = rectangle, style = filled, fillcolor = white]
+
+evalBounds [label = 'Evaluate Ratio Boundary:
+1. If QC Recovery Ratio is between 70% to 130% = PASS
+2. If QC Recovery Ratio is outside 70% to 130% = FAIL
+3. If Experimental Value is NF = Experimental Not Found', shape = rectangle, style = filled, fillcolor = white]
+
+      blank_filtered_analyte_quality_control_evaluation [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>blank_filtered_analyte_quality_control_evaluation</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>qc_level: text</td></tr>
+            <tr><td align='left'>blank_filtered_average_qc_analyte_concentration_ng: numeric</td></tr>
+            <tr><td align='left'>native_analyte_spiked_in_qc_samples_ng: numeric</td></tr>
+            <tr><td align='left'>qc_recovery_ratio: numeric</td></tr>
+            <tr><td align='left'>qc_recovery_ratio_test: text</td></tr>
+        </table>
+    >]
+
+blank_filtered_analyte_concentration_quality_control -> joinTables
+native_analyte_quality_control_levels -> joinTables
+analyte_concentration_name_mapping -> joinTables
+
+joinTables -> evalRatio -> evalBounds -> blank_filtered_analyte_quality_control_evaluation
 
 
 

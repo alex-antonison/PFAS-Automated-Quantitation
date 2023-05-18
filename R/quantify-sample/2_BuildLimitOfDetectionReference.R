@@ -110,6 +110,6 @@ process_limit_of_detection_file(
 process_limit_of_detection_file(
   average_peak_area_ratio,
   analyte_limit_of_detection_reference,
-  calibration_curve_output_with_recovery,
+  calibration_curve_output_no_recovery,
   "_no_recovery"
 )

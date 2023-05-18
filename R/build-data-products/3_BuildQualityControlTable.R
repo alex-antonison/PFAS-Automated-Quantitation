@@ -1,23 +1,23 @@
 library(magrittr)
 
-source("R/quantify-sample/3_CalculateAnalyteConcentration.R")
+source("R/build-data-products/2_RemoveExtractionBlankFromAnalyteConcentration.R")
 
 extraction_batch_source <- arrow::read_parquet(
   "data/processed/reference/extraction_batch_source.parquet"
 )
 
-analyte_concentration_with_recovery <- arrow::read_parquet(
-  "data/processed/quantify-sample/analyte_concentration_with_recovery.parquet"
+blank_filtered_analyte_concentration_with_recovery <- arrow::read_parquet(
+  "data/processed/build-data-products/blank_filtered_analyte_concentration_with_recovery.parquet"
 )
 
-analyte_concentration_no_recovery <- arrow::read_parquet(
-  "data/processed/quantify-sample/analyte_concentration_no_recovery.parquet"
+blank_filtered_analyte_concentration_no_recovery <- arrow::read_parquet(
+  "data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet"
 )
 
 build_qc_table <- function(extraction_batch_source,
-                           analyte_concentration_df,
+                           blank_filtered_analyte_concentration_df,
                            file_name) {
-  qc_filtered_samples <- analyte_concentration_df %>%
+  qc_filtered_samples <- blank_filtered_analyte_concentration_df %>%
     dplyr::inner_join(
       extraction_batch_source,
       by = c("batch_number", "cartridge_number")
@@ -55,7 +55,7 @@ build_qc_table <- function(extraction_batch_source,
       qc_level,
       qc_replicate,
       replicate_missing_flag,
-      analyte_concentration_ng
+      blank_filtered_analyte_concentration_ng
     )
 
   # Account for missing replicate in QC samples
@@ -99,9 +99,9 @@ build_qc_table <- function(extraction_batch_source,
       qc_level
     ) %>%
     dplyr::summarise(
-      average_qc_analyte_concentration_ng = mean(analyte_concentration_ng),
-      std_dev_qc_analyte_concnetration_ng = sd(analyte_concentration_ng),
-      percent_rsd_qc_analyte_concnetration_ng = (std_dev_qc_analyte_concnetration_ng / average_qc_analyte_concentration_ng) * 100
+      blank_filtered_average_qc_analyte_concentration_ng = mean(blank_filtered_analyte_concentration_ng),
+      blank_filtered_std_dev_qc_analyte_concentration_ng = sd(blank_filtered_analyte_concentration_ng),
+      blank_filtered_percent_rsd_qc_analyte_concentration_ng = (blank_filtered_std_dev_qc_analyte_concentration_ng / blank_filtered_average_qc_analyte_concentration_ng) * 100
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
@@ -112,26 +112,26 @@ build_qc_table <- function(extraction_batch_source,
       individual_native_analyte_name,
       qc_level,
       quality_control_exists_flag,
-      average_qc_analyte_concentration_ng,
-      std_dev_qc_analyte_concnetration_ng,
-      percent_rsd_qc_analyte_concnetration_ng
+      blank_filtered_average_qc_analyte_concentration_ng,
+      blank_filtered_std_dev_qc_analyte_concentration_ng,
+      blank_filtered_percent_rsd_qc_analyte_concentration_ng
     )
 
   qc_missing_replicate_levels <- qc_missing_replicate_levels %>%
     dplyr::mutate(
       quality_control_exists_flag = FALSE,
-      average_qc_analyte_concentration_ng = NA,
-      std_dev_qc_analyte_concnetration_ng = NA,
-      percent_rsd_qc_analyte_concnetration_ng = NA
+      blank_filtered_average_qc_analyte_concentration_ng = NA,
+      blank_filtered_std_dev_qc_analyte_concentration_ng = NA,
+      blank_filtered_percent_rsd_qc_analyte_concentration_ng = NA
     ) %>%
     dplyr::select(
       batch_number,
       individual_native_analyte_name,
       qc_level,
       quality_control_exists_flag,
-      average_qc_analyte_concentration_ng,
-      std_dev_qc_analyte_concnetration_ng,
-      percent_rsd_qc_analyte_concnetration_ng
+      blank_filtered_average_qc_analyte_concentration_ng,
+      blank_filtered_std_dev_qc_analyte_concentration_ng,
+      blank_filtered_percent_rsd_qc_analyte_concentration_ng
     )
 
   combined_qc_levels <- dplyr::bind_rows(
@@ -142,14 +142,14 @@ build_qc_table <- function(extraction_batch_source,
   combined_qc_levels %>%
     readr::write_excel_csv(
       paste0(
-        "data/processed/build-data-products/analyte_concentration_quality_control_",
+        "data/processed/build-data-products/blank_filtered_analyte_concentration_quality_control_",
         file_name,
         ".csv"
       )
     ) %>%
     arrow::write_parquet(
       paste0(
-        "data/processed/build-data-products/analyte_concentration_quality_control_",
+        "data/processed/build-data-products/blank_filtered_analyte_concentration_quality_control_",
         file_name,
         ".parquet"
       )
@@ -158,12 +158,12 @@ build_qc_table <- function(extraction_batch_source,
 
 build_qc_table(
   extraction_batch_source,
-  analyte_concentration_with_recovery,
+  blank_filtered_analyte_concentration_with_recovery,
   "with_recovery"
 )
 
 build_qc_table(
   extraction_batch_source,
-  analyte_concentration_with_recovery,
+  blank_filtered_analyte_concentration_no_recovery,
   "no_recovery"
 )

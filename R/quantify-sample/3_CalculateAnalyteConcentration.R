@@ -138,7 +138,7 @@ calculate_analyte_concentration <- function(peak_area_ratio,
     ) %>%
     dplyr::mutate(
       calibration_curve_range_category = dplyr::case_when(
-        peak_area_ratio < limit_of_detection_concentration_ng ~ "<LOD",
+        peak_area_ratio < limit_of_detection_area_ratio ~ "<LOD",
         peak_area_ratio < minimum_average_peak_area_ratio ~ "<LOQ",
         minimum_average_peak_area_ratio < peak_area_ratio & peak_area_ratio < maximum_average_peak_area_ratio ~ "Within Calibration Range",
         peak_area_ratio > maximum_average_peak_area_ratio ~ "Above Calibration Range"
@@ -169,6 +169,7 @@ calculate_analyte_concentration <- function(peak_area_ratio,
       internal_standard_concentration_ppb,
       internal_standard_concentration_ng,
       limit_of_detection_concentration_ng,
+      limit_of_detection_area_ratio,
       analyte_concentration_ng
     ) %>%
     arrow::write_parquet(
