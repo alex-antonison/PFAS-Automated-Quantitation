@@ -2,6 +2,36 @@ library(magrittr)
 
 source("R/build-data-products/1_BuildExtractionBlank.R")
 
+build_blank_filtered_analyte_concentration_table <- function(extraction_blank,
+                                                             analyte_concentration,
+                                                             file_name) {
+  analyte_concentration %>%
+    dplyr::left_join(
+      extraction_blank,
+      by = c(
+        "batch_number",
+        "individual_native_analyte_name"
+      )
+    ) %>%
+    dplyr::mutate(
+      blank_filtered_analyte_concentration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng
+    ) %>%
+    readr::write_excel_csv(
+      paste0(
+        "data/processed/build-data-products/blank_filtered_analyte_concentration_",
+        file_name,
+        ".csv"
+      )
+    ) %>%
+    arrow::write_parquet(
+      paste0(
+        "data/processed/build-data-products/blank_filtered_analyte_concentration_",
+        file_name,
+        ".parquet"
+      )
+    )
+}
+
 extraction_blank_with_recovery <- arrow::read_parquet(
   "data/processed/build-data-products/blank_filtered_with_recovery.parquet"
 ) %>%
@@ -43,36 +73,6 @@ analyte_concentration_no_recovery <- arrow::read_parquet(
     individual_native_analyte_name,
     analyte_concentration_ng
   )
-
-build_blank_filtered_analyte_concentration_table <- function(extraction_blank,
-                                                             analyte_concentration,
-                                                             file_name) {
-  analyte_concentration %>%
-    dplyr::left_join(
-      extraction_blank,
-      by = c(
-        "batch_number",
-        "individual_native_analyte_name"
-      )
-    ) %>%
-    dplyr::mutate(
-      blank_filtered_analyte_concentration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng
-    ) %>%
-    readr::write_excel_csv(
-      paste0(
-        "data/processed/build-data-products/blank_filtered_analyte_concentration_",
-        file_name,
-        ".csv"
-      )
-    ) %>%
-    arrow::write_parquet(
-      paste0(
-        "data/processed/build-data-products/blank_filtered_analyte_concentration_",
-        file_name,
-        ".parquet"
-      )
-    )
-}
 
 build_blank_filtered_analyte_concentration_table(
   extraction_blank_with_recovery,

@@ -2,20 +2,6 @@ library(magrittr)
 
 source("R/quantify-sample/3_CalculateAnalyteConcentration.R")
 
-extraction_batch_source <- arrow::read_parquet(
-  "data/processed/reference/extraction_batch_source.parquet"
-)
-
-analyte_concentration_with_recovery <- arrow::read_parquet(
-  "data/processed/quantify-sample/analyte_concentration_with_recovery.parquet"
-)
-
-analyte_concentration_no_recovery <- arrow::read_parquet(
-  "data/processed/quantify-sample/analyte_concentration_no_recovery.parquet"
-)
-
-
-
 build_extraction_blank_table <- function(extraction_batch_source,
                                          analyte_concentration_df,
                                          file_name) {
@@ -72,6 +58,19 @@ build_extraction_blank_table <- function(extraction_batch_source,
       paste0("data/processed/build-data-products/blank_filtered_", file_name, ".csv")
     )
 }
+
+extraction_batch_source <- arrow::read_parquet(
+  "data/processed/reference/extraction_batch_source.parquet"
+)
+
+analyte_concentration_with_recovery <- arrow::read_parquet(
+  "data/processed/quantify-sample/analyte_concentration_with_recovery.parquet"
+)
+
+analyte_concentration_no_recovery <- arrow::read_parquet(
+  "data/processed/quantify-sample/analyte_concentration_no_recovery.parquet"
+)
+
 
 build_extraction_blank_table(
   extraction_batch_source,
