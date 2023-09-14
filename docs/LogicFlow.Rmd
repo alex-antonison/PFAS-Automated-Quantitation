@@ -1035,7 +1035,7 @@ batch_number and cartridge_number', shape = rectangle, style = filled, fillcolor
             <tr><td align='left'>sample_id: text</td></tr>
             <tr><td align='left'>quality_control_level: text</td></tr>
             <tr><td align='left'>quality_control_replicate: text</td></tr>
-            <tr><td align='left'>analyte_concentratio_ng: numeric</td></tr>
+            <tr><td align='left'>blank_filtered_analyte_concentration_ng: numeric</td></tr>
         </table>
     >]
 
