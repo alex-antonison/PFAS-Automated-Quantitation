@@ -17,7 +17,7 @@ analyte_concentration_name_mapping <- arrow::read_parquet(
 
 native_analyte_quality_control_levels %>%
   dplyr::mutate(
-    qc_level = stringr::str_sub(QC_mix, 1, 1)
+    quality_control_level = stringr::str_sub(QC_mix, 1, 1)
   ) %>%
   # logic to combine Linear and Branched PFOS into "∑ PFOS"
   dplyr::mutate(
@@ -29,7 +29,7 @@ native_analyte_quality_control_levels %>%
   ) %>%
   dplyr::group_by(
     source_analyte_name,
-    qc_level
+    quality_control_level
   ) %>%
   dplyr::summarise(
     native_analyte_spiked_in_qc_samples_ng = sum(native_analyte_spiked_in_qc_samples_ng),
@@ -49,7 +49,7 @@ native_analyte_quality_control_levels %>%
   ) %>%
   dplyr::select(
     individual_native_analyte_name,
-    qc_level,
+    quality_control_level,
     native_analyte_spiked_in_qc_samples_ng
   ) %>%
   readr::write_excel_csv(

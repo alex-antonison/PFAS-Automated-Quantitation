@@ -1078,7 +1078,6 @@ DiagrammeR::grViz("digraph {
             <tr><td bgcolor='lightblue'>blank_filtered_analyte_concentration_quality_control</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
-            <tr><td align='left'>quality_control_sample_type: text</td></tr>
             <tr><td align='left'>quality_control_level: text</td></tr>
             <tr><td align='left'>missing_analyte_level_flag: text</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>

@@ -6,21 +6,21 @@ source("R/process-source-data/ProcessQCSampleFile.R")
 eval_qc_for_blank_filtered_analyte <- function(blank_filtered_analyte_concentration_quality_control,
                                                native_analyte_quality_control_levels,
                                                file_name) {
-  blank_filtered_analyte_concentration_quality_control %>%
+df <- blank_filtered_analyte_concentration_quality_control %>%
     dplyr::left_join(
       native_analyte_quality_control_levels,
-      by = c("individual_native_analyte_name", "qc_level")
+      by = c("individual_native_analyte_name", "quality_control_level")
     ) %>%
     dplyr::mutate(
-      qc_recovery_ratio = (blank_filtered_average_qc_analyte_concentration_ng / native_analyte_spiked_in_qc_samples_ng) * 100
+      quality_control_recovery_ratio = (average_qc_analyte_concentration_ng / native_analyte_spiked_in_qc_samples_ng) * 100
     ) %>%
     dplyr::select(
       batch_number,
       individual_native_analyte_name,
-      qc_level,
-      blank_filtered_average_qc_analyte_concentration_ng,
+      quality_control_level,
+      average_qc_analyte_concentration_ng,
       native_analyte_spiked_in_qc_samples_ng,
-      qc_recovery_ratio
+      quality_control_recovery_ratio
     ) %>%
     readr::write_excel_csv(
       paste0("data/processed/build-data-products/blank_filtered_evaluated_qc_", file_name, ".csv")
