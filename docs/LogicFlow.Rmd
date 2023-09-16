@@ -1061,7 +1061,7 @@ DiagrammeR::grViz("digraph {
 
     // sourced tables
     quality_control_calculation_input [label = 'quality_control_calculation_input', shape = folder, style = filled, fillcolor = lightblue]
-    
+
     quality_control_sample_adjustment [label = 'quality_control_sample_adjustment', shape = folder, style = filled, fillcolor = linen]
 
 

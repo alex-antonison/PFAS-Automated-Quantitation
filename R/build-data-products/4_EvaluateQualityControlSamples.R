@@ -6,7 +6,7 @@ source("R/process-source-data/ProcessQCSampleFile.R")
 eval_qc_for_blank_filtered_analyte <- function(blank_filtered_analyte_concentration_quality_control,
                                                native_analyte_quality_control_levels,
                                                file_name) {
-df <- blank_filtered_analyte_concentration_quality_control %>%
+  df <- blank_filtered_analyte_concentration_quality_control %>%
     dplyr::left_join(
       native_analyte_quality_control_levels,
       by = c("individual_native_analyte_name", "quality_control_level")

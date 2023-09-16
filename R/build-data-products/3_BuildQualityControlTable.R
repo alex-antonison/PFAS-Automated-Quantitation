@@ -39,10 +39,10 @@ build_qc_table <- function(extraction_batch_source,
     dplyr::left_join(
       quality_control_sample_adjustment,
       by = c("individual_native_analyte_name", "quality_control_sample_type")
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       adjusted_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - ng_to_filter_ng
-    ) %>% 
+    ) %>%
     dplyr::select(
       batch_number,
       individual_native_analyte_name,
