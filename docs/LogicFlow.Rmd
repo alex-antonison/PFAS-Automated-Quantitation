@@ -1050,6 +1050,8 @@ build_table -> step1 -> set_sample_type -> parse_out_level_and_rep -> quality_co
 
 #### Calculate Quality Control Levels
 
+Sample Type is not included in this table because in the reference material "reference/native_analyte_quality_control_levels.xlsx", there is only the analyte name and the QC mix of High, Medium, and Low to reference to.
+
 ```{r echo=FALSE}
 DiagrammeR::grViz("digraph {
 
@@ -1059,8 +1061,11 @@ DiagrammeR::grViz("digraph {
 
     // sourced tables
     quality_control_calculation_input [label = 'quality_control_calculation_input', shape = folder, style = filled, fillcolor = lightblue]
+    
+    quality_control_sample_adjustment [label = 'quality_control_sample_adjustment', shape = folder, style = filled, fillcolor = linen]
 
 
+subtract_sample_adjustment [label = 'For each individual_native_analyte_name and quality_control_sample_type, subtract the corresponidng ng_to_filter_ng amount', shape = rectangle, style = filled, fillcolor = white]
 
   evaluate_qc_level [label = 'If within a level a QC Level (Low Medium High) there is a Not Found for analyte_peak, set all values in that level to Not Found
   Set the corresponding missing_analyte_level_flag to false
@@ -1088,7 +1093,8 @@ DiagrammeR::grViz("digraph {
     >]
 
 
-    quality_control_calculation_input -> evaluate_qc_level -> calc_average_and_stddev -> qc_analyte
+    quality_control_calculation_input -> subtract_sample_adjustment -> evaluate_qc_level -> calc_average_and_stddev -> qc_analyte
+    quality_control_sample_adjustment -> subtract_sample_adjustment
 
 
 
