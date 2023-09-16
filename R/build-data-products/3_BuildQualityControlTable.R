@@ -4,6 +4,7 @@ source("R/build-data-products/2_RemoveExtractionBlankFromAnalyteConcentration.R"
 
 build_qc_table <- function(extraction_batch_source,
                            blank_filtered_analyte_concentration_df,
+                           quality_control_blank_filter_adjustment,
                            file_name) {
   qc_filtered_samples <- blank_filtered_analyte_concentration_df %>%
     dplyr::inner_join(
@@ -34,6 +35,14 @@ build_qc_table <- function(extraction_batch_source,
         FALSE
       )
     ) %>%
+    # subtract blank filtered values
+    dplyr::left_join(
+      quality_control_sample_adjustment,
+      by = c("individual_native_analyte_name", "quality_control_sample_type")
+    ) %>% 
+    dplyr::mutate(
+      adjusted_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - ng_to_filter_ng
+    ) %>% 
     dplyr::select(
       batch_number,
       individual_native_analyte_name,
@@ -43,7 +52,9 @@ build_qc_table <- function(extraction_batch_source,
       quality_control_level,
       quality_control_replicate,
       replicate_missing_flag,
-      blank_filtered_analyte_concentration_ng
+      blank_filtered_analyte_concentration_ng,
+      ng_to_filter_ng,
+      adjusted_analyte_concentration_ng
     )
 
   # Account for missing replicate in QC samples
@@ -88,8 +99,8 @@ build_qc_table <- function(extraction_batch_source,
       quality_control_level
     ) %>%
     dplyr::summarise(
-      average_qc_analyte_concentration_ng = mean(blank_filtered_analyte_concentration_ng),
-      std_dev_qc_analyte_concentration_ng = sd(blank_filtered_analyte_concentration_ng),
+      average_qc_analyte_concentration_ng = mean(adjusted_analyte_concentration_ng),
+      std_dev_qc_analyte_concentration_ng = sd(adjusted_analyte_concentration_ng),
       percent_rsd_qc_analyte_concentration_ng = (std_dev_qc_analyte_concentration_ng / average_qc_analyte_concentration_ng) * 100
     ) %>%
     dplyr::ungroup() %>%
@@ -149,6 +160,10 @@ extraction_batch_source <- arrow::read_parquet(
   "data/processed/reference/extraction_batch_source.parquet"
 )
 
+quality_control_sample_adjustment <- arrow::read_parquet(
+  "data/processed/reference/quality_control_blank_filter_adjustment.parquet"
+)
+
 blank_filtered_analyte_concentration_with_recovery <- arrow::read_parquet(
   "data/processed/build-data-products/blank_filtered_analyte_concentration_with_recovery.parquet"
 )
@@ -160,11 +175,13 @@ blank_filtered_analyte_concentration_no_recovery <- arrow::read_parquet(
 build_qc_table(
   extraction_batch_source,
   blank_filtered_analyte_concentration_with_recovery,
+  quality_control_sample_adjustment,
   "with_recovery"
 )
 
 build_qc_table(
   extraction_batch_source,
   blank_filtered_analyte_concentration_no_recovery,
+  quality_control_sample_adjustment,
   "no_recovery"
 )
