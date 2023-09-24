@@ -12,15 +12,20 @@ eval_qc_for_blank_filtered_analyte <- function(blank_filtered_analyte_concentrat
       by = c("individual_native_analyte_name", "quality_control_level")
     ) %>%
     dplyr::mutate(
-      quality_control_recovery_ratio = (average_qc_analyte_concentration_ng / native_analyte_spiked_in_qc_samples_ng) * 100
+      quality_control_recovery_ratio = (average_qc_analyte_concentration_ng / native_analyte_spiked_in_qc_samples_ng) * 100,
+      evaluate_recovery_ratio_flag = ifelse(quality_control_recovery_ratio > 70.0 & quality_control_recovery_ratio < 130.0, "PASS", "FAIL")
     ) %>%
     dplyr::select(
       batch_number,
       individual_native_analyte_name,
+      quality_control_exists_flag,
       quality_control_level,
+      quality_control_adjust_flag,
       average_qc_analyte_concentration_ng,
       native_analyte_spiked_in_qc_samples_ng,
-      quality_control_recovery_ratio
+      percent_rsd_qc_analyte_concentration_ng,
+      quality_control_recovery_ratio,
+      evaluate_recovery_ratio_flag
     ) %>%
     readr::write_excel_csv(
       paste0("data/processed/build-data-products/blank_filtered_evaluated_qc_", file_name, ".csv")
