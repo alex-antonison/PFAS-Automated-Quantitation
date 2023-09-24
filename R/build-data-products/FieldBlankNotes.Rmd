@@ -11,8 +11,8 @@ extraction_batch_source <- arrow::read_parquet(
   "../../data/processed/reference/extraction_batch_source.parquet"
 )
 
-extraction_batch_source %>% 
-  dplyr::filter(county == "Field Blank") %>% 
-  dplyr::group_by(batch_number) %>% 
-  dplyr::summarise(count=dplyr::n())
+extraction_batch_source %>%
+  dplyr::filter(county == "Field Blank") %>%
+  dplyr::group_by(batch_number) %>%
+  dplyr::summarise(count = dplyr::n())
 ```
