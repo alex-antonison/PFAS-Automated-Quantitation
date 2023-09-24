@@ -41,7 +41,8 @@ build_qc_table <- function(extraction_batch_source,
       by = c("individual_native_analyte_name", "quality_control_sample_type")
     ) %>%
     dplyr::mutate(
-      adjusted_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - ng_to_filter_ng
+      ng_to_filter_ng_na_fix = ifelse(is.na(ng_to_filter_ng), 0.0, ng_to_filter_ng),
+      adjusted_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - ng_to_filter_ng_na_fix
     ) %>%
     dplyr::select(
       batch_number,
@@ -53,9 +54,10 @@ build_qc_table <- function(extraction_batch_source,
       quality_control_replicate,
       replicate_missing_flag,
       blank_filtered_analyte_concentration_ng,
-      ng_to_filter_ng,
+      ng_to_filter_ng_na_fix,
       adjusted_analyte_concentration_ng
     )
+    
 
   # Account for missing replicate in QC samples
 
@@ -69,7 +71,6 @@ build_qc_table <- function(extraction_batch_source,
     )
 
   # Average together Batch + Analyte + QC Level -> average_analyte_concentration_ng
-
   average_qc_analyte_concentration <- qc_filtered_samples %>%
     dplyr::left_join(
       qc_missing_replicate_levels,

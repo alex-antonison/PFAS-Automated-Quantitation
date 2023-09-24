@@ -1,0 +1,37 @@
+# QC Results
+
+```{r}
+library(magrittr)
+
+extraction_batch_source <- arrow::read_parquet(
+  "../../data/processed/reference/extraction_batch_source.parquet"
+)
+
+quality_control_sample_adjustment <- arrow::read_parquet(
+  "../../data/processed/reference/quality_control_blank_filter_adjustment.parquet"
+)
+
+qc_results <- arrow::read_parquet(
+  "../../data/processed/build-data-products/blank_filtered_analyte_concentration_quality_control_no_recovery.parquet"
+) %>% 
+  dplyr::filter(batch_number == 2)
+```
+
+```{r}
+qc_results %>% 
+  dplyr::filter(individual_native_analyte_name == "PFBA")
+```
+
+# Eval QC Results
+
+```{r}
+eval_results <- arrow::read_parquet(
+  "../../data/processed/build-data-products/blank_filtered_evaluated_qc_no_recovery.parquet"
+) %>% 
+  dplyr::filter(batch_number == 2)
+
+eval_results %>% 
+  # dplyr::filter(individual_native_analyte_name == "PFBA") %>% 
+  dplyr::filter(evaluate_recovery_ratio_flag == "PASS") %>% 
+  dplyr::select(-batch_number,-quality_control_exists_flag)
+```

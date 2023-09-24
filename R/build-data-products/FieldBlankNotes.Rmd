@@ -1,0 +1,18 @@
+# Field Blank
+
+1. Take a pool of all of the analytes for Field Blanks across all batches
+2. Average them together and remove across all the batches
+3. Remove the 
+
+```{r}
+library(magrittr)
+
+extraction_batch_source <- arrow::read_parquet(
+  "../../data/processed/reference/extraction_batch_source.parquet"
+)
+
+extraction_batch_source %>% 
+  dplyr::filter(county == "Field Blank") %>% 
+  dplyr::group_by(batch_number) %>% 
+  dplyr::summarise(count=dplyr::n())
+```
