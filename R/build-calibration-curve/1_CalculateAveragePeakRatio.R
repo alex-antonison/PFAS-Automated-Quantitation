@@ -107,7 +107,7 @@ without_rep_number_df <- temp_analyte_df %>%
   dplyr::mutate(
     replicate_number = 1,
     split_filename = stringr::str_split_fixed(filename, "_", 2),
-    calibration_level = as.integer(split_filename[, 2])
+    calibration_level = as.integer(readr::parse_number(split_filename[, 2]))
   ) %>%
   dplyr::select(
     batch_number,
@@ -120,10 +120,11 @@ without_rep_number_df <- temp_analyte_df %>%
 with_rep_number_df <- temp_analyte_df %>%
   dplyr::filter(underscore_count == 2) %>%
   dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
+  dplyr::filter(!stringr::str_detect(filename, "new")) %>%
   dplyr::mutate(
     split_filename = stringr::str_split_fixed(filename, "_", 3),
-    replicate_number = as.integer(split_filename[, 2]),
-    calibration_level = as.integer(split_filename[, 3])
+    replicate_number = as.integer(readr::parse_number(split_filename[, 2])),
+    calibration_level = as.integer(readr::parse_number(split_filename[, 3]))
   ) %>%
   dplyr::select(
     batch_number,
@@ -169,7 +170,7 @@ temp_ind_without_rep_df <- temp_ind_df %>%
   dplyr::mutate(
     replicate_number = 1,
     split_filename = stringr::str_split_fixed(filename, "_", 2),
-    calibration_level = as.integer(split_filename[, 2])
+    calibration_level = as.integer(readr::parse_number(split_filename[, 2]))
   ) %>%
   dplyr::select(
     batch_number,
@@ -182,10 +183,11 @@ temp_ind_without_rep_df <- temp_ind_df %>%
 temp_ind_with_rep_df <- temp_ind_df %>%
   dplyr::filter(underscore_count == 2) %>%
   dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
+  dplyr::filter(!stringr::str_detect(filename, "new")) %>%
   dplyr::mutate(
     split_filename = stringr::str_split_fixed(filename, "_", 3),
-    replicate_number = as.integer(split_filename[, 2]),
-    calibration_level = as.integer(split_filename[, 3])
+    replicate_number = as.integer(readr::parse_number(split_filename[, 2])),
+    calibration_level = as.integer(readr::parse_number(split_filename[, 3]))
   ) %>%
   dplyr::select(
     batch_number,
