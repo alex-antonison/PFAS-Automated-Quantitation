@@ -11,8 +11,23 @@ extraction_batch_source <- arrow::read_parquet(
   "../../data/processed/reference/extraction_batch_source.parquet"
 )
 
+blank_filtered_analyte_concentration <- arrow::read_parquet(
+  "../../data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet"
+)
+
 extraction_batch_source %>%
   dplyr::filter(county == "Field Blank") %>%
-  dplyr::group_by(batch_number) %>%
-  dplyr::summarise(count = dplyr::n())
+  dplyr::left_join(
+    blank_filtered_analyte_concentration,
+    by = c("batch_number", "cartridge_number")
+  ) %>%
+  dplyr::filter(!is.na(individual_native_analyte_name)) %>% 
+  dplyr::select(
+    individual_native_analyte_name, batch_number, cartridge_number, blank_filtered_analyte_concentration_ng
+  ) %>% 
+  head()
+
+```
+```{r}
+blank_filtered_analyte_concentration
 ```
