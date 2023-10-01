@@ -24,9 +24,9 @@ calibration_curve_input_df <- arrow::read_parquet(
 ```
 
 ```{r}
-calibration_curve_input_df %>% 
-  dplyr::filter(batch_number == 3) %>% 
-  dplyr::filter(individual_native_analyte_name == "N-EtFOSA-M+NN-Me2FOSA-M") %>% 
+calibration_curve_input_df %>%
+  dplyr::filter(batch_number == 3) %>%
+  dplyr::filter(individual_native_analyte_name == "N-EtFOSA-M+NN-Me2FOSA-M") %>%
   dplyr::arrange(calibration_level)
 ```
 
@@ -42,14 +42,12 @@ combined_data_df
 
 
 ```{r}
-combined_data_df %>% 
-  dplyr::filter(batch_number == 3) %>% 
-  dplyr::filter(sheet_name == "N-EtFOSA-M+NN-Me2FOSA-M_2") %>% 
-  dplyr::filter(stringr::str_detect(filename, "Cal")) %>% 
+combined_data_df %>%
+  dplyr::filter(batch_number == 3) %>%
+  dplyr::filter(sheet_name == "N-EtFOSA-M+NN-Me2FOSA-M_2") %>%
+  dplyr::filter(stringr::str_detect(filename, "Cal")) %>%
   dplyr::filter(stringr::str_detect(filename, "9"))
 ```
 
 ```{r}
-
-  
 ```
