@@ -1,0 +1,12 @@
+# Issues in Files
+
+## Batch 1
+
+Found `new` in filenames and some had letters on the end.
+
+* For `new`, filter these out
+* For filenames with a letter on the end, remove the letter
+
+## Batch 3
+
+internal_standard `d5-NEtFOSA-M` has a 0.0 for the level. This is causing a downstream of creating an INF value. As a hotfix I am filtering any instances where area is set to 0 out.
