@@ -71,20 +71,20 @@ without_rep_number_df <- temp_analyte_df %>%
   )
 
 temp_df <- temp_analyte_df %>%
-  dplyr::filter(batch_number == 1) %>% 
+  dplyr::filter(batch_number == 1) %>%
   dplyr::filter(!stringr::str_detect(filename, "rep")) %>%
-  dplyr::filter(!stringr::str_detect(filename, "new")) %>% 
+  dplyr::filter(!stringr::str_detect(filename, "new")) %>%
   dplyr::mutate(
     split_filename = stringr::str_split_fixed(filename, "_", 3),
     replicate_number = as.integer(readr::parse_number(split_filename[, 2])),
     calibration_level = as.integer(readr::parse_number(split_filename[, 3]))
   )
-  # 
-  # dplyr::select(
-  #   batch_number,
-  #   individual_native_analyte_name = analyte_name,
-  #   replicate_number,
-  #   calibration_level,
-  #   individual_native_analyte_peak_area
-  # )
+#
+# dplyr::select(
+#   batch_number,
+#   individual_native_analyte_name = analyte_name,
+#   replicate_number,
+#   calibration_level,
+#   individual_native_analyte_peak_area
+# )
 ```
