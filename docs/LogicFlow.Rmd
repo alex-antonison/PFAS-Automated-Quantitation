@@ -1179,8 +1179,8 @@ DiagrammeR::grViz("digraph {
     blank_filtered_analyte_concentration [label = 'blank_filtered_analyte_concentration', shape = folder, style = filled, fillcolor = lightblue]
 
     extraction_batch_source [label = 'extraction_batch_source', shape = folder, style = filled, fillcolor = linen]
-    
-    
+
+
 getFiledBlanks [label = 'Get Field Blank blank_filtered_analyte_concentration_ng values
 by filtering cartridges to Field Blank in extraction_batch_source
 and joining to blank_filtered_analyte_concentration', shape = rectangle, style = filled, fillcolor = white]
@@ -1212,32 +1212,37 @@ getFiledBlanks -> averageFieldBlank -> field_blank_average_blank_filtered_analyt
 DiagrammeR::grViz("digraph {
 
   node [shape=none, margin=0]
-  
+
   blank_filtered_analyte_concentration [label = 'blank_filtered_analyte_concentration', shape = folder, style = filled, fillcolor = lightblue]
-  
+
   field_blank_average_blank_filtered_analyte_concentration [label = 'field_blank_average_blank_filtered_analyte_concentration', shape = folder, style = filled, fillcolor = lightblue]
-  
+
   joinFieldBlanks [label = 'Join the field_blank_average_blank_filtered_analyte_concentration
   to each individual_native_analyte_name
   in the blank_filtered_analyte_concentration', shape = rectangle, style = filled, fillcolor = white]
-  
+
   subtractFieldBlanks [label = 'Subtract the field_blank_average_analyte_concentration_ng
-  from each blank_filtered_analyte_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
-  
-  
-blank_filtered_analyte_concentration -> joinFieldBlanks
-field_blank_average_blank_filtered_analyte_concentration -> joinFieldBlanks
+  from each blank_filtered_analyte_concentration_ng
+  field_blank_blank_filtered_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - field_blank_average_analyte_concentration_ng', shape = rectangle, style = filled, fillcolor = white]
 
-joinFieldBlanks -> subtractFieldBlanks
 
-     field_blank_blank_filtered_analyte_concentration [label=<
+       field_blank_blank_filtered_analyte_concentration [label=<
         <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
             <tr><td bgcolor='lightblue'>field_blank_blank_filtered_analyte_concentration</td></tr>
             // columns
             <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>cartridge_number: numeric</td></tr>
             <tr><td align='left'>individual_native_analyte_name: text</td></tr>
-            <tr><td align='left'>field_blank_average_analyte_concentration_ng: numeric</td></tr>
+            <tr><td align='left'>field_blank_blank_filtered_analyte_concentration_ng: numeric</td></tr>
         </table>
     >]
+
+
+blank_filtered_analyte_concentration -> joinFieldBlanks
+field_blank_average_blank_filtered_analyte_concentration -> joinFieldBlanks
+
+joinFieldBlanks -> subtractFieldBlanks -> field_blank_blank_filtered_analyte_concentration
+
+
 }")
 ```
