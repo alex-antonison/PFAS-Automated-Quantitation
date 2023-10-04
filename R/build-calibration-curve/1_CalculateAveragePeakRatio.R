@@ -296,10 +296,9 @@ individual_native_analyte_df %>%
       "calibration_level"
     )
   ) %>%
-  # TODO: Review this change, adding in this filter to prevent INF values downstream
-  # Caused by Batch 3
+  # Put in place to account for instances where the instrument doesn't detect and doesn't set to NF
   dplyr::filter(
-    individual_native_analyte_peak_area != 0.0 & internal_standard_peak_area != 0
+    individual_native_analyte_peak_area != 0.0 & internal_standard_peak_area != 0.0
   ) %>%
   # calculate the analyte peak ratio
   dplyr::mutate(
