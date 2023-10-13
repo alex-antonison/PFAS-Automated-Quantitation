@@ -17,14 +17,14 @@ field_blank_averaged_analyte_concentration <- extraction_batch_source %>%
   dplyr::select(
     batch_number, cartridge_number, individual_native_analyte_name, blank_filtered_analyte_concentration_ng
   ) %>%
-  dplyr::filter(!is.na(individual_native_analyte_name)) %>% 
+  dplyr::filter(!is.na(individual_native_analyte_name)) %>%
   dplyr::mutate(
     blank_filtered_analyte_concentration_ng = ifelse(
       is.na(blank_filtered_analyte_concentration_ng),
       0.0,
       blank_filtered_analyte_concentration_ng
     )
-  ) %>% 
+  ) %>%
   dplyr::group_by(
     individual_native_analyte_name
   ) %>%
