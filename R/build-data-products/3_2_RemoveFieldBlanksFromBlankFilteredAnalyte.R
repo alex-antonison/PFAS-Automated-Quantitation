@@ -52,4 +52,7 @@ blank_filtered_analyte_concentration %>%
   ) %>%
   readr::write_excel_csv(
     paste0("data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.csv")
+  ) %>% 
+  arrow::write_parquet(
+    "data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.parquet"
   )

@@ -1,10 +1,11 @@
 # this takes a few minutes, only comment out if a new batch is provided
-# source("R/process-source-data/RunAllPrep.R")
-# source("R/build-data-products/4_EvaluateQualityControlSamples.R")
-# source("R/build-data-products/3_2_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
+source("R/process-source-data/RunAllPrep.R")
+source("R/build-data-products/4_EvaluateQualityControlSamples.R")
+source("R/build-data-products/5_Calculate_Analyte_Concentration_ppt.R")
+source("R/build-data-products/3_2_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
 library(magrittr)
 
-options(java.parameters = "-Xmx10000m")
+options(java.parameters = "-Xmx1000000m")
 
 # set up initial workbook
 wb <- xlsx::createWorkbook()
@@ -37,18 +38,38 @@ xlsx::addDataFrame(quality_control_results_df, sheet = quality_control_results_s
 calibration_curve_output_df <- arrow::read_parquet("data/processed/calibration-curve/calibration_curve_output_no_recov_filter.parquet") %>%
   data.frame()
 
-calibration_curve_output_sheet <- xlsx::createSheet(wb, "Calibration Curve Output")
+calibration_curve_output_sheet <- xlsx::createSheet(wb, "Cal Curve Output")
 xlsx::addDataFrame(calibration_curve_output_df, sheet = calibration_curve_output_sheet, row.names = FALSE)
 
-########## Sheet 4 - Add Analyte Concentration Output #############
+########## Sheet 4 - Add Analyte Concentration Summary #############
+
+analyte_concentration_df <- arrow::read_parquet("data/processed/quantify-sample/analyte_concentration_no_recovery.parquet") %>%
+  dplyr::select(
+    batch_number,
+    cartridge_number,
+    individual_native_analyte_name,
+    analyte_detection_flag,
+    internal_standard_detection_flag,
+    calibration_curve_range_category,
+    r_squared,
+    calibration_point,
+    calibration_range,
+    analyte_concentration_ng
+  ) %>% 
+  data.frame()
+
+analyte_concentration_sheet <- xlsx::createSheet(wb, "Anlyte Conc Sum")
+xlsx::addDataFrame(analyte_concentration_df, sheet = analyte_concentration_sheet, row.names = FALSE)
+
+########## Sheet 5 - Add Analyte Concentration Output #############
 
 analyte_concentration_df <- arrow::read_parquet("data/processed/quantify-sample/analyte_concentration_no_recovery.parquet") %>%
   data.frame()
 
-analyte_concentration_sheet <- xlsx::createSheet(wb, "Analyte Concentration")
+analyte_concentration_sheet <- xlsx::createSheet(wb, "Analyte Concentration Troubleshoot")
 xlsx::addDataFrame(analyte_concentration_df, sheet = analyte_concentration_sheet, row.names = FALSE)
 
-########## Sheet 5 - Add Blank Filtered Output #############
+########## Sheet 6 - Add Blank Filtered Output #############
 
 blank_filtered_df <- arrow::read_parquet("data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet") %>%
   data.frame()
@@ -56,7 +77,7 @@ blank_filtered_df <- arrow::read_parquet("data/processed/build-data-products/bla
 blank_filtered_sheet <- xlsx::createSheet(wb, "Blnk Fltrd Anlyte Con")
 xlsx::addDataFrame(blank_filtered_df, sheet = blank_filtered_sheet, row.names = FALSE)
 
-########## Sheet 6 - Add Field Blank Filtered Output #############
+########## Sheet 7 - Add Field Blank Filtered Output #############
 
 field_blank_filtered_df <- readr::read_csv("data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.csv") %>%
   data.frame()
@@ -64,6 +85,14 @@ field_blank_filtered_df <- readr::read_csv("data/processed/build-data-products/f
 field_blank_filtered_sheet <- xlsx::createSheet(wb, "Fld Blnk Fltrd Anlyte Con")
 xlsx::addDataFrame(field_blank_filtered_df, sheet = field_blank_filtered_sheet, row.names = FALSE)
 
+########## Sheet 8 - Analyte Concentration PPT #############
+
+analyte_concentration_ppt <- readr::read_csv("data/processed/build-data-products/analyte_concentration_ppt.csv") %>%
+  data.frame()
+
+analyte_concentration_ppt_sheet <- xlsx::createSheet(wb, "Analyte Concentration ppt")
+xlsx::addDataFrame(analyte_concentration_ppt, sheet = analyte_concentration_ppt_sheet, row.names = FALSE)
+
 ########## Save out final file ############
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
-xlsx::saveWorkbook(wb, paste0("data/processed/analysis-summary/", cur_time, "_summary_analysis_file.xlsx"))
+xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file.xlsx"))
