@@ -55,7 +55,7 @@ analyte_concentration_df <- arrow::read_parquet("data/processed/quantify-sample/
     calibration_point,
     calibration_range,
     analyte_concentration_ng
-  ) %>% 
+  ) %>%
   data.frame()
 
 analyte_concentration_sheet <- xlsx::createSheet(wb, "Anlyte Conc Sum")

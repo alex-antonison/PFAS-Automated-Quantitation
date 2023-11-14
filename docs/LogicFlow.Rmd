@@ -1246,3 +1246,45 @@ joinFieldBlanks -> subtractFieldBlanks -> field_blank_blank_filtered_analyte_con
 
 }")
 ```
+
+#### Calculate Analyte Concentration ppt
+
+```{r echo=FALSE}
+DiagrammeR::grViz("digraph {
+
+  node [shape=none, margin=0]
+
+    // sourced tables
+    field_blank_blank_filtered_analyte_concentration [label = 'field_blank_blank_filtered_analyte_concentration', shape = folder, style = filled, fillcolor = lightblue]
+
+    extraction_batch_source [label = 'extraction_batch_source', shape = folder, style = filled, fillcolor = linen]
+
+
+
+  calc_analyte_con [label = 'Calculate analyte_concentration_ppt
+  analyte_concentration_ppt = (field_blank_blank_filtered_analyte_concentration_ng / sample_mass_g) * 1000
+  ', shape = rectangle, style = filled, fillcolor = white]
+
+
+       analyte_con_ppt [label=<
+        <table border='0' cellborder='1' cellspacing='0' cellpadding='4'>
+            <tr><td bgcolor='lightblue'>Analyte Concentration ppt</td></tr>
+            // columns
+            <tr><td align='left'>batch_number: numeric</td></tr>
+            <tr><td align='left'>cartridge_number: numeric</td></tr>
+            <tr><td align='left'>county: text</td></tr>
+            <tr><td align='left'>sample_id: text</td></tr>
+            <tr><td align='left'>individual_native_analyte_name: text</td></tr>
+            <tr><td align='left'>field_blank_blank_filtered_analyte_concentration_ng: numeric</td></tr>
+            <tr><td align='left'>sample_mass_g: numeric</td></tr>
+            <tr><td align='left'>analyte_concentration_ppt: numeric</td></tr>
+        </table>
+    >]
+
+field_blank_blank_filtered_analyte_concentration -> calc_analyte_con
+extraction_batch_source -> calc_analyte_con
+
+calc_analyte_con -> analyte_con_ppt
+
+}")
+```

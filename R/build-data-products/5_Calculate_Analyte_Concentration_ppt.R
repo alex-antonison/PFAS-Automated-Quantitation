@@ -8,7 +8,7 @@ field_blank_blank_filtered_analyte_concentration <- arrow::read_parquet(
   "data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.parquet"
 )
 
-analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>% 
+analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>%
   dplyr::left_join(
     extraction_batch_source,
     by = c(
@@ -32,7 +32,7 @@ analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>
     field_blank_blank_filtered_analyte_concentration_ng,
     sample_mass_g,
     analyte_concentration_ppt
-  ) %>% 
+  ) %>%
   readr::write_excel_csv(
     "data/processed/build-data-products/analyte_concentration_ppt.csv"
   )
