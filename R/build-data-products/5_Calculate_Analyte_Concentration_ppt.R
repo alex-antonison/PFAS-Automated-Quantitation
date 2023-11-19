@@ -28,6 +28,7 @@ analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>
     cartridge_number,
     county,
     sample_id,
+    coordinates,
     individual_native_analyte_name,
     field_blank_blank_filtered_analyte_concentration_ng,
     sample_mass_g,
