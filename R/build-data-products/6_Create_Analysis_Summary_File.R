@@ -1,8 +1,8 @@
 # this takes a few minutes, only comment out if a new batch is provided
-source("R/process-source-data/RunAllPrep.R")
-source("R/build-data-products/4_EvaluateQualityControlSamples.R")
-source("R/build-data-products/5_Calculate_Analyte_Concentration_ppt.R")
-source("R/build-data-products/3_2_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
+# source("R/process-source-data/RunAllPrep.R")
+# source("R/build-data-products/4_EvaluateQualityControlSamples.R")
+# source("R/build-data-products/5_Calculate_Analyte_Concentration_ppt.R")
+# source("R/build-data-products/3_2_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
 library(magrittr)
 
 options(java.parameters = "-Xmx1000000m")
@@ -13,7 +13,6 @@ wb <- xlsx::createWorkbook()
 
 ########## Sheet 1 - Build a quality control pass fail across batches ##########
 quality_control_pass_fail_df <- arrow::read_parquet("data/processed/build-data-products/blank_filtered_evaluated_qc_no_recovery.parquet") %>%
-  # dplyr::filter(batch_number == 1) %>%
   dplyr::select(-quality_control_exists_flag, -quality_control_adjust_flag) %>%
   dplyr::filter(!is.na(evaluate_recovery_ratio_flag)) %>%
   dplyr::group_by(batch_number, evaluate_recovery_ratio_flag) %>%
@@ -87,11 +86,44 @@ xlsx::addDataFrame(field_blank_filtered_df, sheet = field_blank_filtered_sheet, 
 
 ########## Sheet 8 - Analyte Concentration PPT #############
 
+cal_curve_prep <- calibration_curve_output_df %>% 
+  dplyr::distinct(
+    batch_number,
+    individual_native_analyte_name,
+    calibration_point
+  ) 
+
 analyte_concentration_ppt <- readr::read_csv("data/processed/build-data-products/analyte_concentration_ppt.csv") %>%
+  dplyr::left_join(
+    cal_curve_prep,
+    by = c("batch_number","individual_native_analyte_name")
+  ) %>% 
   data.frame()
 
 analyte_concentration_ppt_sheet <- xlsx::createSheet(wb, "Analyte Concentration ppt")
 xlsx::addDataFrame(analyte_concentration_ppt, sheet = analyte_concentration_ppt_sheet, row.names = FALSE)
+
+########## Sheet 9 - Analyte Concentration PPT Transposed #############
+
+# cal_curve_prep <- calibration_curve_output_df %>% 
+#   dplyr::distinct(
+#     batch_number,
+#     individual_native_analyte_name,
+#     calibration_point
+#   ) 
+# 
+# extraction_batch
+# 
+# analyte_concentration_ppt <- readr::read_csv("data/processed/build-data-products/analyte_concentration_ppt.csv") %>%
+#   dplyr::left_join(
+#     cal_curve_prep,
+#     by = c("batch_number","individual_native_analyte_name")
+#   ) %>% 
+#   data.frame()
+
+analyte_concentration_ppt_sheet <- xlsx::createSheet(wb, "Analyte Concentration ppt")
+xlsx::addDataFrame(analyte_concentration_ppt, sheet = analyte_concentration_ppt_sheet, row.names = FALSE)
+
 
 ########## Save out final file ############
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
