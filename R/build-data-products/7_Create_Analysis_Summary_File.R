@@ -1,3 +1,5 @@
+## Need to restart R Session prior to running this script
+
 library(magrittr)
 
 options(java.parameters = "-Xmx1000000m")
