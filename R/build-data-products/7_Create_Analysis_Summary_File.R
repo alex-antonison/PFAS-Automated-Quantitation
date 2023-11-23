@@ -1,8 +1,3 @@
-# this takes a few minutes, only comment out if a new batch is provided
-# source("R/process-source-data/RunAllPrep.R")
-# source("R/build-data-products/4_EvaluateQualityControlSamples.R")
-# source("R/build-data-products/5_Calculate_Analyte_Concentration_ppt.R")
-# source("R/build-data-products/3_2_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
 library(magrittr)
 
 options(java.parameters = "-Xmx1000000m")
@@ -86,7 +81,7 @@ xlsx::addDataFrame(field_blank_filtered_df, sheet = field_blank_filtered_sheet, 
 
 ########## Sheet 8 - Analyte Concentration PPT #############
 
-cal_curve_prep <- calibration_curve_output_df %>%
+cal_curve_prep <- analyte_concentration_df %>%
   dplyr::distinct(
     batch_number,
     individual_native_analyte_name,
