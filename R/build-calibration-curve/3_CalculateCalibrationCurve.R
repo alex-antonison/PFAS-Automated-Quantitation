@@ -118,7 +118,7 @@ calculate_calibration_curve <- function(df,
       df <- return_val[[1]]
       min_flag <- return_val[[2]]
       remove_val <- return_val[[3]]
-      removed_calibration <- paste(removed_calibration, remove_val, sep = ":")
+      removed_calibration <- paste(removed_calibration, remove_val, sep = ",")
 
       cur_eval_df <- dplyr::tibble(
         batch_number = batch_number,
