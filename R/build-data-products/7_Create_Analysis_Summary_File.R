@@ -110,13 +110,13 @@ xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlo
 
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
 analyte_concentration_ppt %>%
+  dplyr::filter(calibration_point >= 5) %>% 
   dplyr::select(
     batch_number,
     cartridge_number,
     sample_id,
     county,
     coordinates,
-    calibration_point,
     individual_native_analyte_name,
     analyte_concentration_ppt
   ) %>%
