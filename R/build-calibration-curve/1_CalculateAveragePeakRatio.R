@@ -332,6 +332,12 @@ individual_native_analyte_df %>%
   dplyr::filter(
     calibration_level <= max_calibration_level_filter
   ) %>%
+  # removing filter columns from output
+  dplyr::select(
+    -max_calibration_level_filter,
+    -notes,
+    -internal_standard_mix
+  ) %>% 
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/average_peak_area_ratio.parquet"
   ) %>%
