@@ -335,6 +335,7 @@ individual_native_analyte_df %>%
   # removing filter columns from output
   dplyr::select(
     -max_calibration_level_filter,
+    -max_calibration_level,
     -notes,
     -internal_standard_mix
   ) %>% 
