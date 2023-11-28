@@ -97,16 +97,6 @@ analyte_concentration_ppt <- readr::read_csv("data/processed/build-data-products
   ) %>%
   data.frame()
 
-analyte_concentration_ppt %>%
-  dplyr::group_by(
-    batch_number,
-    cartridge_number,
-    individual_native_analyte_name
-  ) %>%
-  dplyr::summarize(count = dplyr::n()) %>%
-  dplyr::filter(count > 1)
-
-
 analyte_concentration_ppt_sheet <- xlsx::createSheet(wb, "Analyte Concentration ppt")
 xlsx::addDataFrame(analyte_concentration_ppt, sheet = analyte_concentration_ppt_sheet, row.names = FALSE)
 
@@ -117,7 +107,8 @@ xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlo
 
 ########## Separate Analyte Concentration PPT Transposed #############
 
-analyte_concentration_ppt_transposed <- analyte_concentration_ppt %>%
+cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
+analyte_concentration_ppt %>%
   dplyr::select(
     batch_number,
     cartridge_number,
