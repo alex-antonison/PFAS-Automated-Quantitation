@@ -280,7 +280,7 @@ for (batch in batch_df$batch_number) {
   calc_recovery_value_df <- calculate_recovery_value(calc_cal_curve_df)
 
 
-  # do not want to remove calibration levels, just want to re-calcualte
+  # do not want to remove calibration levels, just want to re-calculate
   # the R Squared, Y Intercept, and Slope
   # If it has an R Squared less than 0.99, this is an error that requires
   # investigation
