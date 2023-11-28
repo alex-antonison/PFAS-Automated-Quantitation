@@ -116,13 +116,6 @@ calculate_analyte_concentration <- function(peak_area_ratio,
       lod_reference,
       by = c("batch_number", "individual_native_analyte_name")
     ) %>%
-    dplyr::mutate(
-      lod_exist_flag = dplyr::if_else(
-        is.na(limit_of_detection_concentration_ng),
-        FALSE,
-        TRUE
-      )
-    ) %>%
     # calculate amount of internal standard in each sample
     dplyr::mutate(
       # TODO make the value 25 a configurable number
