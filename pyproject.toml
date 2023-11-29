@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "processmassspecdata"
+version = "0.1.0"
+description = ""
+authors = ["Alexander Antonison <adantonison@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+jupyter = "^1.0.0"
+notebook = "^7.0.6"
+pandas = "^2.1.3"
+pyarrow = "^14.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

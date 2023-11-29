@@ -2,7 +2,7 @@
 
 library(magrittr)
 
-options(java.parameters = "-Xmx1000000m")
+options(java.parameters = "-Xmx10000000m")
 
 # set up initial workbook
 wb <- xlsx::createWorkbook()
