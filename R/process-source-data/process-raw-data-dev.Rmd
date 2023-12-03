@@ -1,0 +1,34 @@
+```{r}
+library(magrittr)
+
+batch_number = 1
+
+remove_analytes <- arrow::read_parquet(
+    "../../data/processed/reference/remove_analytes_from_study.parquet"
+  ) %>% 
+  dplyr::select(
+    analyte_name,
+    native_is
+  )
+
+remove_analytes_by_batch <- arrow::read_parquet(
+  "../../data/processed/reference/remove_analytes_from_batch.parquet"
+) %>% 
+  dplyr::filter(batch_number == batch_number) %>% 
+  dplyr::select(
+    analyte_name,
+    native_is
+  )
+
+remove_analytes_combined <- dplyr::bind_rows(
+  remove_analytes,
+  remove_analytes_by_batch
+) %>% 
+  dplyr::distinct(analyte_name)
+
+sheet_name = "5:2sFTOH_1"
+
+if (sheet_name %in% remove_analytes_combined$analyte_name) {
+  print("Exclude")
+}
+```
