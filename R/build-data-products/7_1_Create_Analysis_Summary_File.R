@@ -32,7 +32,7 @@ xlsx::addDataFrame(quality_control_results_df, sheet = quality_control_results_s
 
 ########## Sheet 3 - Add Calibration Curve Output #############
 calibration_curve_output_df <- arrow::read_parquet("data/processed/calibration-curve/calibration_curve_output_no_recov_filter.parquet") %>%
-  dplyr::select(-run_count) %>% 
+  dplyr::select(-run_count) %>%
   data.frame()
 
 calibration_curve_output_sheet <- xlsx::createSheet(wb, "Cal Curve Output")

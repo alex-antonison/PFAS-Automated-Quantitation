@@ -338,7 +338,7 @@ individual_native_analyte_df %>%
     -max_calibration_level,
     -notes,
     -internal_standard_mix
-  ) %>% 
+  ) %>%
   arrow::write_parquet(
     sink = "data/processed/calibration-curve/average_peak_area_ratio.parquet"
   ) %>%

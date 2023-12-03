@@ -24,7 +24,7 @@ readxl::read_excel(
 
 readxl::read_excel(
   "data/source/reference/remove_analytes_from_batch.xlsx"
-) %>% 
+) %>%
   readr::write_excel_csv(
     "data/processed/reference/remove_analytes_from_batch.csv"
   ) %>%
@@ -34,7 +34,7 @@ readxl::read_excel(
 
 readxl::read_excel(
   "data/source/reference/remove_analytes_from_study.xlsx"
-) %>% 
+) %>%
   readr::write_excel_csv(
     "data/processed/reference/remove_analytes_from_study.csv"
   ) %>%

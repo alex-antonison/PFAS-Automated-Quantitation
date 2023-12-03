@@ -86,30 +86,30 @@ process_raw_file <- function(file_name) {
   # initialize dataframes for adding files
   data_df <- dplyr::tibble()
   naming_df <- dplyr::tibble()
-  
+
   batch_number <- get_batch_number(file_name)
-  
+
   remove_analytes <- arrow::read_parquet(
     "data/processed/reference/remove_analytes_from_study.parquet"
-  ) %>% 
+  ) %>%
     dplyr::select(
       analyte_name,
       native_is
     )
-  
+
   remove_analytes_by_batch <- arrow::read_parquet(
     "data/processed/reference/remove_analytes_from_batch.parquet"
-  ) %>% 
-    dplyr::filter(batch_number == batch_number) %>% 
+  ) %>%
+    dplyr::filter(batch_number == batch_number) %>%
     dplyr::select(
       analyte_name,
       native_is
     )
-  
+
   remove_analytes_combined <- dplyr::bind_rows(
     remove_analytes,
     remove_analytes_by_batch
-  ) %>% 
+  ) %>%
     dplyr::distinct(analyte_name)
 
   # read in matching file for internal standards and
@@ -135,7 +135,7 @@ process_raw_file <- function(file_name) {
 
     # ignore non-data sheets
     if (sheet %in% c("Component", "mdlCalcs")) next
-    
+
     # if an analyte or internal standard is in the list
     # it should not be processed and excluded from the study
     if (sheet %in% remove_analytes_combined$analyte_name) next
