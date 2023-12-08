@@ -57,7 +57,7 @@ combined_data_df %>%
   # filter down to analytes that have a match in the reference file
   dplyr::filter(analyte_match == "Match Found") %>%
   # filter down to only filenames that have a number
-  dplyr::filter(!(filename %in% ignore_list)) %>% 
+  dplyr::filter(!(filename %in% ignore_list)) %>%
   dplyr::mutate(
     # flag for if a analyte is not NF
     analyte_detection_flag = dplyr::if_else((area == "NF"), FALSE, TRUE),

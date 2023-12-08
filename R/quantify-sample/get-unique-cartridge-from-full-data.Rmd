@@ -5,7 +5,7 @@ df <- arrow::read_parquet(
   "../../data/processed/source/full_raw_data.parquet"
 )
 
-df %>% 
-  dplyr::distinct(filename) %>% 
+df %>%
+  dplyr::distinct(filename) %>%
   readr::write_excel_csv("unique_file_name.csv")
 ```
