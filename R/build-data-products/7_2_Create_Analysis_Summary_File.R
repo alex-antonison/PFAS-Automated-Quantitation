@@ -53,13 +53,20 @@ xlsx::addDataFrame(analyte_concentration_ppt, sheet = analyte_concentration_ppt_
 
 ########## Save out final file ############
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
-xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file_2.xlsx"))
 
+cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
+if (Sys.info()["sysname"] == "MacOS"){
+  xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file_1.xlsx"))
+}
+
+if (Sys.info()["sysname"] == "Windows") {
+  xlsx::saveWorkbook(wb, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file_2.xlsx"))
+}
 
 ########## Separate Analyte Concentration PPT Transposed #############
 
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
-analyte_concentration_ppt %>%
+df <- analyte_concentration_ppt %>%
   dplyr::filter(calibration_point >= 5) %>%
   dplyr::select(
     batch_number,
@@ -70,7 +77,22 @@ analyte_concentration_ppt %>%
     individual_native_analyte_name,
     analyte_concentration_ppt,
   ) %>%
-  tidyr::pivot_wider(names_from = individual_native_analyte_name, values_from = analyte_concentration_ppt, names_sep = "") %>%
-  readr::write_excel_csv(paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_analyte_concentration_ppt_wide.csv"),
-    na = ""
+  tidyr::pivot_wider(names_from = individual_native_analyte_name, values_from = analyte_concentration_ppt, names_sep = "")
+
+cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
+if (Sys.info()["sysname"] == "MacOS"){
+  readr::write_excel_csv(df, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_analyte_concentration_ppt_wide.csv"),
+                         na = ""
   )
+  
+}
+
+if (Sys.info()["sysname"] == "Windows") {
+  readr::write_excel_csv(df, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_analyte_concentration_ppt_wide.csv"),
+                         na = ""
+  )
+  
+}
+
+
+  
