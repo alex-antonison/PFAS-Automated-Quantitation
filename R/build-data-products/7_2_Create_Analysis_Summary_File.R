@@ -68,7 +68,7 @@ analyte_concentration_ppt %>%
     county,
     coordinates,
     individual_native_analyte_name,
-    analyte_concentration_ppt
+    analyte_concentration_ppt,
   ) %>%
   tidyr::pivot_wider(names_from = individual_native_analyte_name, values_from = analyte_concentration_ppt, names_sep = "") %>%
   readr::write_excel_csv(paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_analyte_concentration_ppt_wide.csv"),

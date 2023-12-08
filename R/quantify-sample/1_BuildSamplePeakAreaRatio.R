@@ -16,10 +16,13 @@ library(magrittr)
 
 source("R/process-source-data/RefCreateMappingFiles.R")
 source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
+source("R/quantify-sample/ignore_list.R")
 
 ####################################
 # Create Analyte Sample Table
 ####################################
+
+ignore_list <- c("plastic", "MeOH", "meoh", "Cal", "glass")
 
 batch_filename_error <- arrow::read_parquet(
   "data/processed/reference/batch_filename_error.parquet"
@@ -54,7 +57,7 @@ combined_data_df %>%
   # filter down to analytes that have a match in the reference file
   dplyr::filter(analyte_match == "Match Found") %>%
   # filter down to only filenames that have a number
-  dplyr::filter(!grepl("\\D", filename)) %>%
+  dplyr::filter(!(filename %in% ignore_list)) %>% 
   dplyr::mutate(
     # flag for if a analyte is not NF
     analyte_detection_flag = dplyr::if_else((area == "NF"), FALSE, TRUE),
