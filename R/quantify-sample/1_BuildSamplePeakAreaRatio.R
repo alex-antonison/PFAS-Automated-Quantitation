@@ -22,8 +22,6 @@ source("R/quantify-sample/ignore_list.R")
 # Create Analyte Sample Table
 ####################################
 
-ignore_list <- c("plastic", "MeOH", "meoh", "Cal", "glass")
-
 batch_filename_error <- arrow::read_parquet(
   "data/processed/reference/batch_filename_error.parquet"
 ) %>%
@@ -56,15 +54,15 @@ combined_data_df %>%
   dplyr::filter(source_type == "native_analyte") %>%
   # filter down to analytes that have a match in the reference file
   dplyr::filter(analyte_match == "Match Found") %>%
-  # filter down to only filenames that have a number
-  dplyr::filter(!(filename %in% ignore_list)) %>%
+  # filter down to only filenames that are not in the ignore list
+  dplyr::filter(!(filename %in% ignore_catridge_list)) %>%
   dplyr::mutate(
     # flag for if a analyte is not NF
     analyte_detection_flag = dplyr::if_else((area == "NF"), FALSE, TRUE),
     # if area is not found, then set to NA
     area_prep = dplyr::if_else(analyte_detection_flag, area, NA),
     # rename to cartridge_number for joining later
-    cartridge_number = filename,
+    cartridge_number = readr::parse_number(filename),
     # convert peak area to numeric
     individual_native_analyte_peak_area = as.numeric(area_prep),
     # calculate analyte name
@@ -95,8 +93,8 @@ combined_data_df %>%
 
 combined_data_df %>%
   dplyr::filter(source_type == "internal_standard") %>%
-  # filter down to only filenames that are a number
-  dplyr::filter(!grepl("\\D", filename)) %>%
+  # filter down to only filenames that are not in the ignore list
+  dplyr::filter(!(filename %in% ignore_catridge_list)) %>%
   dplyr::mutate(
     internal_standard_name = sheet_name,
     # flag for if a analyte is not NF
@@ -108,7 +106,7 @@ combined_data_df %>%
     # if area is not found, then set to NA
     area_prep = dplyr::if_else(internal_standard_detection_flag, area, NA),
     # rename to cartridge_number for joining later
-    cartridge_number = filename,
+    cartridge_number = readr::parse_number(filename),
     # convert peak area to numeric
     internal_standard_peak_area = as.numeric(area_prep),
   ) %>%
