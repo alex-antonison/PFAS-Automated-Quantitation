@@ -75,7 +75,8 @@ process_batch_file <- function(data) {
       full_bottle_mass = as.double(full_bottle_mass),
       empty_bottle_mass = as.double(empty_bottle_mass),
       sample_mass_g = as.double(sample_mass_g),
-      batch_number = readr::parse_number(batch_number)
+      batch_number = readr::parse_number(batch_number),
+      cartridge_number = readr::parse_number(cartridge_number)
     ) %>%
     # puts the batch number in the front of the dataframe
     dplyr::relocate(
