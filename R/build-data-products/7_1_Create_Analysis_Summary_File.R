@@ -62,7 +62,7 @@ xlsx::addDataFrame(analyte_concentration_df, sheet = analyte_concentration_sheet
 
 ########## Save out final file ############
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
-if (Sys.info()["sysname"] == "MacOS") {
+if (Sys.info()["sysname"] == "Darwin") {
   xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file_1.xlsx"))
 }
 
