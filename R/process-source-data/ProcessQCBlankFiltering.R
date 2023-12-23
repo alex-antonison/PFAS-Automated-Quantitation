@@ -1,5 +1,6 @@
 library(magrittr)
 
+process_qc_blank_filtering <- function() {
 
 readxl::read_excel("data/source/reference/QC_BlankFiltering_ngValues.xlsx") %>%
   janitor::clean_names() %>%
@@ -21,3 +22,4 @@ readxl::read_excel("data/source/reference/QC_BlankFiltering_ngValues.xlsx") %>%
   arrow::write_parquet(
     sink = "data/processed/reference/quality_control_blank_filter_adjustment.parquet"
   )
+}

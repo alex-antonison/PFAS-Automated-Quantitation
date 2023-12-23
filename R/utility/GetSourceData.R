@@ -10,7 +10,6 @@ get_source_data <- function() {
 
   for (obj in s3_obj_list$Contents) {
     object_key <- obj$Key
-    print(object_key)
 
     s3$download_file(
       Bucket = bucket_name,

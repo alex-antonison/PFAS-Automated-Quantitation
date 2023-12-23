@@ -1,14 +1,3 @@
-library(magrittr)
-
-####################################
-# Get Source Data if Missing
-####################################
-
-# clear out environment
-rm(list = ls())
-
-source("R/process-source-data/RefCreateMappingFiles.R")
-
 ####################################
 # Process Measured Data
 ####################################
@@ -50,8 +39,6 @@ check_analyte_name <- function(analyte_name, match_list) {
     analyte_match <- "Match Found"
   } else {
     analyte_match <- "No Match Found"
-    print(analyte_name)
-    print("Match Not Found")
   }
 
   return(analyte_match)
@@ -237,45 +224,48 @@ process_raw_file <- function(file_name) {
 # Run Processing Function for all files
 ####################################
 
-combined_data_df <- dplyr::tibble()
-combined_naming_df <- dplyr::tibble()
+run_processing_for_raw_data <- function() {
 
-source_file_list <- fs::dir_ls("data/source/raw_data/")
-
-# This loops over each of the source files in the
-# previously configured source_file_list
-for (file_name in source_file_list) {
-  df_list <- process_raw_file(file_name)
-
-  # combines the different processed data file
-  # into a single file
-  combined_data_df <- dplyr::bind_rows(
-    combined_data_df,
-    df_list[[1]]
-  )
-
-  # combines the different naming dataframes into a single
-  # table
-  combined_naming_df <- dplyr::bind_rows(
+  combined_data_df <- dplyr::tibble()
+  combined_naming_df <- dplyr::tibble()
+  
+  source_file_list <- fs::dir_ls("data/source/raw_data/")
+  
+  # This loops over each of the source files in the
+  # previously configured source_file_list
+  for (file_name in source_file_list) {
+    df_list <- process_raw_file(file_name)
+  
+    # combines the different processed data file
+    # into a single file
+    combined_data_df <- dplyr::bind_rows(
+      combined_data_df,
+      df_list[[1]]
+    )
+  
+    # combines the different naming dataframes into a single
+    # table
+    combined_naming_df <- dplyr::bind_rows(
+      combined_naming_df,
+      df_list[[2]]
+    )
+  }
+  
+  # troubleshoot naming
+  readr::write_csv(
     combined_naming_df,
-    df_list[[2]]
+    "data/processed/troubleshoot/raw_data_processing_naming.csv"
+  )
+  
+  # write full output to parquet for processing
+  arrow::write_parquet(
+    combined_data_df,
+    sink = "data/processed/source/full_raw_data.parquet"
+  )
+  
+  # write full output to csv
+  readr::write_csv(
+    combined_data_df,
+    "data/processed/source/full_raw_data.csv"
   )
 }
-
-# troubleshoot naming
-readr::write_csv(
-  combined_naming_df,
-  "data/processed/troubleshoot/raw_data_processing_naming.csv"
-)
-
-# write full output to parquet for processing
-arrow::write_parquet(
-  combined_data_df,
-  sink = "data/processed/source/full_raw_data.parquet"
-)
-
-# write full output to csv
-readr::write_csv(
-  combined_data_df,
-  "data/processed/source/full_raw_data.csv"
-)

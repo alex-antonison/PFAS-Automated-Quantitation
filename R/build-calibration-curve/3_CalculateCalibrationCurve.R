@@ -64,12 +64,9 @@ remove_cal_level <- function(df, min_flag) {
     remove_val <- max(df$calibration_level)
     min_flag <- TRUE
   }
-  print(paste("Removing Calibration Range", remove_val))
 
   df <- df %>%
     dplyr::filter(calibration_level != remove_val) # nolint
-
-  print("Removed cal range")
 
   return(list(df, min_flag, remove_val))
 }
@@ -113,7 +110,6 @@ calculate_calibration_curve <- function(df,
       # set remove calibration flag to true to indicate an analyte
       # has had a calibration removed from it
       removed_calibration_flag <- TRUE
-      print(r_squared)
       return_val <- remove_cal_level(df, min_flag)
       df <- return_val[[1]]
       min_flag <- return_val[[2]]
@@ -185,7 +181,6 @@ run_calibration_curve <- function(df, run_count, remove_cal_level) {
         individual_native_analyte_name == analyte
       )
 
-    print(analyte)
     calc_cal_curve_temp <- calculate_calibration_curve(
       input_df,
       run_count,
@@ -258,7 +253,6 @@ complete_cal_curve_output <- dplyr::tibble()
 cal_curve_non_recovery_output <- dplyr::tibble()
 
 for (batch in batch_df$batch_number) {
-  print(paste0("Running batch number ", batch))
   # initialize run values values
   single_batch_analyte_df <- calibration_curve_input_df %>%
     # process one batch at a time
@@ -290,7 +284,6 @@ for (batch in batch_df$batch_number) {
     remove_cal_level = FALSE
   )
 
-  print(paste0("Batch ", batch, " complete."))
 
   complete_cal_curve_output <- dplyr::bind_rows(
     complete_cal_curve_output,

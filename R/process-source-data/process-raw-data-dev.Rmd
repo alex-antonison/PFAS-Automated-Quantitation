@@ -27,8 +27,4 @@ remove_analytes_combined <- dplyr::bind_rows(
   dplyr::distinct(analyte_name)
 
 sheet_name <- "5:2sFTOH_1"
-
-if (sheet_name %in% remove_analytes_combined$analyte_name) {
-  print("Exclude")
-}
 ```

@@ -1,18 +1,9 @@
-library(magrittr)
-
 # Processes the IS_Mix_source.xlsx file into a single table
 # called internal_standard_mix
 
 ####################################
 # Process IS_Mix_source File
 ####################################
-
-if (fs::file_exists("data/source/reference/IS_Mix_source.xlsx")) {
-  print("Source Data Downloaded")
-} else {
-  # pull source data from S3
-  source("R/utility/GetSourceData.R")
-}
 
 #' Extract IS Mixes from Excel file
 #' @param file_name A string of the file_name where the file is located
@@ -137,5 +128,4 @@ process_is_excel <- function(file_name) {
   )
 }
 
-# Process IS_mix_source.xlsx file
-process_is_excel("data/source/reference/IS_Mix_source.xlsx")
+
