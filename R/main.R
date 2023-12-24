@@ -23,7 +23,7 @@ source("R/process-source-data/RefCreateMappingFiles.R")
 
 # This can take time depending on volume of data, only uncomment if you need
 # to re-process source data files
-# source("R/process-source-data/ProcessRawData.R")
+source("R/process-source-data/ProcessRawData.R")
 
 ########################################
 section_change_print("Building Calibration Curve")
