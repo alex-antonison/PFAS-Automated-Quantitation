@@ -106,11 +106,11 @@ cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
 
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
 if (Sys.info()["sysname"] == "Darwin") {
-  xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file_2.xlsx"))
+  xlsx::saveWorkbook(wb, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file.xlsx"))
 }
 
 if (Sys.info()["sysname"] == "Windows") {
-  xlsx::saveWorkbook(wb, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file_2.xlsx"))
+  xlsx::saveWorkbook(wb, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file.xlsx"))
 }
 
 ########## Separate Analyte Concentration PPT Transposed #############
