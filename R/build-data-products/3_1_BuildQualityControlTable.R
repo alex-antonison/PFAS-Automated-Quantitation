@@ -1,7 +1,5 @@
 library(magrittr)
 
-source("R/build-data-products/2_RemoveExtractionBlankFromAnalyteConcentration.R")
-
 build_qc_table <- function(extraction_batch_source,
                            blank_filtered_analyte_concentration_df,
                            quality_control_blank_filter_adjustment,

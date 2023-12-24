@@ -34,7 +34,6 @@
 #' they left off. We take the highest value in the event that when finding the
 #' area under the curve, they do ignore it because it is a duplicate filename.
 
-source("R/process-source-data/RefCreateMappingFiles.R")
 
 library(magrittr)
 

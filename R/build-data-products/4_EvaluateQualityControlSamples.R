@@ -1,8 +1,5 @@
 library(magrittr)
 
-source("R/build-data-products/3_2_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
-source("R/process-source-data/ProcessQCSampleFile.R")
-
 eval_qc_for_blank_filtered_analyte <- function(blank_filtered_analyte_concentration_quality_control,
                                                native_analyte_quality_control_levels,
                                                file_name) {

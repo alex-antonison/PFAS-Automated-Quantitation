@@ -1,7 +1,5 @@
 library(magrittr)
 
-source("R/build-data-products/1_BuildExtractionBlank.R")
-
 build_blank_filtered_analyte_concentration_table <- function(extraction_blank,
                                                              analyte_concentration,
                                                              file_name) {

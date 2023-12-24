@@ -1,7 +1,5 @@
 library(magrittr)
 
-source("R/build-data-products/3_1_BuildQualityControlTable.R")
-
 extraction_batch_source <- arrow::read_parquet(
   "data/processed/reference/extraction_batch_source.parquet"
 )

@@ -5,8 +5,6 @@
 #'
 #'
 
-source("R/quantify-sample/2_BuildLimitOfDetectionReference.R")
-
 library(magrittr)
 
 peak_area_ratio <- arrow::read_parquet(

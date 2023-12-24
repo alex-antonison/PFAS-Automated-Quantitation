@@ -1,7 +1,5 @@
 library(magrittr)
 
-source("R/quantify-sample/3_CalculateAnalyteConcentration.R")
-
 build_extraction_blank_table <- function(extraction_batch_source,
                                          analyte_concentration_df,
                                          file_name) {

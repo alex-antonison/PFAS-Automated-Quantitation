@@ -14,10 +14,6 @@
 
 library(magrittr)
 
-source("R/process-source-data/RefCreateMappingFiles.R")
-source("R/build-calibration-curve/3_CalculateCalibrationCurve.R")
-source("R/quantify-sample/ignore_list.R")
-
 ####################################
 # Create Analyte Sample Table
 ####################################

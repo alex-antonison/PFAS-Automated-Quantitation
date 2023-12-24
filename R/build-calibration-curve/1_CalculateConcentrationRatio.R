@@ -8,9 +8,6 @@
 
 library(magrittr)
 
-source("R/process-source-data/ProcessCalibrationCurveSourceFile.R")
-source("R/process-source-data/RefCreateMappingFiles.R")
-
 # processed from Sep2021Calibration_Curve_source.xlsx
 analyte_concentration_df <- arrow::read_parquet(
   "data/processed/reference/native_analyte_concentration.parquet"
