@@ -127,3 +127,5 @@ process_is_excel <- function(file_name) {
     "data/processed/reference/internal_standard_mix.csv"
   )
 }
+
+process_is_excel("data/source/reference/IS_Mix_source.xlsx")
