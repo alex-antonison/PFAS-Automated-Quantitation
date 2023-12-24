@@ -1,5 +1,3 @@
-
-
 # This script takes in the Sep2021Calibration_Curve_source.xlsx file
 # and transforms it into two tables:
 # native_analyte_concentration
@@ -67,7 +65,6 @@ process_cal_source <- function(file_name) {
   for (sheet in readxl::excel_sheets(file_name)) {
     # only want to run the non-final sheet
     if (stringr::str_detect(sheet, "Cal_")) {
-
       # process sheet name into
       # calibration level and
       # calibration mix
@@ -167,4 +164,4 @@ process_cal_source <- function(file_name) {
 }
 
 # Process Sep2021Calibration_Curve_source.xlsx
-
+process_cal_source("data/source/reference/Sep2021Calibration_Curve_source.xlsx")

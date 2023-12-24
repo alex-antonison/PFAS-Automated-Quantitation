@@ -1,16 +1,22 @@
 library(magrittr)
+options(warn=-1)
 
-# Process Calibration Curve Source File
+section_change_print <- function(section_name) {
+  print("=========================")
+  print(paste0("Processing ", section_name))
+  print("=========================")
+}
+
+section_change_print("Processing Source Data")
+
 source("R/process-source-data/ProcessCalibrationCurveSourceFile.R")
-
-process_cal_source("data/source/reference/Sep2021Calibration_Curve_source.xlsx")
-
-# Process Configuration Files
 source("R/process-source-data/ProcessConfigurationFiles.R")
-process_config_files()
-
-# Process Extraction Batch Source Files
 source("R/process-source-data/ProcessExtractionBatchSource.R")
+source("R/process-source-data/ProcessInternalStandardMixFile.R")
+source("R/process-source-data/ProcessQCBlankFiltering.R")
+source("R/process-source-data/ProcessQCSampleFile.R")
+source("R/process-source-data/RefCreateMappingFiles.R")
 
-# Process IS_mix_source.xlsx file
-process_is_excel("data/source/reference/IS_Mix_source.xlsx")
+# This can take time depending on volume of data, only uncomment if you need
+# to re-process source data files
+# source("R/process-source-data/ProcessRawData.R")
