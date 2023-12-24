@@ -21,10 +21,7 @@ source("R/process-source-data/ProcessInternalStandardMixFile.R")
 source("R/process-source-data/ProcessQCBlankFiltering.R")
 source("R/process-source-data/ProcessQCSampleFile.R")
 
-
-# This can take time depending on volume of data, only uncomment if you need
-# to re-process source data files
-# source("R/process-source-data/ProcessRawData.R")
+source("R/process-source-data/ProcessRawData.R")
 
 ########################################
 section_change_print("Building Calibration Curve")
