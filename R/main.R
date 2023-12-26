@@ -34,8 +34,10 @@ source("R/process-source-data/ProcessQCBlankFiltering.R")
 print("Creating QC Sample File")
 source("R/process-source-data/ProcessQCSampleFile.R")
 
-# print("Processing Raw Data - can take some time")
-# source("R/process-source-data/ProcessRawData.R")
+tictoc::tic("Processing Raw Data")
+print("Processing Raw Data - can take some time")
+source("R/process-source-data/ProcessRawData.R")
+tictoc::toc()
 
 ########################################
 section_change_print("Building Calibration Curve")
