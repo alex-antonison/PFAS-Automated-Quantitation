@@ -101,7 +101,8 @@ build_qc_table <- function(extraction_batch_source,
     dplyr::summarise(
       average_qc_analyte_concentration_ng = mean(adjusted_analyte_concentration_ng),
       std_dev_qc_analyte_concentration_ng = sd(adjusted_analyte_concentration_ng),
-      percent_rsd_qc_analyte_concentration_ng = (std_dev_qc_analyte_concentration_ng / average_qc_analyte_concentration_ng) * 100
+      percent_rsd_qc_analyte_concentration_ng = (std_dev_qc_analyte_concentration_ng / average_qc_analyte_concentration_ng) * 100,
+      .groups="keep"
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(

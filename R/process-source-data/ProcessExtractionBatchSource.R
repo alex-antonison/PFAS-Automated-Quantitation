@@ -18,6 +18,7 @@ read_batch_file <- function(file_name) {
   for (sheet in batch_sheets) {
     excel_sheet_data <- readxl::read_excel(
       file_name,
+      .name_repair = "unique_quiet",
       sheet = sheet,
       col_types = "text",
       na = c("N/A", "NA", "Sample not found", "#VALUE!")
@@ -27,10 +28,11 @@ read_batch_file <- function(file_name) {
     excel_sheet_data$batch_number <- sheet
 
     # combine the sheets together
-    combined_tibble <- dplyr::bind_rows(
-      excel_sheet_data,
-      combined_tibble
-    )
+    combined_tibble <- suppressMessages(
+      dplyr::bind_rows(
+          excel_sheet_data,
+          combined_tibble
+    ))
   }
 
   return(combined_tibble)

@@ -56,7 +56,8 @@ process_limit_of_detection_file <- function(average_peak_area_ratio,
       individual_native_analyte_name
     ) %>%
     dplyr::summarise(
-      min_cal_level_above_lod = min(calibration_level)
+      min_cal_level_above_lod = min(calibration_level),
+      .groups = "keep"
     )
 
   average_peak_area_ratio %>%

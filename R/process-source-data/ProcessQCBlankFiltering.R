@@ -1,7 +1,7 @@
 library(magrittr)
 
 
-readxl::read_excel("data/source/reference/QC_BlankFiltering_ngValues.xlsx") %>%
+readxl::read_excel("data/source/reference/QC_BlankFiltering_ngValues.xlsx", .name_repair = "unique_quiet") %>%
   janitor::clean_names() %>%
   dplyr::mutate(
     individual_native_analyte_name = compound_name,

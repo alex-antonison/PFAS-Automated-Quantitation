@@ -8,7 +8,8 @@
 
 readxl::read_excel(
   "data/source/mapping/Native_analyte_ISmatch_source.xlsx",
-  sheet = "Sheet1"
+  sheet = "Sheet1",
+  .name_repair = "unique_quiet"
 ) %>%
   janitor::clean_names() %>%
   dplyr::mutate(
@@ -32,7 +33,7 @@ readxl::read_excel(
 # Create Calibration Analyte Name to Source Analyte Name Reference File
 ###########################
 
-readxl::read_excel("data/source/mapping/analyte_concentration_name_mapping.xlsx") %>%
+readxl::read_excel("data/source/mapping/analyte_concentration_name_mapping.xlsx", .name_repair = "unique_quiet") %>%
   janitor::clean_names() %>%
   dplyr::rename(
     source_analyte_name = individual_native_analyte_name,
@@ -50,7 +51,8 @@ readxl::read_excel("data/source/mapping/analyte_concentration_name_mapping.xlsx"
 ###########################
 
 readxl::read_excel(
-  "data/source/mapping/internal_standard_concentration_name_mapping.xlsx"
+  "data/source/mapping/internal_standard_concentration_name_mapping.xlsx",
+  .name_repair = "unique_quiet"
 ) %>%
   arrow::write_parquet(
     sink = "data/processed/mapping/concentration_internal_standard_mapping.parquet"

@@ -24,7 +24,8 @@ extract_analyte_source <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = sheet_range_col,
-    col_names = c("individual_native_analyte_name", "a", "b", "c", "d", "e", "native_analyte_concentration_ppt")
+    col_names = c("individual_native_analyte_name", "a", "b", "c", "d", "e", "native_analyte_concentration_ppt"),
+    .name_repair = "unique_quiet"
   )
 
   return(analyte_df)
@@ -47,7 +48,8 @@ extract_is_label <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = sheet_range_col,
-    col_names = c("internal_standard_name", "a", "b", "c", "d", "e", "internal_standard_concentration_ppt")
+    col_names = c("internal_standard_name", "a", "b", "c", "d", "e", "internal_standard_concentration_ppt"),
+    .name_repair = "unique_quiet"
   )
 
   return(iso_label_df)

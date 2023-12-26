@@ -1,5 +1,6 @@
 native_analyte_quality_control_levels <- readxl::read_excel(
-  "data/source/reference/native_analyte_quality_control_levels.xlsx"
+  "data/source/reference/native_analyte_quality_control_levels.xlsx",
+  .name_repair = "unique_quiet"
 ) %>%
   dplyr::select(
     source_analyte_name = native_analyte_name,

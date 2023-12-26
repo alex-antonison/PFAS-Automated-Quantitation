@@ -12,7 +12,7 @@ quality_control_pass_fail_df <- arrow::read_parquet("data/processed/build-data-p
   dplyr::select(-quality_control_exists_flag, -quality_control_adjust_flag) %>%
   dplyr::filter(!is.na(evaluate_recovery_ratio_flag)) %>%
   dplyr::group_by(batch_number, evaluate_recovery_ratio_flag) %>%
-  dplyr::summarise(count = dplyr::n()) %>%
+  dplyr::summarise(count = dplyr::n(), .groups="keep") %>%
   dplyr::arrange(batch_number) %>%
   data.frame()
 
