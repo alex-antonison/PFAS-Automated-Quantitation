@@ -18,13 +18,15 @@ extraact_is_mix <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = "A33:A51",
-    col_names = c("internal_standard_concentration_name")
+    col_names = c("internal_standard_concentration_name"),
+    .name_repair = "unique_quiet"
   )
   is_mix_mpfac_24es <- readxl::read_excel(
     file_name,
     sheet = sheet_name,
     range = "G33:G51",
-    col_names = c("internal_standard_concentration_ppb")
+    col_names = c("internal_standard_concentration_ppb"),
+    .name_repair = "unique_quiet"
   )
   df_mpfac_24es <- dplyr::bind_cols(
     is_label_mpfac_24es,
@@ -44,13 +46,15 @@ extraact_is_mix <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = "A54:A56",
-    col_names = c("internal_standard_concentration_name")
+    col_names = c("internal_standard_concentration_name"),
+    .name_repair = "unique_quiet"
   )
   is_mix_mfta_mxa <- readxl::read_excel(
     file_name,
     sheet = sheet_name,
     range = "G54:G56",
-    col_names = c("internal_standard_concentration_ppb")
+    col_names = c("internal_standard_concentration_ppb"),
+    .name_repair = "unique_quiet"
   )
   df_mfta_mxa <- dplyr::bind_cols(
     is_label_mfta_mxa,
@@ -68,13 +72,15 @@ extraact_is_mix <- function(file_name, sheet_name) {
     file_name,
     sheet = sheet_name,
     range = "A59:A63",
-    col_names = c("internal_standard_concentration_name")
+    col_names = c("internal_standard_concentration_name"),
+    .name_repair = "unique_quiet"
   )
   is_mix_extra_is_mix <- readxl::read_excel(
     file_name,
     sheet = sheet_name,
     range = "G59:G63",
-    col_names = c("internal_standard_concentration_ppb")
+    col_names = c("internal_standard_concentration_ppb"),
+    .name_repair = "unique_quiet"
   )
   df_extra_is_mix <- dplyr::bind_cols(
     is_label_extra_is_mix,

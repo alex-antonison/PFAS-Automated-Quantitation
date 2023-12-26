@@ -5,7 +5,7 @@
 
 read_in_raw_data <- function(source_file_name, sheet_name, source_type) {
   # read in the sheet and skip the top 4 names
-  df <- readxl::read_xls(file_name, sheet_name, skip = 4) %>%
+  df <- readxl::read_xls(file_name, sheet_name, skip = 4, .name_repair = "unique_quiet") %>%
     # clean up the column names
     janitor::clean_names() %>%
     # remove instances where sample_type is null since this

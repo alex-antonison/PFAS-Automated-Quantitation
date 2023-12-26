@@ -1,7 +1,8 @@
 library(magrittr)
 
 readxl::read_excel(
-  "data/source/reference/batch_filename_error.xlsx"
+  "data/source/reference/batch_filename_error.xlsx",
+  .name_repair = "unique_quiet"
 ) %>%
   janitor::clean_names() %>%
   readr::write_excel_csv(
@@ -12,7 +13,8 @@ readxl::read_excel(
   )
 
 readxl::read_excel(
-  "data/source/reference/internal_standard_max_calibration_level.xlsx"
+  "data/source/reference/internal_standard_max_calibration_level.xlsx",
+  .name_repair = "unique_quiet"
 ) %>%
   janitor::clean_names() %>%
   readr::write_excel_csv(
@@ -23,7 +25,8 @@ readxl::read_excel(
   )
 
 readxl::read_excel(
-  "data/source/reference/remove_analytes_from_batch.xlsx"
+  "data/source/reference/remove_analytes_from_batch.xlsx",
+  .name_repair = "unique_quiet"
 ) %>%
   readr::write_excel_csv(
     "data/processed/reference/remove_analytes_from_batch.csv"
@@ -33,7 +36,8 @@ readxl::read_excel(
   )
 
 readxl::read_excel(
-  "data/source/reference/remove_analytes_from_study.xlsx"
+  "data/source/reference/remove_analytes_from_study.xlsx",
+  .name_repair = "unique_quiet"
 ) %>%
   readr::write_excel_csv(
     "data/processed/reference/remove_analytes_from_study.csv"
