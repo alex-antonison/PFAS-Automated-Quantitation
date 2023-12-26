@@ -57,12 +57,24 @@ analyte_concentration_df <- arrow::read_parquet("data/processed/quantify-sample/
 analyte_concentration_sheet <- xlsx::createSheet(wb, "Anlyte Conc Sum")
 xlsx::addDataFrame(analyte_concentration_df, sheet = analyte_concentration_sheet, row.names = FALSE)
 
-########## Sheet 5 - Add Analyte Concentration Output #############
+########## Sheet 5 - Add Anlyte Concen Troubleshoot #############
 
 analyte_concentration_df <- arrow::read_parquet("data/processed/quantify-sample/analyte_concentration_no_recovery.parquet") %>%
+  dplyr::mutate(
+    analyte_concentration_ng = ifelse(
+      calibration_curve_range_category == "<LOD",
+      "NF",
+      analyte_concentration_ng
+    ),
+    analyte_concentration_ng = ifelse(
+      calibration_curve_range_category == "<LOQ",
+      "<LOQ",
+      analyte_concentration_ng
+    )
+  ) %>%
   data.frame()
 
-analyte_concentration_sheet <- xlsx::createSheet(wb, "Analyte Concentration Troubleshoot")
+analyte_concentration_sheet <- xlsx::createSheet(wb, "Anlyte Concen Troubleshoot")
 xlsx::addDataFrame(analyte_concentration_df, sheet = analyte_concentration_sheet, row.names = FALSE)
 
 
