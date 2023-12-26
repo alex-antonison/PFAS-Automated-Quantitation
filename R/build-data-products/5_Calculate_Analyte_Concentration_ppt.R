@@ -36,4 +36,7 @@ analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>
   ) %>%
   readr::write_excel_csv(
     "data/processed/build-data-products/analyte_concentration_ppt.csv"
+  ) %>%
+  arrow::write_parquet(
+    sink = "data/processed/build-data-products/analyte_concentration_ppt.parquet"
   )

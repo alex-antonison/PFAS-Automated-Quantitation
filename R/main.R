@@ -9,6 +9,8 @@ section_change_print <- function(section_name) {
   print("=========================")
 }
 
+process_raw_data <- FALSE
+
 ########################################
 section_change_print("Processing Source Data")
 ########################################
@@ -34,10 +36,16 @@ source("R/process-source-data/ProcessQCBlankFiltering.R")
 print("Creating QC Sample File")
 source("R/process-source-data/ProcessQCSampleFile.R")
 
-tictoc::tic("Processing Raw Data")
-print("Processing Raw Data - can take some time")
-source("R/process-source-data/ProcessRawData.R")
-tictoc::toc()
+if (process_raw_data) {
+  tictoc::tic("Processing Raw Data")
+  print("Processing Raw Data - can take some time")
+  source("R/process-source-data/ProcessRawData.R")
+  tictoc::toc()
+} else {
+  print("========================")
+  print("Skipping Processing Raw Data....")
+  print("========================")
+}
 
 ########################################
 section_change_print("Building Calibration Curve")

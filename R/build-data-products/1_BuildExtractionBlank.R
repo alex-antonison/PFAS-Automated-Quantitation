@@ -45,7 +45,7 @@ build_extraction_blank_table <- function(extraction_batch_source,
       average_extraction_blank_analyte_concentration_ng = mean(analyte_concentration_ng),
       std_dev_extraction_blank_analyte_concentration_ng = sd(analyte_concentration_ng),
       percent_rsd_lank_analyte_concentration_ng = (std_dev_extraction_blank_analyte_concentration_ng / average_extraction_blank_analyte_concentration_ng) * 100,
-      .groups="keep"
+      .groups = "keep"
     ) %>%
     dplyr::select(
       batch_number,

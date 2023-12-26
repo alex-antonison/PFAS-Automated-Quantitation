@@ -30,9 +30,10 @@ read_batch_file <- function(file_name) {
     # combine the sheets together
     combined_tibble <- suppressMessages(
       dplyr::bind_rows(
-          excel_sheet_data,
-          combined_tibble
-    ))
+        excel_sheet_data,
+        combined_tibble
+      )
+    )
   }
 
   return(combined_tibble)
