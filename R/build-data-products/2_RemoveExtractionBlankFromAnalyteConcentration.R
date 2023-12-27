@@ -12,7 +12,7 @@ build_blank_filtered_analyte_concentration_table <- function(extraction_blank,
       )
     ) %>%
     dplyr::mutate(
-      blank_filtered_analyte_concentration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng
+      ext_blank_filtered_analyte_concentration_ng = analyte_concentration_ng - average_extraction_blank_analyte_concentration_ng
     ) %>%
     readr::write_excel_csv(
       paste0(

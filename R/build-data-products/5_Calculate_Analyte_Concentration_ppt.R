@@ -21,7 +21,7 @@ analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>
     county != "Fresh Water QC" & county != "Salt Water QC" & county != "Field Blank" & county != "Extraction Blank"
   ) %>%
   dplyr::mutate(
-    analyte_concentration_ppt = (field_blank_blank_filtered_analyte_concentration_ng / sample_mass_g) * 1000
+    analyte_concentration_ppt = (complete_blank_filtered_analyte_concentration_ng / sample_mass_g) * 1000
   ) %>%
   dplyr::select(
     batch_number,
@@ -30,7 +30,7 @@ analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>
     sample_id,
     coordinates,
     individual_native_analyte_name,
-    field_blank_blank_filtered_analyte_concentration_ng,
+    complete_blank_filtered_analyte_concentration_ng,
     sample_mass_g,
     analyte_concentration_ppt
   ) %>%

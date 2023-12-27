@@ -15,22 +15,22 @@ field_blank_averaged_analyte_concentration <- extraction_batch_source %>%
     by = c("batch_number", "cartridge_number")
   ) %>%
   dplyr::select(
-    batch_number, cartridge_number, individual_native_analyte_name, blank_filtered_analyte_concentration_ng
+    batch_number, cartridge_number, individual_native_analyte_name, ext_blank_filtered_analyte_concentration_ng
   ) %>%
   dplyr::filter(!is.na(individual_native_analyte_name)) %>%
   dplyr::mutate(
-    blank_filtered_analyte_concentration_ng = ifelse(
-      is.na(blank_filtered_analyte_concentration_ng),
+    ext_blank_filtered_analyte_concentration_ng = ifelse(
+      is.na(ext_blank_filtered_analyte_concentration_ng),
       0.0,
-      blank_filtered_analyte_concentration_ng
+      ext_blank_filtered_analyte_concentration_ng
     )
   ) %>%
   dplyr::group_by(
     individual_native_analyte_name
   ) %>%
   dplyr::summarise(
-    average_field_blank_analyte_concentration_ng = mean(blank_filtered_analyte_concentration_ng),
-    field_blank_stdev_analyte_concentration_ng = sd(blank_filtered_analyte_concentration_ng),
+    average_field_blank_analyte_concentration_ng = mean(ext_blank_filtered_analyte_concentration_ng),
+    field_blank_stdev_analyte_concentration_ng = sd(ext_blank_filtered_analyte_concentration_ng),
     field_blank_percent_rsd_analyte_concentration_ng = (field_blank_stdev_analyte_concentration_ng / average_field_blank_analyte_concentration_ng) * 100,
     .groups = "keep"
   ) %>%
@@ -46,13 +46,13 @@ blank_filtered_analyte_concentration %>%
     by = c("individual_native_analyte_name")
   ) %>%
   dplyr::mutate(
-    field_blank_blank_filtered_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - average_field_blank_analyte_concentration_ng
+    complete_blank_filtered_analyte_concentration_ng = ext_blank_filtered_analyte_concentration_ng - average_field_blank_analyte_concentration_ng
   ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
     individual_native_analyte_name,
-    field_blank_blank_filtered_analyte_concentration_ng
+    complete_blank_filtered_analyte_concentration_ng
   ) %>%
   readr::write_excel_csv(
     paste0("data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.csv")
