@@ -16,7 +16,7 @@ analyte_concentration_ppt <- field_blank_blank_filtered_analyte_concentration %>
       "cartridge_number"
     )
   ) %>%
-  # filter to just QC Samples
+  # filter to just samples
   dplyr::filter(
     county != "Fresh Water QC" & county != "Salt Water QC" & county != "Field Blank" & county != "Extraction Blank"
   ) %>%
