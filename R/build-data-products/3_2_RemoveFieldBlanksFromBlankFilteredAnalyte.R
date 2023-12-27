@@ -34,9 +34,9 @@ average_field_blank_analyte_concentration_df <- extraction_batch_source %>%
     percent_rsd_field_blank_analyte_concentration_ng = (stdev_field_blank_analyte_concentration_ng / average_field_blank_analyte_concentration_ng) * 100,
     .groups = "keep"
   ) %>%
-  readr::write_excel_csv("data/processed/build-data-products/average_field_blank_analyte_concentration_average_ng.csv") %>%
+  readr::write_excel_csv("data/processed/build-data-products/average_field_blank_analyte_concentration_ng.csv") %>%
   arrow::write_parquet(
-    "data/processed/build-data-products/average_field_blank_analyte_concentration_average_ng.parquet"
+    "data/processed/build-data-products/average_field_blank_analyte_concentration_ng.parquet"
   )
 
 
