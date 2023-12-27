@@ -41,7 +41,7 @@ build_qc_table <- function(extraction_batch_source,
     dplyr::mutate(
       quality_control_adjust_flag = ifelse(!is.na(ng_to_filter_ng), TRUE, FALSE),
       ng_to_filter_ng_na_fix = ifelse(is.na(ng_to_filter_ng), 0.0, ng_to_filter_ng),
-      adjusted_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - ng_to_filter_ng_na_fix
+      adjusted_analyte_concentration_ng = extraction_blank_filtered_analyte_concentration_ng - ng_to_filter_ng_na_fix
     ) %>%
     dplyr::select(
       batch_number,
@@ -52,7 +52,7 @@ build_qc_table <- function(extraction_batch_source,
       quality_control_level,
       quality_control_replicate,
       replicate_missing_flag,
-      blank_filtered_analyte_concentration_ng,
+      extraction_blank_filtered_analyte_concentration_ng,
       ng_to_filter_ng_na_fix,
       adjusted_analyte_concentration_ng
     )
@@ -168,19 +168,8 @@ quality_control_sample_adjustment <- arrow::read_parquet(
   "data/processed/reference/quality_control_blank_filter_adjustment.parquet"
 )
 
-blank_filtered_analyte_concentration_with_recovery <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_analyte_concentration_with_recovery.parquet"
-)
-
 blank_filtered_analyte_concentration_no_recovery <- arrow::read_parquet(
   "data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet"
-)
-
-build_qc_table(
-  extraction_batch_source,
-  blank_filtered_analyte_concentration_with_recovery,
-  quality_control_sample_adjustment,
-  "with_recovery"
 )
 
 build_qc_table(
