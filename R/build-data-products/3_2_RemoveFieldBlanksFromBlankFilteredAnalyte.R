@@ -4,59 +4,59 @@ extraction_batch_source <- arrow::read_parquet(
   "data/processed/reference/extraction_batch_source.parquet"
 )
 
-blank_filtered_analyte_concentration <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet"
+extraction_blank_filtered_analyte_concentration_df <- arrow::read_parquet(
+  "data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_no_recovery.parquet"
 )
 
-field_blank_averaged_analyte_concentration <- extraction_batch_source %>%
+average_field_blank_analyte_concentration_df <- extraction_batch_source %>%
   dplyr::filter(county == "Field Blank") %>%
   dplyr::left_join(
-    blank_filtered_analyte_concentration,
+    extraction_blank_filtered_analyte_concentration_df,
     by = c("batch_number", "cartridge_number")
   ) %>%
   dplyr::select(
-    batch_number, cartridge_number, individual_native_analyte_name, blank_filtered_analyte_concentration_ng
+    batch_number, cartridge_number, individual_native_analyte_name, extraction_blank_filtered_analyte_concentration_ng
   ) %>%
   dplyr::filter(!is.na(individual_native_analyte_name)) %>%
   dplyr::mutate(
-    blank_filtered_analyte_concentration_ng = ifelse(
-      is.na(blank_filtered_analyte_concentration_ng),
+    extraction_blank_filtered_analyte_concentration_ng = ifelse(
+      is.na(extraction_blank_filtered_analyte_concentration_ng),
       0.0,
-      blank_filtered_analyte_concentration_ng
+      extraction_blank_filtered_analyte_concentration_ng
     )
   ) %>%
   dplyr::group_by(
     individual_native_analyte_name
   ) %>%
   dplyr::summarise(
-    average_field_blank_analyte_concentration_ng = mean(blank_filtered_analyte_concentration_ng),
-    field_blank_stdev_analyte_concentration_ng = sd(blank_filtered_analyte_concentration_ng),
-    field_blank_percent_rsd_analyte_concentration_ng = (field_blank_stdev_analyte_concentration_ng / average_field_blank_analyte_concentration_ng) * 100,
+    average_field_blank_analyte_concentration_ng = mean(extraction_blank_filtered_analyte_concentration_ng),
+    stdev_field_blank_analyte_concentration_ng = sd(extraction_blank_filtered_analyte_concentration_ng),
+    percent_rsd_field_blank_analyte_concentration_ng = (stdev_field_blank_analyte_concentration_ng / average_field_blank_analyte_concentration_ng) * 100,
     .groups = "keep"
   ) %>%
-  readr::write_excel_csv("data/processed/build-data-products/field_blank_analyte_concentration_average_ng.csv") %>%
+  readr::write_excel_csv("data/processed/build-data-products/average_field_blank_analyte_concentration_ng.csv") %>%
   arrow::write_parquet(
-    "data/processed/build-data-products/field_blank_analyte_concentration_average_ng.parquet"
+    "data/processed/build-data-products/average_field_blank_analyte_concentration_ng.parquet"
   )
 
 
-blank_filtered_analyte_concentration %>%
+extraction_blank_filtered_analyte_concentration_df %>%
   dplyr::left_join(
-    field_blank_averaged_analyte_concentration,
+    average_field_blank_analyte_concentration_df,
     by = c("individual_native_analyte_name")
   ) %>%
   dplyr::mutate(
-    field_blank_blank_filtered_analyte_concentration_ng = blank_filtered_analyte_concentration_ng - average_field_blank_analyte_concentration_ng
+    final_filtered_analyte_concentration_ng = extraction_blank_filtered_analyte_concentration_ng - average_field_blank_analyte_concentration_ng
   ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
     individual_native_analyte_name,
-    field_blank_blank_filtered_analyte_concentration_ng
+    final_filtered_analyte_concentration_ng
   ) %>%
   readr::write_excel_csv(
-    paste0("data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.csv")
+    paste0("data/processed/build-data-products/final_filtered_analyte_concentration_no_recovery.csv")
   ) %>%
   arrow::write_parquet(
-    "data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.parquet"
+    "data/processed/build-data-products/final_filtered_analyte_concentration_no_recovery.parquet"
   )
