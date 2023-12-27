@@ -10,7 +10,7 @@ wb <- xlsx::createWorkbook()
 ########## Sheet 1 - Build a quality control pass fail across batches ##########
 print("Creating Pass Fail Summary")
 
-quality_control_pass_fail_df <- arrow::read_parquet("data/processed/build-data-products/blank_filtered_evaluated_qc_no_recovery.parquet") %>%
+quality_control_pass_fail_df <- arrow::read_parquet("data/processed/build-data-products/extraction_blank_filtered_evaluated_qc_no_recovery.parquet") %>%
   dplyr::select(-quality_control_exists_flag, -quality_control_adjust_flag) %>%
   dplyr::filter(!is.na(evaluate_recovery_ratio_flag)) %>%
   dplyr::group_by(batch_number, evaluate_recovery_ratio_flag) %>%
@@ -25,7 +25,7 @@ xlsx::addDataFrame(quality_control_pass_fail_df, sheet = quality_control_pass_fa
 ########## Sheet 2 -  Include quality control results across all batches ##########
 print("Creating Quality Control Values")
 
-quality_control_results_df <- arrow::read_parquet("data/processed/build-data-products/blank_filtered_evaluated_qc_no_recovery.parquet") %>%
+quality_control_results_df <- arrow::read_parquet("data/processed/build-data-products/extraction_blank_filtered_evaluated_qc_no_recovery.parquet") %>%
   dplyr::arrange(batch_number, dplyr::desc(evaluate_recovery_ratio_flag)) %>%
   data.frame()
 
@@ -97,24 +97,24 @@ xlsx::addDataFrame(analyte_concentration_df, sheet = analyte_concentration_sheet
 ######## Sheet 6 - Add Blank Filtered Output #############
 print("Creating Blnk Fltrd Anlyte Con")
 
-blank_filtered_df <- arrow::read_parquet("data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet") %>%
+blank_filtered_df <- arrow::read_parquet("data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_no_recovery.parquet") %>%
   data.frame()
 
 blank_filtered_sheet <- xlsx::createSheet(wb, "Blnk Fltrd Anlyte Con")
 xlsx::addDataFrame(blank_filtered_df, sheet = blank_filtered_sheet, row.names = FALSE)
 
-########## Sheet 7 - Add Field Blank Filtered Output #############
+########## Sheet 7 - Add Final Filtered Output #############
 print("Creating Fld Blnk Fltrd Anlyte Con")
 
-field_blank_filtered_df <- arrow::read_parquet("data/processed/build-data-products/field_blank_blank_filtered_analyte_concentration_no_recovery.parquet") %>%
+final_filtered_df <- arrow::read_parquet("data/processed/build-data-products/final_filtered_analyte_concentration_no_recovery.parquet") %>%
   dplyr::left_join(
     calibration_curve_range_category_ref,
     by = c("batch_number", "cartridge_number", "individual_native_analyte_name")
   ) %>%
   data.frame()
 
-field_blank_filtered_sheet <- xlsx::createSheet(wb, "Fld Blnk Fltrd Anlyte Con")
-xlsx::addDataFrame(field_blank_filtered_df, sheet = field_blank_filtered_sheet, row.names = FALSE)
+final_filtered_sheet <- xlsx::createSheet(wb, "Fnl Fltrd Anlyte Con")
+xlsx::addDataFrame(final_filtered_df, sheet = final_filtered_sheet, row.names = FALSE)
 
 ########## Sheet 8 - Analyte Concentration PPT #############
 print("Creating Analyte Concentration ppt")
@@ -127,7 +127,7 @@ cal_curve_prep <- analyte_concentration_df %>%
   )
 
 average_extract_blank_ref <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_no_recovery.parquet"
+  "data/processed/build-data-products/average_extraction_blank_ng_no_recovery.parquet"
 ) %>%
   dplyr::select(
     batch_number,
@@ -136,7 +136,7 @@ average_extract_blank_ref <- arrow::read_parquet(
   )
 
 average_field_blank_ref <- arrow::read_parquet(
-  "data/processed/build-data-products/field_blank_analyte_concentration_average_ng.parquet"
+  "data/processed/build-data-products/average_field_blank_analyte_concentration_ng.parquet"
 ) %>%
   dplyr::select(
     individual_native_analyte_name,
