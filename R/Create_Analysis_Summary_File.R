@@ -207,7 +207,7 @@ analyte_concentration_ppt <- arrow::read_parquet("data/processed/build-data-prod
     analyte_concentration_ng,
     average_extraction_blank_analyte_concentration_ng,
     average_field_blank_analyte_concentration_ng,
-    field_blank_blank_filtered_analyte_concentration_ng,
+    final_filtered_analyte_concentration_ng,
     analyte_concentration_ppt
   ) %>%
   data.frame()
