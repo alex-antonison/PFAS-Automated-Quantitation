@@ -16,14 +16,14 @@ build_blank_filtered_analyte_concentration_table <- function(extraction_blank,
     ) %>%
     readr::write_excel_csv(
       paste0(
-        "data/processed/build-data-products/blank_filtered_analyte_concentration_",
+        "data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_",
         file_name,
         ".csv"
       )
     ) %>%
     arrow::write_parquet(
       paste0(
-        "data/processed/build-data-products/blank_filtered_analyte_concentration_",
+        "data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_",
         file_name,
         ".parquet"
       )
@@ -31,7 +31,7 @@ build_blank_filtered_analyte_concentration_table <- function(extraction_blank,
 }
 
 extraction_blank_no_recovery <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_no_recovery.parquet"
+  "data/processed/build-data-products/average_extraction_blank_ng_no_recovery.parquet"
 ) %>%
   dplyr::select(
     batch_number,

@@ -146,14 +146,14 @@ build_qc_table <- function(extraction_batch_source,
   combined_qc_levels %>%
     readr::write_excel_csv(
       paste0(
-        "data/processed/build-data-products/blank_filtered_analyte_concentration_quality_control_",
+        "data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_quality_control_",
         file_name,
         ".csv"
       )
     ) %>%
     arrow::write_parquet(
       paste0(
-        "data/processed/build-data-products/blank_filtered_analyte_concentration_quality_control_",
+        "data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_quality_control_",
         file_name,
         ".parquet"
       )
@@ -169,7 +169,7 @@ quality_control_sample_adjustment <- arrow::read_parquet(
 )
 
 blank_filtered_analyte_concentration_no_recovery <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_analyte_concentration_no_recovery.parquet"
+  "data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_no_recovery.parquet"
 )
 
 build_qc_table(

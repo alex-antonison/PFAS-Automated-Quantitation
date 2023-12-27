@@ -25,33 +25,23 @@ eval_qc_for_blank_filtered_analyte <- function(blank_filtered_analyte_concentrat
       evaluate_recovery_ratio_flag
     ) %>%
     readr::write_excel_csv(
-      paste0("data/processed/build-data-products/blank_filtered_evaluated_qc_", file_name, ".csv")
+      paste0("data/processed/build-data-products/extraction_blank_filtered_evaluated_qc_", file_name, ".csv")
     ) %>%
     arrow::write_parquet(
-      sink = paste0("data/processed/build-data-products/blank_filtered_evaluated_qc_", file_name, ".parquet")
+      sink = paste0("data/processed/build-data-products/extraction_blank_filtered_evaluated_qc_", file_name, ".parquet")
     )
 }
 
 blank_filtered_analyte_concentration_quality_control_no_recovery <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_analyte_concentration_quality_control_no_recovery.parquet"
-)
-blank_filtered_analyte_concentration_quality_control_with_recovery <- arrow::read_parquet(
-  "data/processed/build-data-products/blank_filtered_analyte_concentration_quality_control_with_recovery.parquet"
+  "data/processed/build-data-products/extraction_blank_filtered_analyte_concentration_quality_control_no_recovery.parquet"
 )
 
 native_analyte_quality_control_levels <- arrow::read_parquet(
   "data/processed/reference/native_analyte_quality_control_levels.parquet"
 )
 
-
 eval_qc_for_blank_filtered_analyte(
   blank_filtered_analyte_concentration_quality_control_no_recovery,
   native_analyte_quality_control_levels,
   "no_recovery"
-)
-
-eval_qc_for_blank_filtered_analyte(
-  blank_filtered_analyte_concentration_quality_control_with_recovery,
-  native_analyte_quality_control_levels,
-  "with_recovery"
 )
