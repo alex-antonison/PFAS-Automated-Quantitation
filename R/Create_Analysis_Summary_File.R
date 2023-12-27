@@ -71,12 +71,12 @@ analyte_concentration_df <- arrow::read_parquet("data/processed/quantify-sample/
   dplyr::mutate(
     analyte_concentration_ng = ifelse(
       calibration_curve_range_category == "<LOD",
-      "NF",
+      NA,
       analyte_concentration_ng
     ),
     analyte_concentration_ng = ifelse(
       calibration_curve_range_category == "<LOQ",
-      "<LOQ",
+      NA,
       analyte_concentration_ng
     )
   ) %>%
@@ -174,6 +174,25 @@ analyte_concentration_ppt <- arrow::read_parquet("data/processed/build-data-prod
     analyte_concentration_ng_ref,
     by = c("batch_number", "cartridge_number", "individual_native_analyte_name")
   ) %>%
+  dplyr::mutate(
+    analyte_concentration_ppt = ifelse(
+      calibration_curve_range_category == "<LOQ",
+      NA,
+      analyte_concentration_ppt
+    ),
+    analyte_concentration_ppt = ifelse(
+      calibration_curve_range_category == "<LOD",
+      NA,
+      analyte_concentration_ppt
+    )
+  ) %>%
+  dplyr::mutate(
+    positive_analyte_concentration_ng = ifelse(
+      analyte_concentration_ng > 0 & !is.na(analyte_concentration_ng),
+      "Positive",
+      "Negative or NF"
+    )
+  ) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
@@ -182,6 +201,7 @@ analyte_concentration_ppt <- arrow::read_parquet("data/processed/build-data-prod
     coordinates,
     calibration_point,
     calibration_curve_range_category,
+    positive_analyte_concentration_ng,
     individual_native_analyte_name,
     sample_mass_g,
     analyte_concentration_ng,
@@ -194,6 +214,21 @@ analyte_concentration_ppt <- arrow::read_parquet("data/processed/build-data-prod
 
 analyte_concentration_ppt_sheet <- xlsx::createSheet(wb, "Analyte Concentration ppt")
 xlsx::addDataFrame(analyte_concentration_ppt, sheet = analyte_concentration_ppt_sheet, row.names = FALSE)
+
+########## Sheet 9 - Sample Count Summary #############
+print("Creating a County Sample Count Summary")
+
+county_sample_count_df <- analyte_concentration_ppt %>%
+  dplyr::select(
+    county,
+    sample_id
+  ) %>%
+  dplyr::group_by(county) %>%
+  dplyr::summarise(sample_count = dplyr::n_distinct(sample_id)) %>%
+  data.frame()
+
+county_sample_count_sheet <- xlsx::createSheet(wb, "County Sample Count")
+xlsx::addDataFrame(county_sample_count_df, sheet = county_sample_count_sheet, row.names = FALSE)
 
 ########## Save out final file ############
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
@@ -211,9 +246,22 @@ if (Sys.info()["sysname"] == "Windows") {
 print("Creating Analyte Concentration Wide File")
 
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
-df <- analyte_concentration_ppt %>%
+filtered_df <- analyte_concentration_ppt %>%
   dplyr::filter(calibration_point >= 5) %>%
   dplyr::filter(calibration_curve_range_category == "Within Calibration Range" | calibration_curve_range_category == "Above Calibration Range") %>%
+  dplyr::filter(analyte_concentration_ng > 0) %>%
+  dplyr::select(
+    batch_number,
+    cartridge_number,
+    sample_id,
+    county,
+    coordinates,
+    individual_native_analyte_name,
+    analyte_concentration_ppt,
+  ) %>%
+  tidyr::pivot_wider(names_from = individual_native_analyte_name, values_from = analyte_concentration_ppt, names_sep = "")
+
+unfiltered_df <- analyte_concentration_ppt %>%
   dplyr::select(
     batch_number,
     cartridge_number,
@@ -227,13 +275,19 @@ df <- analyte_concentration_ppt %>%
 
 cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
 if (Sys.info()["sysname"] == "Darwin") {
-  readr::write_excel_csv(df, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_analyte_concentration_ppt_wide.csv"),
+  readr::write_excel_csv(filtered_df, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/filtered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
+    na = ""
+  )
+  readr::write_excel_csv(unfiltered_df, paste0("/Users/aantonison/OneDrive/client/UniversityOfFlorida/unfiltered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
     na = ""
   )
 }
 
 if (Sys.info()["sysname"] == "Windows") {
-  readr::write_excel_csv(df, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_analyte_concentration_ppt_wide.csv"),
+  readr::write_excel_csv(filtered_df, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/filtered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
+    na = ""
+  )
+  readr::write_excel_csv(unfiltered_df, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/unfiltered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
     na = ""
   )
 }
