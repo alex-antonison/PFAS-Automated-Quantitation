@@ -139,7 +139,7 @@ average_field_blank_ref <- arrow::read_parquet(
 ) %>%
   dplyr::select(
     individual_native_analyte_name,
-    average_field_blank_analyte_concentration_ng
+    average_ext_blank_analyte_concentration_ng
   )
 
 # filtering down to just the analyte_concentration_ng to avoid
@@ -205,7 +205,7 @@ analyte_concentration_ppt <- arrow::read_parquet("data/processed/build-data-prod
     sample_mass_g,
     analyte_concentration_ng,
     average_extraction_blank_analyte_concentration_ng,
-    average_field_blank_analyte_concentration_ng,
+    average_ext_blank_analyte_concentration_ng,
     complete_blank_filtered_analyte_concentration_ng,
     analyte_concentration_ppt
   ) %>%

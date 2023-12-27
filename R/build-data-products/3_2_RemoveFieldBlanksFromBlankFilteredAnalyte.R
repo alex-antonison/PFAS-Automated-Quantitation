@@ -29,9 +29,9 @@ field_blank_averaged_analyte_concentration <- extraction_batch_source %>%
     individual_native_analyte_name
   ) %>%
   dplyr::summarise(
-    average_field_blank_analyte_concentration_ng = mean(ext_blank_filtered_analyte_concentration_ng),
-    field_blank_stdev_analyte_concentration_ng = sd(ext_blank_filtered_analyte_concentration_ng),
-    field_blank_percent_rsd_analyte_concentration_ng = (field_blank_stdev_analyte_concentration_ng / average_field_blank_analyte_concentration_ng) * 100,
+    average_ext_blank_analyte_concentration_ng = mean(ext_blank_filtered_analyte_concentration_ng),
+    stdev_ext_blank_analyte_concentration_ng = sd(ext_blank_filtered_analyte_concentration_ng),
+    percent_rsd_ext_blank_analyte_concentration_ng = (stdev_ext_blank_analyte_concentration_ng / average_ext_blank_analyte_concentration_ng) * 100,
     .groups = "keep"
   ) %>%
   readr::write_excel_csv("data/processed/build-data-products/field_blank_analyte_concentration_average_ng.csv") %>%
@@ -46,7 +46,7 @@ blank_filtered_analyte_concentration %>%
     by = c("individual_native_analyte_name")
   ) %>%
   dplyr::mutate(
-    complete_blank_filtered_analyte_concentration_ng = ext_blank_filtered_analyte_concentration_ng - average_field_blank_analyte_concentration_ng
+    complete_blank_filtered_analyte_concentration_ng = ext_blank_filtered_analyte_concentration_ng - average_ext_blank_analyte_concentration_ng
   ) %>%
   dplyr::select(
     batch_number,
