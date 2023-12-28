@@ -242,6 +242,10 @@ if (Sys.info()["sysname"] == "Windows") {
   xlsx::saveWorkbook(wb, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/", cur_time, "_summary_analysis_file.xlsx"))
 }
 
+if (Sys.info()["sysname"] == "Linux") {
+  xlsx::saveWorkbook(wb, paste0("/home/adantonison/shared-data-files/UniversityOfFlorida/", cur_time, "_summary_analysis_file.xlsx"))
+}
+
 ########## Separate Analyte Concentration PPT Transposed #############
 print("Creating Analyte Concentration Wide File")
 
@@ -288,6 +292,15 @@ if (Sys.info()["sysname"] == "Windows") {
     na = ""
   )
   readr::write_excel_csv(unfiltered_df, paste0("C:/Users/Alexander Antonison/OneDrive/client/UniversityOfFlorida/unfiltered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
+    na = ""
+  )
+}
+
+if (Sys.info()["sysname"] == "Linux") {
+    readr::write_excel_csv(filtered_df, paste0("/home/adantonison/shared-data-files/UniversityOfFlorida/filtered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
+    na = ""
+  )
+  readr::write_excel_csv(unfiltered_df, paste0("/home/adantonison/shared-data-files/UniversityOfFlorida/unfiltered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
     na = ""
   )
 }
