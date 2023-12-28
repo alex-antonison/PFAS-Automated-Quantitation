@@ -297,7 +297,7 @@ if (Sys.info()["sysname"] == "Windows") {
 }
 
 if (Sys.info()["sysname"] == "Linux") {
-    readr::write_excel_csv(filtered_df, paste0("/home/adantonison/shared-data-files/UniversityOfFlorida/filtered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
+  readr::write_excel_csv(filtered_df, paste0("/home/adantonison/shared-data-files/UniversityOfFlorida/filtered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
     na = ""
   )
   readr::write_excel_csv(unfiltered_df, paste0("/home/adantonison/shared-data-files/UniversityOfFlorida/unfiltered_", cur_time, "_analyte_concentration_ppt_wide.csv"),
