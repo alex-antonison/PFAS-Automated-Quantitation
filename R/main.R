@@ -9,7 +9,7 @@ section_change_print <- function(section_name) {
   print("=========================")
 }
 
-process_raw_data <- FALSE
+process_raw_data <- TRUE
 
 ########################################
 section_change_print("Processing Source Data")
