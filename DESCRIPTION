@@ -7,8 +7,8 @@ Authors@R: c(
     person("Dr. John A. Bowden Research Group", role = c("cph", "fnd")))
 Description: This package streamlines processing mass spectrometry data.
 License: MIT + file LICENSE
-URL: https://github.com/antonison-consulting/ProcessMassSpecData
-BugReports: https://github.com/antonison-consulting/ProcessMassSpecData/issues/
+URL: https://github.com/alex-antonison/ProcessMassSpecData
+BugReports: https://github.com/alex-antonison/ProcessMassSpecData/issues/
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
@@ -21,9 +21,10 @@ Imports:
     dplyr (>= 1.1.0),
     fs (>= 1.6.0),
     janitor (>= 2.2.0),
-    paws (>= 0.1.12),
+    jsonlite (>= 1.8.8),
     readr (>= 2.1.3),
     readxl (>= 1.4.2),
+    rlang (>= 1.1.2),
     stringr (>= 1.5.0),
     tictoc (>= 1.2.0),
     tidyr (>= 1.3.0)
