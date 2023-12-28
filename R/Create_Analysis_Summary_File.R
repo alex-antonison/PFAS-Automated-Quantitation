@@ -249,7 +249,7 @@ cur_time <- format(Sys.time(), "%Y-%m-%d-%I-%M")
 filtered_df <- analyte_concentration_ppt %>%
   dplyr::filter(calibration_point >= 5) %>%
   dplyr::filter(calibration_curve_range_category == "Within Calibration Range" | calibration_curve_range_category == "Above Calibration Range") %>%
-  dplyr::filter(analyte_concentration_ng > 0) %>%
+  dplyr::filter(analyte_concentration_ppt > 0) %>%
   dplyr::select(
     batch_number,
     cartridge_number,
