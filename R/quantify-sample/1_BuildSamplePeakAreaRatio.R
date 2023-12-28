@@ -51,7 +51,7 @@ combined_data_df %>%
   # filter down to analytes that have a match in the reference file
   dplyr::filter(analyte_match == "Match Found") %>%
   # filter down to only filenames that are not in the ignore list
-  dplyr::filter(!(filename %in% ignore_catridge_list)) %>%
+  dplyr::filter(!(filename %in% ignore_cartridge_list)) %>%
   dplyr::mutate(
     # flag for if a analyte is not NF
     analyte_detection_flag = dplyr::if_else((area == "NF"), FALSE, TRUE),
@@ -90,7 +90,7 @@ combined_data_df %>%
 combined_data_df %>%
   dplyr::filter(source_type == "internal_standard") %>%
   # filter down to only filenames that are not in the ignore list
-  dplyr::filter(!(filename %in% ignore_catridge_list)) %>%
+  dplyr::filter(!(filename %in% ignore_cartridge_list)) %>%
   dplyr::mutate(
     internal_standard_name = sheet_name,
     # flag for if a analyte is not NF

@@ -1,4 +1,4 @@
-ignore_catridge_list <- c(
+ignore_cartridge_list <- c(
   "plastic_wool_EB",
   "MeOH_rstrt9",
   "MeOH_rstrt8",

@@ -64,7 +64,7 @@ internal_standard_mix <- arrow::read_parquet(
     internal_standard_concentration_ppb
   )
 
-concen_internal_stanard_mapping <- arrow::read_parquet(
+concen_internal_standard_mapping <- arrow::read_parquet(
   "data/processed/mapping/concentration_internal_standard_mapping.parquet"
 )
 
@@ -81,7 +81,7 @@ calculate_analyte_concentration <- function(peak_area_ratio,
                                             calibration_curve_output,
                                             extraction_batch_source,
                                             internal_standard_mix,
-                                            concen_internal_stanard_mapping,
+                                            concen_internal_standard_mapping,
                                             lod_reference,
                                             output_base_name) {
   peak_area_ratio %>%
@@ -97,7 +97,7 @@ calculate_analyte_concentration <- function(peak_area_ratio,
       source_internal_standard_name = internal_standard_name
     ) %>%
     dplyr::left_join(
-      concen_internal_stanard_mapping,
+      concen_internal_standard_mapping,
       by = c("source_internal_standard_name" = "mapped_internal_standard_name")
     ) %>%
     dplyr::mutate(
@@ -174,7 +174,7 @@ calculate_analyte_concentration(peak_area_ratio,
   calibration_curve_output_with_recovery,
   extraction_batch_source,
   internal_standard_mix,
-  concen_internal_stanard_mapping,
+  concen_internal_standard_mapping,
   lod_with_recovery,
   output_base_name = "analyte_concentration_with_recovery"
 )
@@ -183,7 +183,7 @@ calculate_analyte_concentration(peak_area_ratio,
   calibration_curve_output_no_recovery,
   extraction_batch_source,
   internal_standard_mix,
-  concen_internal_stanard_mapping,
+  concen_internal_standard_mapping,
   lod_no_recovery,
   output_base_name = "analyte_concentration_no_recovery"
 )

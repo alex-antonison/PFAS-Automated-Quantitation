@@ -30,7 +30,7 @@ cal_name_native_analyte_mapping_df <- arrow::read_parquet(
 ) %>%
   dplyr::rename(mapped_analyte_name = individual_native_analyte_name)
 
-concen_internal_stanard_mapping <- arrow::read_parquet(
+concen_internal_standard_mapping <- arrow::read_parquet(
   "data/processed/mapping/concentration_internal_standard_mapping.parquet"
 )
 
@@ -54,7 +54,7 @@ analyte_concentration_df %>%
     source_internal_standard_name = internal_standard_name
   ) %>%
   dplyr::left_join(
-    concen_internal_stanard_mapping,
+    concen_internal_standard_mapping,
     by = c("source_internal_standard_name" = "mapped_internal_standard_name")
   ) %>%
   dplyr::mutate(
