@@ -1,4 +1,0 @@
-# Meeting Notes for 2023-03-09
-
-* Add reference in Concentration Ratio for using mapping table
-* Remove Average Peak Ratio from Concentration Ratio Calculation

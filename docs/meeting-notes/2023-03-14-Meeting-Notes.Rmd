@@ -1,6 +1,0 @@
-# 2023-03-14 Meeting Notes
-
-## Items to Discuss
-
-1. When building the concentration curve, there is some missing mappings between Sep2021Calibration_Curve_source.xlsx and the source data. We have resolved it some but still getting some missing values.
-2. There is a cartirdge number in batch 12 that is 121 CSB2 - should this just be 121? For now I am setting it to null since I am working with Batch 2.
