@@ -4,6 +4,8 @@
 
 The purpose of this project is to streamline the processing of PFAS Quantitation Steps. For details around these steps, please see this [Powerpoint Presentation](https://uflorida-my.sharepoint.com/:p:/g/personal/camden_camacho_ufl_edu/EaVbQvErEnNKpVYSX4BhQ-EB34x2tahj1mSEbT9KeP13_Q?rtime=REwgXe8f20g).
 
+For an overview of the different steps in the calculations, please reference the [LogicFlow.Rmd](./docs/LogicFlow.Rmd) file that includes notes and a process flow of each step of the calculations.
+
 ## Dev Setup
 
 ### R Setup
