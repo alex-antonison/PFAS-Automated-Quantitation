@@ -31,3 +31,16 @@ This project uses [styler](https://styler.r-lib.org/) to auto-format code.
 ### renv setup
 
 * Used `renv::settings$snapshot.type("explicit")` to manage packages using the DESCRIPTION file.
+
+## Running the Code
+
+There are four main sections:
+
+* [process-source-data](./R/process-source-data/)
+* [build-calibration-curve](./R/build-calibration-curve/)
+* [quantify-sample](./R/quantify-sample/)
+* [build-data-products](./R/build-data-products/)
+
+To run all or some of the sections, you can use the [main.R](./R/main.R) file.
+
+A [Create_Analysis_Summary_File.R](./R/Create_Analysis_Summary_File.R) was created to produce the desired output files for calculation evaluations and further analysis.
