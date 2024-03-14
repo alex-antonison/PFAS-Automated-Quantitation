@@ -2,7 +2,7 @@ Package: ProcessMassSpecData
 Title: Process Mass Spectrometry Data
 Version: 0.1
 Authors@R: c(
-    person("Alexander", "Antonison", , "alex@antonison-cg.com", role = "cre"),
+    person("Alexander", "Antonison", , "adantonison@gmail.com", role = "cre"),
     person("Camden", "Camacho", email = "camden.camacho@chem.ufl.edu", role = "aut"),
     person("Dr. John A. Bowden Research Group", role = c("cph", "fnd")))
 Description: This package streamlines processing mass spectrometry data.
