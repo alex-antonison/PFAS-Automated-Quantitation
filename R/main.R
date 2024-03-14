@@ -93,11 +93,11 @@ source("R/build-data-products/2_RemoveExtractionBlankFromAnalyteConcentration.R"
 print("Build Quality Control Table")
 source("R/build-data-products/3_BuildQualityControlTable.R")
 
-print("Remove Field Blanks from Blank Filtered Analyte")
-source("R/build-data-products/4_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
-
 print("Evaluate Quality Control Samples")
-source("R/build-data-products/5_EvaluateQualityControlSamples.R")
+source("R/build-data-products/4_EvaluateQualityControlSamples.R")
+
+print("Remove Field Blanks from Blank Filtered Analyte")
+source("R/build-data-products/5_RemoveFieldBlanksFromBlankFilteredAnalyte.R")
 
 print("Calculate Final Analyte Concentration")
 source("R/build-data-products/6_Calculate_Analyte_Concentration_ppt.R")
